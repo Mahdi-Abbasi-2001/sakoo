@@ -170,3 +170,11 @@ html[lang="fa"] .crd-note{font-size:13.5px;line-height:23px}
   .lp .sheet-col .lpd{flex:1;display:flex;align-items:center;justify-content:center}
   .lp .sheet-col .lpd svg{height:auto;max-height:100%}
 }
+/* hero: telling the agent is the main way in */
+.lp .ask label{display:block;font-size:14px;font-weight:600;color:var(--tx);margin-bottom:8px}
+.lp .ask textarea{display:block;width:100%;min-height:96px;padding:12px 14px;border-radius:10px;border:1px solid var(--line2);background:var(--sunken);color:var(--tx);font:inherit;font-size:15px;line-height:1.6;resize:vertical}
+.lp .ask textarea::placeholder{color:var(--tx3)}
+.lp .ask textarea:focus{outline:2px solid var(--ac);outline-offset:1px}
+.lp .ask-ideas{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.lp .ask-ideas .lp-chip{text-align:start}
+.lp .ask .cta:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}

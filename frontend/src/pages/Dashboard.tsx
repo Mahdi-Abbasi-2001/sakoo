@@ -5,6 +5,7 @@ import type { OneClickAppOut } from '../api/schema.gen';
 import { errorText } from '../i18n/errors';
 import type { ProjectRow } from '../api/types';
 import { Icon } from '../components/Icon';
+import { AgentPrompt } from '../components/AgentPrompt';
 import { Ticker } from '../components/Ticker';
 import { useAuth } from '../auth/AuthContext';
 import { useI18n, usePageTitle } from '../i18n';
@@ -43,9 +44,10 @@ export function Dashboard() {
     <div className="dash">
       <div className="page-h">
         <div><h1 className="title">{t('dash.title')}</h1><p className="lead">{t('dash.lead')}</p></div>
-        <span className="row" style={{ gap: 8 }}><Link to="/agent" className="btn"><Icon name="diamond" />{t('dash.agent.btn')}</Link><Link to="/new" className="btn btn-p"><Icon name="arrow" />{t('dash.new')}</Link></span>
+        <Link to="/new" className="btn"><Icon name="file" />{t('dash.new.manual')}</Link>
       </div>
-      <div className="sumcards">
+      <AgentPrompt connected={!!me?.has_liara_token} />
+      <div className="sumcards" style={{ marginTop: 20 }}>
         <div className="card pad stack lift" style={{ gap: 8 }}>
           <span className={'badge ' + (waitingRuns.length ? 's-wait' : 's-pend')}><Icon name={waitingRuns.length ? 'diamond' : 'dashed'} />{t('status.waiting')}</span>
           <div className="big">{t('dash.card.approve', { n: num(lang, waitingRuns.length) })}</div>
@@ -132,22 +134,11 @@ function EmptyDashboard({ connected }: { connected: boolean }) {
     { to: '/new', icon: 'file', t: t('new.tab.zip'), d: t('dash.start.zip.d') },
     { to: '/new?source=git', icon: 'link', t: t('new.tab.git'), d: t('dash.start.git.d') },
   ];
-  const [wish, setWish] = useState('');
-  const tell = (text: string) => { const q = text.trim(); if (q) nav(`/agent?q=${encodeURIComponent(q)}`); };
   return (
     <div className="dash">
       <div className="page-h"><div><h1 className="title">{t('dash.title')}</h1><p className="lead">{t('dash.empty.lead')}</p></div></div>
       {!connected && <div className="banner" role="alert" style={{ marginBottom: 20 }}><Icon name="warn" className="ic big" /><div><b>{t('new.noconn')}</b> <Link to="/settings" className="link">{t('new.noconn.link')}</Link></div></div>}
-      <section className="card pad stack agent-hero" style={{ gap: 10 }} aria-label={t('dash.agent.t')}>
-        <h2 className="sect" style={{ margin: 0 }}>{t('dash.agent.t')}</h2>
-        <p className="hint" style={{ margin: 0 }}>{t('dash.agent.d')}</p>
-        <form className="agent-compose" onSubmit={(e) => { e.preventDefault(); tell(wish); }}>
-          <textarea className="inp" rows={2} maxLength={1000} value={wish} aria-label={t('dash.agent.t')} placeholder={t('ag.start.ph')} onChange={(e) => setWish(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); tell(wish); } }} />
-          <button type="submit" className="btn btn-p" disabled={!wish.trim() || !connected}><Icon name="arrow" />{t('dash.agent.go')}</button>
-        </form>
-        <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>{['ag.start.ex.wp', 'ag.start.ex.n8n', 'ag.start.ex.build', 'ag.start.ex.git'].map((k) => <button type="button" key={k} className="chip chat-idea" disabled={!connected} onClick={() => tell(t(k))}>{t(k)}</button>)}</div>
-      </section>
+      <AgentPrompt connected={connected} />
       <h2 className="sect" style={{ margin: '24px 0 12px' }}>{t('dash.or')}</h2>
       <div className="startgrid two">
         {starts.map((s) => (

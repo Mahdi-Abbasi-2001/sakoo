@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Link } from 'react-router-dom';
-import { api } from '../api/client';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { Mark } from '../components/Icon';
+import { AGENT_IDEAS, keepWish } from '../components/AgentPrompt';
 import { LangToggle, ThemeToggle } from '../components/Shell';
 import { useI18n, usePageTitle } from '../i18n';
 import '../styles/landing.gen.css';
@@ -55,19 +55,18 @@ function Section({ id, children, aside }: { id?: string; n?: string; children: R
 
 export default function Landing() {
   const { t, lang } = useI18n();
-  const { me, state } = useAuth();
+  const { state } = useAuth();
   usePageTitle('land.tab');
   const root = useRef<HTMLDivElement>(null);
   const [reduce, setReduce] = useState(() => !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
-  const [maxMb, setMaxMb] = useState<number | null>(null);
-  const [picked, setPicked] = useState('');
+  const nav = useNavigate();
+  const [wish, setWish] = useState('');
   const setupKey = lang + (reduce ? 'r' : 'm');
 
   useEffect(() => {
     const mq = window.matchMedia?.('(prefers-reduced-motion: reduce)'); if (!mq) return;
     const on = () => setReduce(mq.matches); mq.addEventListener('change', on); return () => mq.removeEventListener('change', on);
   }, []);
-  useEffect(() => { if (me) api.limits().then((l) => setMaxMb(l.max_upload_mb)).catch(() => undefined); }, [me]);
   useEffect(() => {
     // the replay needs the web fonts' metrics settled only for the scene text; it never waits for them to start
     if (!root.current) return;
@@ -78,6 +77,8 @@ export default function Landing() {
   const authed = state.status === 'user';
   const nf = (n: number) => new Intl.NumberFormat(lang === 'fa' ? 'fa-IR' : 'en-US').format(n);
   const cta = authed ? { to: '/new', text: t('land.cta.authed') } : { to: '/register', text: t('land.cta.anon') };
+  // a visitor's words wait in the browser while they sign up, and are offered again on the dashboard
+  const tell = () => { const q = wish.trim(); if (!q) return; if (authed) nav(`/agent?q=${encodeURIComponent(q)}`); else { keepWish(q); nav('/register'); } };
 
   return (
     <div className="lp" lang={lang} dir={lang === 'fa' ? 'rtl' : 'ltr'} ref={root} data-live="1">
@@ -88,7 +89,7 @@ export default function Landing() {
         <nav className="lp-nav" aria-label={t('land.nav.label')}><a href="#how">{t('land.nav.how')}</a><a href="#creates">{t('land.nav.creates')}</a><a href="#why">{t('land.nav.safety')}</a></nav>
         <span className="lp-sp" />
         {authed
-          ? <Link className="acct" to="/"><span className="at">{t('nav.dashboard')}</span></Link>
+          ? <Link className="acct" to="/dashboard"><span className="at">{t('nav.dashboard')}</span></Link>
           : <><Link className="acct" to="/login"><span>{t('land.login_short')}</span></Link><Link className="btn reg" to="/register">{t('land.register_short')}</Link></>}
         <LangToggle /><ThemeToggle />
       </header>
@@ -98,11 +99,15 @@ export default function Landing() {
             <div className="eyebrow"><i /><span className="tag">{t('land.eyebrow')}</span></div>
             <h1>{t('land.h1')}</h1><p className="lp-lead">{t('land.lead')}</p>
             <div className="tool" role="group" aria-label={t('land.h1')}>
-              <label className="lp-drop"><span className="ck a" /><span className="ck b" /><input type="file" accept=".zip" aria-label={t('land.drop.title')} onChange={(e) => setPicked(e.target.files?.[0]?.name ?? '')} /><b>{t('land.drop.title')}</b><span>{picked ? <span className="ltr">{picked}</span> : <>{t('land.drop.sub')}{maxMb !== null && t('land.drop.max', { mb: nf(maxMb) })}</>}</span></label>
-              <div className="or"><span className="tag">{t('land.or')}</span></div>
-              <div className="fld"><label htmlFor="git-p">{t('land.git')}</label><input id="git-p" type="url" inputMode="url" placeholder="https://github.com/you/project.git" autoComplete="off" /></div>
-              <Link className="cta" to={cta.to}><span className="cta-t">{cta.text}</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></Link>
+              <form className="ask" onSubmit={(e) => { e.preventDefault(); tell(); }}>
+                <label htmlFor="ask-p">{t('land.ask.label')}</label>
+                <textarea id="ask-p" rows={3} maxLength={1000} value={wish} placeholder={t('land.ask.ph')} onChange={(e) => setWish(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); tell(); } }} />
+                <div className="ask-ideas">{AGENT_IDEAS.map((k) => <button type="button" key={k} className="lp-chip" onClick={() => setWish(t(k))}>{t(k)}</button>)}</div>
+                <button type="submit" className="cta" disabled={!wish.trim()}><span className="cta-t">{t(authed ? 'land.ask.go' : 'land.ask.go.anon')}</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+              </form>
               <p className="toolnote"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" strokeWidth="2" strokeLinejoin="round" aria-hidden="true"><path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" /></svg><span>{t(authed ? 'land.toolnote.authed' : 'land.toolnote.anon')}</span></p>
+              <p className="toolnote"><Link className="lp-link" to={cta.to}>{t('land.ask.manual')}</Link></p>
               {!authed && <p className="toolnote"><Link className="lp-link" to="/login">{t('land.login')}</Link></p>}
             </div>
           </div>
