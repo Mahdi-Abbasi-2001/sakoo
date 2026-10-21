@@ -60,7 +60,7 @@ const SEL = 'a[href],button:not(:disabled),[role=tab],[role=radio],label.lp-drop
 { await pre('/'); await waitFor(c, `!!document.querySelector('.lp')`, 20000).catch(() => {}); await sleep(600);
   const ids = await FORCE(SEL); const r = await measureContrast(c); await UNFORCE(ids); out.forcedStates.push({ label: 'landing', controls: ids.length, ...short(r) }); }
 const stop = await mockApi(c, buildMock());
-for (const [label, path, ready] of [['dashboard', '/', `document.querySelectorAll('.prow .nm').length===4`], ['project', '/projects/2', `!!document.querySelector('.rrow:not(.rhead)')`]]) {
+for (const [label, path, ready] of [['dashboard', '/dashboard', `document.querySelectorAll('.prow .nm').length===4`], ['project', '/projects/2', `!!document.querySelector('.rrow:not(.rhead)')`]]) {
   await pre(path); await waitFor(c, ready, 20000).catch(() => {}); await sleep(600);
   const ids = await FORCE(SEL); const r = await measureContrast(c); await UNFORCE(ids);
   out.forcedStates.push({ label, controls: ids.length, ...short(r) });

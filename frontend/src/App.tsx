@@ -20,8 +20,6 @@ function Protected({ children }: { children: ReactElement }) {
   const { t } = useI18n();
   const loc = useLocation();
   if (state.status === 'loading') return <div className="page"><div className="sk" style={{ height: 40, maxWidth: 360 }} role="status" aria-label={t('a11y.loading')} /></div>;
-  // `/` is the landing page for visitors and the dashboard for signed-in users
-  if (state.status === 'anon' && loc.pathname === '/') return <Suspense fallback={null}><Landing /></Suspense>;
   if (state.status === 'anon') return <Navigate to="/login" replace state={{ from: loc.pathname }} />;
   return children;
 }
@@ -33,14 +31,15 @@ export default function App() {
         <Route path="/login" element={<AuthPage mode="login" />} />
         <Route path="/register" element={<AuthPage mode="register" />} />
       </Route>
-      <Route path="/welcome" element={<Suspense fallback={null}><Landing /></Suspense>} />
+      <Route path="/" element={<Suspense fallback={null}><Landing /></Suspense>} />
+      <Route path="/welcome" element={<Navigate to="/" replace />} />
       <Route element={<Shell bare />}>
         <Route path="/demo" element={<Navigate to="/demo/waiting" replace />} />
         <Route path="/demo/:name" element={<DemoPage />} />
       </Route>
       <Route element={<Protected><Shell /></Protected>}>
         <Route path="/runs/:id" element={<RunPage />} />
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/agent" element={<AgentStart />} />
         <Route path="/new" element={<NewDeployment />} />
         <Route path="/apps" element={<ReadyMade />} />

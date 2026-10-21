@@ -68,7 +68,7 @@ await open(c, '/settings', { rm }); await c.ev(`localStorage.setItem('lang','${l
 
 // ---- signed-in pages with made-up projects
 const stop = await mockApi(c, buildMock());
-await audit('dashboard', '/', `document.querySelectorAll('.prow .nm').length===4`, { max: 40 });
+await audit('dashboard', '/dashboard', `document.querySelectorAll('.prow .nm').length===4`, { max: 40 });
 await audit('project', '/projects/2', `!!document.querySelector('.rrow:not(.rhead)')`, { max: 50 });
 stop();
 await audit('new deployment', '/new', `!!document.querySelector('#zipfile')`, { max: 30 });

@@ -9,12 +9,12 @@ const u = srv.url;
 console.log(`
 Deploy Agent is running at ${u}  (throw-away data; Ctrl-C stops it)
 
-Landing page            ${u}/                      (also ${u}/welcome when signed in)
+Landing page            ${u}/
   frozen frames         ${u}/?t=8.5   ${u}/?t=10.4   ${u}/?t=19.5   ${u}/?t=26.4      (the five frame buttons)
   Persian               open any page, then press فا in the header
 Sign in / create        ${u}/login   ${u}/register
 Connect Liara           ${u}/settings          (any token works here: a stand-in answers instead of api.liara.ir)
-Dashboard, new, project ${u}/    ${u}/new    (after you register)
+Dashboard, new, project ${u}/dashboard    ${u}/new    (after you register)
 Recorded runs           ${u}/demo/waiting      plan approval, question, Apply and Decline
                         ${u}/demo/failed       secret, build timeout, fix approval, live, declined fix
                         ${u}/demo/dryrun       a preview that sends nothing

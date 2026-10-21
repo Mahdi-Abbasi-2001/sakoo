@@ -30,7 +30,7 @@ export function ReadyMade() {
   };
   return (
     <div className="newdep">
-      <div className="crumb"><Link to="/">{t('proj.crumb.projects')}</Link> / {t('rm.title')}</div>
+      <div className="crumb"><Link to="/dashboard">{t('proj.crumb.projects')}</Link> / {t('rm.title')}</div>
       <h1 className="title">{t('rm.title')}</h1>
       <p className="hint" style={{ maxWidth: 680 }}>{t('rm.d')}</p>
       <div className="field" style={{ margin: '16px 0', maxWidth: 360 }}>

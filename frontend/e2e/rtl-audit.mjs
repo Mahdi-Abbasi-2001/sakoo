@@ -55,10 +55,10 @@ await click(c, 'section[aria-labelledby=chk-h] [role=radio]:nth-child(2)'); awai
 await click(c, 'section[aria-labelledby=chk-h] .row .btn-p'); await sleep(1500); await scan('connect: connected');
 clearInterval(pump); await c.send('Fetch.disable');
 // dashboard: first visit, then with the made-up projects
-await go('dashboard: first visit', '/', `!!document.querySelector('.step-card')`);
+await go('dashboard: first visit', '/dashboard', `!!document.querySelector('.step-card')`);
 const stop = await mockApi(c, buildMock());
 for (const w of [1440, 390]) {
-  await go('dashboard', '/', `document.querySelectorAll('.prow .nm').length===4`, { w, h: w > 600 ? 900 : 844 });
+  await go('dashboard', '/dashboard', `document.querySelectorAll('.prow .nm').length===4`, { w, h: w > 600 ? 900 : 844 });
   await go('project', '/projects/2', `!!document.querySelector('.rrow:not(.rhead)')`, { w, h: w > 600 ? 900 : 844, wait: 1500 });
 }
 stop();

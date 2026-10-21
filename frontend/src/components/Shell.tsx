@@ -38,7 +38,7 @@ export function Shell({ bare = false }: { bare?: boolean }) {
       <Background />
       <a className="skip" href="#main">{t('nav.skip')}</a>
       <header className="shell">
-        <Link className="brand" to="/welcome"><Mark /><span>{t('app.name')}</span></Link>
+        <Link className="brand" to="/"><Mark /><span>{t('app.name')}</span></Link>
         <span style={{ flex: 1 }} />
         {me && (
           <Link className={'badge ' + (me.has_liara_token ? 's-ok' : 's-warn')} to="/settings" title={t('nav.settings')}>

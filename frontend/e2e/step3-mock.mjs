@@ -14,14 +14,14 @@ await c.ev(`fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'applica
 for (const lang of ['en', 'fa']) {
   await c.ev(`fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json','X-Requested-With':'XMLHttpRequest'},body:JSON.stringify({language:'${lang}'})})`); await sleepy(300);
   for (const [n, w, h] of [['desktop', 1440, 900], ['tablet', 768, 1024], ['phone', 390, 844]]) {
-    await open(c, '/', { w, h }); await waitFor(c, `document.querySelectorAll('.prow .nm').length===4`); await sleepy(1300);
+    await open(c, '/dashboard', { w, h }); await waitFor(c, `document.querySelectorAll('.prow .nm').length===4`); await sleepy(1300);
     const m = await c.ev(MEASURE); out[`dashboard-${lang}-${n}`] = { overflow: m.overflow, under44: m.under44, dir: m.dir }; await shot(c, `${OUT}/s3m-dashboard-${lang}-${n}.png`);
     await open(c, '/projects/2', { w, h }); await waitFor(c, `!!document.querySelector('.rrow:not(.rhead)')`); await sleepy(1500);
     const p = await c.ev(MEASURE); out[`project-${lang}-${n}`] = { overflow: p.overflow, under44: p.under44, dir: p.dir }; await shot(c, `${OUT}/s3m-project-${lang}-${n}.png`);
   }
 }
 await c.ev(`fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json','X-Requested-With':'XMLHttpRequest'},body:JSON.stringify({language:'en'})})`); await sleepy(300);
-await open(c, '/'); await waitFor(c, `document.querySelectorAll('.prow .nm').length===4`); await sleepy(900);
+await open(c, '/dashboard'); await waitFor(c, `document.querySelectorAll('.prow .nm').length===4`); await sleepy(900);
 out.rows = await c.ev(`[...document.querySelectorAll('.prow')].slice(1).map(r=>[...r.querySelectorAll('.pcell')].map(x=>x.textContent.replace(/\\s+/g,' ').trim()).join(' | ')).join('\\n')`);
 out.summary = await c.ev(`[...document.querySelectorAll('.sumcards .card')].map(x=>x.textContent.replace(/\\s+/g,' ').trim()).join('\\n')`);
 await open(c, '/projects/2'); await waitFor(c, `!!document.querySelector('.rrow:not(.rhead)')`); await sleepy(1500);

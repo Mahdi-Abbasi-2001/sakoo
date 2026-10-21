@@ -19,13 +19,13 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
   useEffect(() => { api.limits().then((l) => { setNeedInvite(mode === 'register' && !!l.registration_code_required); setGhOn(!!l.github_oauth); }).catch(() => undefined); }, [mode]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const to = useRef('/');
+  const to = useRef('/dashboard');
   if (state.status === 'user') return <Navigate to={to.current} replace />;
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setBusy(true); setError(null);
-    to.current = mode === 'register' ? '/settings' : '/';
+    to.current = mode === 'register' ? '/settings' : '/dashboard';
     try {
       if (mode === 'login') await login(username.trim(), password); else await register(username.trim(), password, invite.trim());
       setPassword('');                       // the password never outlives the request
@@ -58,7 +58,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
         </button>
         {ghOn && <>
           <div className="or" style={{ textAlign: 'center' }}><span className="tag">{t('land.or')}</span></div>
-          <GithubButton mode="signin" label={t(mode === 'login' ? 'gh.signin' : 'gh.signup')} invite={invite} next="/" before={() => (mode === 'register' && needInvite && !invite.trim() ? t('auth.invite_first') : null)} />
+          <GithubButton mode="signin" label={t(mode === 'login' ? 'gh.signin' : 'gh.signup')} invite={invite} next="/dashboard" before={() => (mode === 'register' && needInvite && !invite.trim() ? t('auth.invite_first') : null)} />
         </>}
         <Link className="hint" style={{ textAlign: 'center', padding: '12px 0' }} to={mode === 'login' ? '/register' : '/login'}>{t(mode === 'login' ? 'auth.to_register' : 'auth.to_login')}</Link>
       </form>

@@ -50,7 +50,7 @@ const projApi = (await api('GET', `/api/projects/${pid}`)).body; out.projectApi 
 await open(c, `/projects/${pid}`); await waitFor(c, `!!document.querySelector('h1')`, 15000); await sleep(1200);
 out.projectPage = await c.ev(`(function(){var t=document.body.innerText;return {liveCard:!!document.querySelector('.result.live'),openLink:!!document.querySelector('a[href*="liara.run"]'),mentionsLive:/Your app is live/i.test(t),badges:[...document.querySelectorAll('.badge')].map(b=>b.innerText.trim()),removedText:/Removed from Liara/.test(t),nowCost:(document.querySelector('.aside, .proj-aside')||{}).innerText?.slice(0,160)||null}})()`);
 await shot(c, `${OUT}/cl-project.png`);
-await open(c, '/'); await waitFor(c, `document.querySelector('.prow .nm')`, 15000); await sleep(1200);
+await open(c, '/dashboard'); await waitFor(c, `document.querySelector('.prow .nm')`, 15000); await sleep(1200);
 out.dashboard = await c.ev(`(function(){var r=document.querySelector('.prow:not(.phead)');return {row:r.innerText.replace(/\\s+/g,' ').trim(),link:!!r.querySelector('a[href*="liara.run"], .url'),tiles:[...document.querySelectorAll('.card .big, .tiles .big')].map(x=>x.innerText.replace(/\\s+/g,' ').trim()).slice(0,4)}})()`);
 await shot(c, `${OUT}/cl-dashboard.png`);
 // Persian

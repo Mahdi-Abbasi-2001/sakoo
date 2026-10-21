@@ -103,7 +103,7 @@ def test_signing_in_creates_an_account_asks_only_for_identity_and_keeps_no_token
     url, state = start(c, mode="signin")
     assert "scope=read%3Auser" in url
     r = finish(c, state)
-    assert r.status_code == 302 and r.headers["location"] == "/"
+    assert r.status_code == 302 and r.headers["location"] == "/dashboard"
     me = c.get("/api/me").json()
     assert me["username"] == "octo"
     row = app.state.db.one("SELECT github_id FROM users WHERE username='octo'")
@@ -142,10 +142,10 @@ def test_a_server_with_an_invite_code_only_lets_new_github_accounts_in_with_it(m
     url, state = start(c, mode="signin", invite="wrong")
     assert finish(c, state).headers["location"] == "/register?github_error=invite_required"
     url, state = start(c, mode="signin", invite="open-sesame-1")
-    assert finish(c, state).headers["location"] == "/" and c.get("/api/me").json()["username"] == "octo"
+    assert finish(c, state).headers["location"] == "/dashboard" and c.get("/api/me").json()["username"] == "octo"
     c.post("/api/auth/logout")                                   # an account that already exists signs in without the code
     url, state = start(c, mode="signin")
-    assert finish(c, state).headers["location"] == "/" and c.get("/api/me").status_code == 200
+    assert finish(c, state).headers["location"] == "/dashboard" and c.get("/api/me").status_code == 200
 
 
 def test_the_state_cookie_cannot_be_forged_or_swapped(make):

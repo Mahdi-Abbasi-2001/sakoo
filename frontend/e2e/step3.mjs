@@ -15,14 +15,14 @@ const measure = async (label, w, h, lang) => { await open(c, label.path, { w, h 
 // an account with no projects and no Liara token yet: the first-visit steps
 const user = 'dash' + Date.now().toString(36);
 await open(c, '/register'); await type(c, '#u', user); await type(c, '#p', 'password123'); await click(c, 'button[type=submit]'); await sleep(1500);
-await open(c, '/'); await waitFor(c, `!!document.querySelector('.step-card')`);
+await open(c, '/dashboard'); await waitFor(c, `!!document.querySelector('.step-card')`);
 out.firstVisitNotConnected = { steps: await c.ev(`document.querySelectorAll('.step-card').length`), active: await c.ev(`[...document.querySelectorAll('.step-card.active h2')].map(h=>h.textContent).join()`), newDisabled: await c.ev(`!![...document.querySelectorAll('.step-card button')].find(b=>b.disabled)`) };
 await shot(c, `${OUT}/s3-first-visit-notconnected.png`);
 // connect (a placeholder token is saved; the stand-in Liara answers the reads)
 await c.ev(`fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json','X-Requested-With':'XMLHttpRequest'},body:JSON.stringify({liara_token:'placeholder-token-not-valid-0000',language:'en'})})`); await sleep(500);
-await open(c, '/'); await waitFor(c, `!!document.querySelector('.step-card')`); await sleep(700);
+await open(c, '/dashboard'); await waitFor(c, `!!document.querySelector('.step-card')`); await sleep(700);
 out.firstVisitConnected = { active: await c.ev(`[...document.querySelectorAll('.step-card.active h2')].map(h=>h.textContent).join()`), newLink: await c.ev(`!!document.querySelector('.step-card a[href="/new"]')` ) };
-for (const [n, w, h] of [['desktop', 1440, 900], ['tablet', 768, 1024], ['phone', 390, 844]]) await measure({ name: `first-visit-${n}`, path: '/' }, w, h);
+for (const [n, w, h] of [['desktop', 1440, 900], ['tablet', 768, 1024], ['phone', 390, 844]]) await measure({ name: `first-visit-${n}`, path: '/dashboard' }, w, h);
 
 // the new-deployment form, with its errors
 await open(c, '/new'); await waitFor(c, `!!document.querySelector('#zipfile')`);
@@ -46,9 +46,9 @@ await shot(c, `${OUT}/s3-approval-plural.png`);
 await c.ev(`document.querySelector('.appr .ap-acts .btn:not(.btn-p)').click()`); await waitFor(c, `document.querySelector('.run').dataset.situation==='cancelled'`, 6000); out.declined = await sit();
 
 // the dashboard now has one project whose last run was declined
-await open(c, '/'); await waitFor(c, `!!document.querySelector('.prow .nm')`); await sleep(600);
+await open(c, '/dashboard'); await waitFor(c, `!!document.querySelector('.prow .nm')`); await sleep(600);
 out.dashboardRow = { name: await txt('.prow .nm'), badge: await txt('.prow .badge'), cost: await txt('.prow .cost'), actions: await c.ev(`[...document.querySelectorAll('.prow .acts-cell .btn')].map(b=>b.textContent.trim()).join(' | ')`), summary: await c.ev(`[...document.querySelectorAll('.sumcards .card')].map(x=>x.textContent.replace(/\\s+/g,' ').trim()).join(' || ')`) };
-for (const [n, w, h] of [['desktop', 1440, 900], ['tablet', 768, 1024], ['phone', 390, 844]]) await measure({ name: `dashboard-${n}`, path: '/' }, w, h);
+for (const [n, w, h] of [['desktop', 1440, 900], ['tablet', 768, 1024], ['phone', 390, 844]]) await measure({ name: `dashboard-${n}`, path: '/dashboard' }, w, h);
 // project page: history, start a preview run, which finishes without creating anything
 await click(c, '.prow .nm'); await waitFor(c, `!!document.querySelector('.proj-h')`); await sleep(500);
 out.projectHeader = { title: await txt('.proj-h .title'), history: await c.ev(`[...document.querySelectorAll('.rrow:not(.rhead)')].map(r=>r.textContent.replace(/\\s+/g,' ').trim()).join(' || ')`) };
@@ -58,7 +58,7 @@ await c.ev(`history.back()`); await waitFor(c, `!!document.querySelector('.proj-
 out.historyAfterPreview = await c.ev(`[...document.querySelectorAll('.rrow:not(.rhead)')].map(r=>r.textContent.replace(/\\s+/g,' ').trim().slice(0,110)).join(' || ')`);
 // persian
 await c.ev(`fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json','X-Requested-With':'XMLHttpRequest'},body:JSON.stringify({language:'fa'})})`); await sleep(400);
-for (const [name, p] of [['dashboard-fa', '/'], ['new-fa', '/new'], ['project-fa', await c.ev('location.pathname')]]) for (const [n, w, h] of [['desktop', 1440, 900], ['phone', 390, 844]]) { await open(c, p, { w, h }); await sleep(1200); const m = await c.ev(MEASURE); out[`${name}-${n}`] = { overflow: m.overflow, under44: m.under44, dir: m.dir }; await shot(c, `${OUT}/s3-${name}-${n}.png`); }
+for (const [name, p] of [['dashboard-fa', '/dashboard'], ['new-fa', '/new'], ['project-fa', await c.ev('location.pathname')]]) for (const [n, w, h] of [['desktop', 1440, 900], ['phone', 390, 844]]) { await open(c, p, { w, h }); await sleep(1200); const m = await c.ev(MEASURE); out[`${name}-${n}`] = { overflow: m.overflow, under44: m.under44, dir: m.dir }; await shot(c, `${OUT}/s3-${name}-${n}.png`); }
 // remove the project from the project page
 await open(c, await c.ev('location.pathname')); await waitFor(c, `!!document.querySelector('.danger')`); await click(c, '.danger .btn-d'); await sleep(200); await click(c, '.danger .row .btn-d'); await sleep(1200);
 out.afterRemove = await c.ev('location.pathname');

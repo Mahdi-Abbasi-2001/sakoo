@@ -81,7 +81,7 @@ export function NewDeployment() {
 
   return (
     <div className="newdep">
-      <div className="crumb"><Link to="/">{t('proj.crumb.projects')}</Link> / {t('new.title')}</div>
+      <div className="crumb"><Link to="/dashboard">{t('proj.crumb.projects')}</Link> / {t('new.title')}</div>
       <h1 className="title">{t('new.title')}</h1>
       <p className="hint"><Link to="/apps" className="link">{t('rm.link')}</Link></p>
       {!connected && me && <div className="banner" role="alert" style={{ marginTop: 20 }}><Icon name="warn" className="ic big" /><div><b>{t('new.noconn')}</b> <Link to="/settings" className="link">{t('new.noconn.link')}</Link></div></div>}

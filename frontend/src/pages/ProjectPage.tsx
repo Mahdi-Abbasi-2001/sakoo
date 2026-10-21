@@ -65,7 +65,7 @@ export function ProjectPage() {
   };
 
   if (state === 'loading') return <ProjectSkeleton />;
-  if (state === 'missing' || !p) return <div className="page-narrow"><div className="card pad stack"><Icon name="alert" /><p>{t('proj.missing')}</p><div><Link className="btn" to="/">{t('nav.projects')}</Link></div></div></div>;
+  if (state === 'missing' || !p) return <div className="page-narrow"><div className="card pad stack"><Icon name="alert" /><p>{t('proj.missing')}</p><div><Link className="btn" to="/dashboard">{t('nav.projects')}</Link></div></div></div>;
 
   const live = p.live;
   const url = live ? (Object.values(live.urls)[0] as string | undefined) : undefined;
@@ -88,7 +88,7 @@ export function ProjectPage() {
 
   return (
     <div className="projpage">
-      <div className="crumb"><Link to="/">{t('proj.crumb.projects')}</Link> / <span className="mono">{p.name}</span></div>
+      <div className="crumb"><Link to="/dashboard">{t('proj.crumb.projects')}</Link> / <span className="mono">{p.name}</span></div>
       <div className="proj-h">
         <h1 className="title mono">{p.name}</h1>
         {live ? <span className="badge s-ok"><Icon name="check" />{t('status.succeeded')}</span> : head && <span className={'badge ' + head.tone}><Icon name={head.icon} />{head.label}</span>}
@@ -198,7 +198,7 @@ function Danger({ p }: { p: ProjectDetail; onChanged: () => void }) {
   const names = useMemo(() => live?.resources.map((r) => r.id).join(', ') ?? '', [live]);
   const remove = async () => {
     setBusy(true); setErr(null);
-    try { await api.deleteProject(p.id, typed); nav('/', { replace: true }); }
+    try { await api.deleteProject(p.id, typed); nav('/dashboard', { replace: true }); }
     catch (e) { setErr(errorText(lang, e)); setBusy(false); }
   };
   return (
