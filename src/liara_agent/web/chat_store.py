@@ -22,6 +22,38 @@ def clear(db, cid: int) -> None:
     db.run("DELETE FROM chat_actions WHERE chat_id=?", (cid,))
 
 
+def forget_project(db, user_id: int, project_id: int, same_project) -> None:
+    """A deleted project leaves no conversation behind: its own chat goes, and a change for it still waiting in the general chat is closed, as if declined,
+    so the general chat is not blocked by a card that could only fail. `same_project(name)` says whether a project name given to a tool means this project."""
+    db.run("DELETE FROM chats WHERE user_id=? AND project_id=?", (user_id, project_id))
+    row = db.one("SELECT id FROM chats WHERE user_id=? AND project_id=0", (user_id,))
+    if not row:
+        return
+    store = DbStore(db, row["id"])
+    for a in store.actions().values():
+        if a["status"] == "pending" and same_project(str(a["args"].get("project") or "")):
+            result = {"declined": True, "message": "The project was deleted, so this change was not made."}
+            store.resolve_action(a["id"], "declined", result)
+            store.append({"role": "tool", "tool_call_id": a["tool_call_id"], "content": json.dumps(result)})
+
+
+def hand_over(db, user_id: int, project_id: int) -> None:
+    """The conversation that led to a project goes with it: when a deployment starts from the general chat, the project's own chat (the one on its run page)
+    gets a copy of what was said, so the agent there still knows the request and the changes already made. Nothing is copied over an existing conversation,
+    and not while a change is still waiting (its card would block the project's chat)."""
+    src = db.one("SELECT id FROM chats WHERE user_id=? AND project_id=0", (user_id,))
+    if not src:
+        return
+    dst = chat_id(db, user_id, project_id)
+    if db.one("SELECT 1 FROM chat_messages WHERE chat_id=?", (dst,)) or db.one("SELECT 1 FROM chat_actions WHERE chat_id=? AND status='pending'", (src["id"],)):
+        return
+    for r in db.q("SELECT body, created_at FROM chat_messages WHERE chat_id=? ORDER BY id", (src["id"],)):
+        db.run("INSERT INTO chat_messages(chat_id,body,created_at) VALUES (?,?,?)", (dst, r["body"], r["created_at"]))
+    for r in db.q("SELECT * FROM chat_actions WHERE chat_id=? ORDER BY created_at", (src["id"],)):
+        db.run("INSERT INTO chat_actions(id,chat_id,tool,args,tool_call_id,info,status,result,created_at) VALUES (?,?,?,?,?,?,?,?,?)",
+               (uuid.uuid4().hex[:12], dst, r["tool"], r["args"], r["tool_call_id"], r["info"], r["status"], r["result"], r["created_at"]))
+
+
 class DbStore:
     def __init__(self, db, cid: int):
         self.db, self.cid = db, cid

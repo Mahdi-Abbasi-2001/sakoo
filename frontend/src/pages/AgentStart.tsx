@@ -11,20 +11,23 @@ const EXAMPLES = ['ag.start.ex.wp', 'ag.start.ex.n8n', 'ag.start.ex.build', 'ag.
 export function AgentStart() {
   const { t } = useI18n();
   const [params, setParams] = useSearchParams();
-  const opened = useRef(Math.floor(Date.now() / 1000));   // this visit's conversation only (the agent still remembers the earlier ones)
-  const th = useChatThread(0, opened.current, true);
-  const sent = useRef(false);
+  const th = useChatThread(0, null, true);
+  const started = useRef(false);
   const q = params.get('q');
   useEffect(() => {
-    if (!q || sent.current || !th.chat) return;
-    sent.current = true; setParams({}, { replace: true });
-    if (th.chat.available !== false) void th.send(q);
+    // The general conversation (outside any project) starts fresh on every visit to this page, with or without a request typed in the prompt box: the agent
+    // remembers the whole saved conversation, so an unrelated earlier request would colour its answers. Only this chat (project 0) is cleared here: a project's
+    // own conversation, on its run page, is never touched.
+    if (started.current || !th.chat) return;
+    started.current = true; if (q) setParams({}, { replace: true });
+    if (th.chat.available === false) return;
+    void (async () => { if (th.chat!.messages.length > 0) await th.clear(); if (q) await th.send(q); })();
   }, [q, th.chat]);   // eslint-disable-line react-hooks/exhaustive-deps
   const off = th.chat?.available === false;
   return (
     <div className="agent-start page-narrow" style={{ margin: '0 auto', maxWidth: 860 }}>
       <div className="page-h"><div><h1 className="title">{t('ag.start.t')}</h1><p className="lead">{t('ag.start.lead')}</p></div></div>
-      <section className="card stack" style={{ gap: 0 }} aria-label={t('ag.start.t')}>
+      <section className="card stack agent-start-card" style={{ gap: 0 }} aria-label={t('ag.start.t')}>
         <ChatMessages th={th} title={t('ag.start.chat')} empty={
           <div className="stack" style={{ gap: 10 }}>
             <p className="hint">{t('ag.start.empty')}</p>

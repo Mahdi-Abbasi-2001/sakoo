@@ -25,7 +25,7 @@ export function ActionCard({ a, busy, decide: decideAction }: { a: G.ChatActionO
     <div className={'chat-card' + (a.confirm_name ? ' danger' : '')} role="group" aria-label={t('chat.card.label')}>
       <div className="row" style={{ gap: 8, flexWrap: 'nowrap', alignItems: 'flex-start' }}>
         <Icon name={a.confirm_name ? 'alert' : 'diamond'} className="ic" />
-        <div className="stack" style={{ gap: 6, flex: 1 }}>
+        <div className="stack" style={{ gap: 6, flex: 1, minWidth: 0 }}>
           <b>{t(`chat.card.${a.code}`, p)}</b>
           {a.warnings.map((w, i) => <p className="hint" key={i}>{t(`chat.warn.${w.code}`, asParams(w.params))}</p>)}
           {a.files && a.files.length > 0 && <ul className="chat-files">{a.files.map((f) => <li key={String(f.path)} className="mono ltr" dir="ltr"><span className={'chat-fs ' + String(f.status)}>{t(`chat.file.${String(f.status)}`)}</span> {String(f.path)} <i>+{String(f.added)} −{String(f.removed)}</i></li>)}</ul>}
@@ -94,7 +94,15 @@ export function useChatThread(projectId: number, since?: number | null, general 
   };
   const decide = (id: string, b: { decision: 'approve' | 'decline'; value?: string; confirm_name?: string }) => run(() => api.chatDecideLive(projectId, id, b, onEvent), id);
   const clear = async () => { setBusy(true); try { await api.chatClear(projectId); setChat({ messages: [], pending: null, available: chat?.available }); setNote(false); } catch (e) { setErr(errorText(lang, e)); } finally { setBusy(false); } };
-  const shown = chat && since ? { ...chat, messages: chat.messages.filter((m) => m.at == null || m.at >= since - 2) } : chat;
+  // only this visit's messages, except a change still waiting for a decision from before: it blocks sending, so the conversation is shown from the
+  // request that led to it. The starting point is fixed the first time the conversation loads, so deciding on that change does not hide it again.
+  const from = useRef<number | null>(null);
+  if (since && chat && from.current === null) {
+    const all = chat.messages, i = all.findIndex((m) => (m.actions ?? []).some((x) => x.status === 'pending'));
+    const start = i < 0 ? null : all[i - 1]?.role === 'user' ? all[i - 1] : all[i];
+    from.current = Math.min(since - 2, start?.at ?? Infinity);
+  }
+  const shown = chat && since ? { ...chat, messages: chat.messages.filter((m) => m.at == null || m.at >= (from.current ?? since - 2)) } : chat;
   return { projectId, chat: shown, text, setText, busy, err, note, live, send, decide, clear };
 }
 export type ChatThread = ReturnType<typeof useChatThread>;

@@ -793,7 +793,7 @@ def create_app(settings: WebSettings | None = None, deps=None, agent_settings: S
         if mode == "connect":
             current_user(request)   # connecting needs an account to attach the token to
         nonce = secrets.token_urlsafe(24)
-        ctx = {"n": nonce, "m": mode, "i": invite.strip()[:200], "r": safe_next(next, "/" if mode == "signin" else "/settings?github=connected")}
+        ctx = {"n": nonce, "m": mode, "i": invite.strip()[:200], "r": safe_next(next, "/dashboard" if mode == "signin" else "/settings?github=connected")}
         resp = JSONResponse({"url": github.authorize_url(settings.github_client_id, nonce, oauth_redirect_uri(request), github.SCOPE_SIGNIN if mode == "signin" else github.SCOPE)})
         resp.set_cookie("gh_ctx", sign_ctx(ctx), httponly=True, samesite="lax", secure=settings.cookie_secure, max_age=600, path="/api/github")
         return resp
@@ -959,6 +959,7 @@ def create_app(settings: WebSettings | None = None, deps=None, agent_settings: S
             shutil.rmtree(manager.run_dir(r["id"]), ignore_errors=True)
         shutil.rmtree(project_dir(pid).parent, ignore_errors=True)
         db.run("DELETE FROM projects WHERE id=?", (pid,))
+        chat_store.forget_project(db, user["id"], pid, lambda name: bool(name) and sources.slug(name) == row["name"])
         return {"ok": True, "deleted": deleted}
 
     # -- runs ---------------------------------------------------------------------------------------------------------
@@ -1629,6 +1630,15 @@ def create_app(settings: WebSettings | None = None, deps=None, agent_settings: S
             lock.release()
         return {**chat_store.view(store), "hidden_secret": hidden}
 
+    def hand_over_after(uid: int, store, action_id: str, project_id: int) -> None:
+        """A deployment approved in the general chat opens the project's run page: the conversation goes there with it."""
+        a = None if project_id else store.get_action(action_id)
+        if not a or a["tool"] != "start_run" or a["status"] != "done":
+            return
+        run = db.one("SELECT project_id FROM runs WHERE id=? AND user_id=?", (str((a["result"] or {}).get("id") or ""), uid))
+        if run:
+            chat_store.hand_over(db, uid, run["project_id"])
+
     @app.post("/api/chat/actions/{action_id}", response_model=m.ChatOut)
     def chat_decide(action_id: str, body: ChatDecisionIn, user=Depends(current_user)):
         row, cid, store = chat_scope(user["id"], body.project_id)
@@ -1636,6 +1646,7 @@ def create_app(settings: WebSettings | None = None, deps=None, agent_settings: S
         lock = chat_busy(cid)
         try:
             engine.decide(action_id, body.decision, body.value, body.confirm_name)
+            hand_over_after(user["id"], store, action_id, body.project_id)
         except ToolError as e:
             raise err(422, "action_invalid", str(e))
         except Exception as e:
@@ -1712,6 +1723,7 @@ def create_app(settings: WebSettings | None = None, deps=None, agent_settings: S
 
         def step():
             engine.decide(action_id, body.decision, body.value, body.confirm_name)
+            hand_over_after(user["id"], store, action_id, body.project_id)
             return chat_store.view(store)
         return chat_stream(engine, store, lock, step)
 

@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS settings (
   user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
   liara_token_enc TEXT, team_id TEXT NOT NULL DEFAULT '', language TEXT NOT NULL DEFAULT 'en', team_name TEXT NOT NULL DEFAULT '');
 CREATE TABLE IF NOT EXISTS projects (
-  id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE, name TEXT NOT NULL,
+  id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE, name TEXT NOT NULL,
   source_kind TEXT NOT NULL, git_url TEXT, created_at REAL NOT NULL);
 CREATE TABLE IF NOT EXISTS auto_deploys (
   id INTEGER PRIMARY KEY, project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE, ts REAL NOT NULL, finished_at REAL,
@@ -79,7 +79,39 @@ class DB:
             self._conn.execute("ALTER TABLE auto_deploys ADD COLUMN run_id TEXT")
         if "cleaned_at" not in {r["name"] for r in self._conn.execute("PRAGMA table_info(runs)")}:  # databases created before this column existed
             self._conn.execute("ALTER TABLE runs ADD COLUMN cleaned_at REAL")
+        self._never_reuse_project_ids()
         self._lock = threading.Lock()
+
+    def _never_reuse_project_ids(self) -> None:
+        """A deleted project's id must never come back: chats, run folders and links are keyed by it. Older databases made `projects` without AUTOINCREMENT
+        (SQLite then hands out the highest deleted id again), so the table is rebuilt once with the same columns and rows, and the counter starts above
+        every project id anything still mentions."""
+        c = self._conn
+        sql = c.execute("SELECT sql FROM sqlite_master WHERE type='table' AND name='projects'").fetchone()["sql"]
+        if "AUTOINCREMENT" not in sql.upper():
+            new_sql = sql.replace("projects", "projects_new", 1).replace("id INTEGER PRIMARY KEY", "id INTEGER PRIMARY KEY AUTOINCREMENT", 1)
+            cols = ", ".join(r["name"] for r in c.execute("PRAGMA table_info(projects)"))
+            c.execute("PRAGMA foreign_keys = OFF")   # the other tables keep pointing at "projects", which is the rebuilt table afterwards
+            try:
+                c.execute("BEGIN")
+                c.execute(new_sql)
+                c.execute(f"INSERT INTO projects_new({cols}) SELECT {cols} FROM projects")
+                c.execute("DROP TABLE projects")
+                c.execute("ALTER TABLE projects_new RENAME TO projects")
+                c.execute("COMMIT")
+            except Exception:
+                c.execute("ROLLBACK")
+                raise
+            finally:
+                c.execute("PRAGMA foreign_keys = ON")
+        seen = [c.execute(f"SELECT COALESCE(MAX({col}), 0) m FROM {t}").fetchone()["m"]
+                for t, col in (("projects", "id"), ("chats", "project_id"), ("runs", "project_id"), ("auto_deploys", "project_id"), ("incidents", "project_id"))]
+        top = max(seen)
+        row = c.execute("SELECT seq FROM sqlite_sequence WHERE name='projects'").fetchone()
+        if row is None:
+            c.execute("INSERT INTO sqlite_sequence(name, seq) VALUES ('projects', ?)", (top,))
+        elif row["seq"] < top:
+            c.execute("UPDATE sqlite_sequence SET seq=? WHERE name='projects'", (top,))
 
     def q(self, sql: str, args: tuple = ()) -> list[sqlite3.Row]:
         with self._lock:

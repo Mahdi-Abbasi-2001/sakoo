@@ -66,7 +66,7 @@ export function RunView({ view, conn, runId, projectId, projectName, onRespond, 
 
   const hmoney = view.status === 'succeeded' || view.status === 'failed' || sit === 'fix' || sit === 'working' ? view.money.currentHourly : view.money.plannedHourly ?? 0;
   const mmoney = view.status === 'succeeded' || view.status === 'failed' || sit === 'fix' || sit === 'working' ? view.money.currentMonthly : view.money.plannedMonthly ?? 0;
-  const thread = useChatThread(demo ? 0 : projectId ?? 0, view.t0);
+  const thread = useChatThread(demo ? 0 : projectId ?? 0);   // the project's whole conversation, including what was said before this run: the agent here remembers all of it
   const chatOn = !demo && !!projectId;
   const active = view.status === 'running' || view.status === 'waiting';
   const watched = useRef(false);
@@ -88,7 +88,7 @@ export function RunView({ view, conn, runId, projectId, projectName, onRespond, 
         <div className="h-id">
           <div className="orb-box"><Orb state={view.agent} size={56} /></div>
           <div className="h-text">
-            <div className="crumb">{demo ? t('run.crumb.projects') : <Link to="/">{t('run.crumb.projects')}</Link>} / {demo || !projectId ? <span className="mono">{projectName}</span> : <Link to={`/projects/${projectId}`} className="mono">{projectName}</Link>} / {t('run.crumb.run')}</div>
+            <div className="crumb">{demo ? t('run.crumb.projects') : <Link to="/dashboard">{t('run.crumb.projects')}</Link>} / {demo || !projectId ? <span className="mono">{projectName}</span> : <Link to={`/projects/${projectId}`} className="mono">{projectName}</Link>} / {t('run.crumb.run')}</div>
             <div className="h-line">{req ? <button type="button" className={'badge badge-btn ' + AGENT_TONE[view.agent]} onClick={() => setAskOpen(true)}><Icon name={AGENT_ICON[view.agent]} />{t('agent.' + view.agent)}</button> : <span className={'badge ' + AGENT_TONE[view.agent]}><Icon name={AGENT_ICON[view.agent]} />{t('agent.' + view.agent)}</span>}
               <h1 className="h1" ref={h1Ref} tabIndex={-1}><span className="gt">{t(`run.h1.${sit}.a`)}</span> {t(`run.h1.${sit}.b`)}</h1></div>
               {req && !askOpen && <button type="button" className="btn btn-p btn-s ask-again" onClick={() => setAskOpen(true)}><Icon name="diamond" />{t('ask.open')}</button>}
