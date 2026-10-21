@@ -1,0 +1,9 @@
+/* Page background: a graphite base, a teal glow from the upper right, a warm light behind the hero that gets stronger while an
+   approval waits, a faint film grain and a vignette. No page grid: a grid exists only inside the blueprint panel. */
+.app-bg{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,var(--gr1),var(--gr2));contain:strict}
+.app-bg i{position:absolute;inset:0;display:block}
+.app-bg .g1{background:radial-gradient(ellipse 900px 560px at 82% -80px,color-mix(in srgb,var(--accent) var(--glw),transparent),transparent 72%),radial-gradient(ellipse 560px 380px at 60% 560px,color-mix(in srgb,var(--accent-2) calc(var(--glw) * .35),transparent),transparent 70%)}
+.app-bg .g2{background:radial-gradient(ellipse 640px 420px at 8% 40px,color-mix(in srgb,var(--warn) var(--wrm),transparent),transparent 70%)}
+.app-bg .vg{background:linear-gradient(90deg,rgba(0,0,0,var(--vga)) 0,transparent 24%,transparent 76%,rgba(0,0,0,var(--vga)) 100%),linear-gradient(180deg,rgba(0,0,0,calc(var(--vga) * .5)) 0,transparent 6%,transparent 90%,rgba(0,0,0,var(--vga)) 100%)}
+.app-bg .gn{opacity:var(--gop);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 -.35'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");background-size:180px 180px}
+.app-bg .gm{opacity:var(--gop2);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -.35'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");background-size:180px 180px}

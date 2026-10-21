@@ -1,0 +1,509 @@
+{
+  "cli_version": "9.5.1",
+  "platforms": {
+    "node": {
+      "port": 3000,
+      "versions": {
+        "defaultVersion": "22",
+        "allVersions": [
+          "14",
+          "16",
+          "18",
+          "20",
+          "22",
+          "24"
+        ]
+      },
+      "liara_json_options": [
+        {
+          "name": "version",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "npmAudit",
+          "type": "boolean",
+          "optional": true
+        },
+        {
+          "name": "timezone",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "mirror",
+          "type": "boolean",
+          "optional": true
+        }
+      ]
+    },
+    "laravel": {
+      "port": 80,
+      "versions": {
+        "defaultVersion": "8.2",
+        "allVersions": [
+          "8.4",
+          "8.3",
+          "8.2",
+          "8.1",
+          "8.0",
+          "7.4",
+          "7.3",
+          "7.2"
+        ]
+      },
+      "liara_json_options": [
+        {
+          "name": "timezone",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "phpVersion",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "npmMirror",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "routeCache",
+          "type": "boolean",
+          "optional": true
+        },
+        {
+          "name": "configCache",
+          "type": "boolean",
+          "optional": true
+        },
+        {
+          "name": "buildAssets",
+          "type": "boolean",
+          "optional": true
+        },
+        {
+          "name": "ssr",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "modifyImagickPolicy",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "installDevDependencies",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "composerMirror",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "reverb",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "reverbPath",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "modifyHtaccess",
+          "type": "boolean",
+          "optional": false
+        }
+      ]
+    },
+    "php": {
+      "port": 80,
+      "versions": {
+        "defaultVersion": "8.0",
+        "allVersions": [
+          "8.4",
+          "8.3",
+          "8.2",
+          "8.1",
+          "8.0",
+          "7.4",
+          "7.3",
+          "7.2"
+        ]
+      },
+      "liara_json_options": [
+        {
+          "name": "timezone",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "version",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "composerMirror",
+          "type": "boolean",
+          "optional": false
+        }
+      ]
+    },
+    "python": {
+      "port": 80,
+      "versions": {
+        "defaultVersion": "3.12",
+        "allVersions": [
+          "3.7",
+          "3.8",
+          "3.9",
+          "3.10",
+          "3.11",
+          "3.12",
+          "3.13"
+        ]
+      },
+      "liara_json_options": [
+        {
+          "name": "version",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "mirror",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "timezone",
+          "type": "string",
+          "optional": false
+        }
+      ]
+    },
+    "django": {
+      "port": 80,
+      "versions": {
+        "defaultVersion": "3.12",
+        "allVersions": [
+          "3.7",
+          "3.8",
+          "3.9",
+          "3.10",
+          "3.11",
+          "3.12",
+          "3.13"
+        ]
+      },
+      "liara_json_options": [
+        {
+          "name": "mirror",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "timezone",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "settingsFile",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "modifySettings",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "collectStatic",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "compileMessages",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "geospatial",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "pipTimeout",
+          "type": "number",
+          "optional": false
+        },
+        {
+          "name": "pythonVersion",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "nodeVersion",
+          "type": "string",
+          "optional": false
+        }
+      ]
+    },
+    "flask": {
+      "port": 80,
+      "versions": {
+        "defaultVersion": "3.12",
+        "allVersions": [
+          "3.7",
+          "3.8",
+          "3.9",
+          "3.10",
+          "3.11",
+          "3.12",
+          "3.13"
+        ]
+      },
+      "liara_json_options": [
+        {
+          "name": "mirror",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "appModule",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "timezone",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "pythonVersion",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "nodeVersion",
+          "type": "string",
+          "optional": false
+        }
+      ]
+    },
+    "dotnet": {
+      "port": 80,
+      "versions": {
+        "defaultVersion": "8.0",
+        "allVersions": [
+          "2.1",
+          "2.2",
+          "3.0",
+          "3.1",
+          "5.0",
+          "6.0",
+          "7.0",
+          "8.0",
+          "9.0",
+          "10.0"
+        ]
+      },
+      "liara_json_options": [
+        {
+          "name": "version",
+          "type": "number",
+          "optional": true
+        },
+        {
+          "name": "timezone",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "finalDllName",
+          "type": "string",
+          "optional": true
+        },
+        {
+          "name": "csprojectFile",
+          "type": "string",
+          "optional": true
+        }
+      ]
+    },
+    "react": {
+      "port": 80,
+      "versions": null,
+      "liara_json_options": [
+        {
+          "name": "mirror",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "sourceMap",
+          "type": "boolean",
+          "optional": false
+        }
+      ]
+    },
+    "angular": {
+      "port": 80,
+      "versions": null,
+      "liara_json_options": [
+        {
+          "name": "mirror",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "sourceMap",
+          "type": "boolean",
+          "optional": false
+        }
+      ]
+    },
+    "vue": {
+      "port": 80,
+      "versions": null,
+      "liara_json_options": [
+        {
+          "name": "mirror",
+          "type": "boolean",
+          "optional": false
+        }
+      ]
+    },
+    "static": {
+      "port": 80,
+      "versions": null,
+      "liara_json_options": []
+    },
+    "docker": {
+      "port": 3000,
+      "versions": null,
+      "liara_json_options": []
+    },
+    "next": {
+      "port": 3000,
+      "versions": {
+        "defaultVersion": "22",
+        "allVersions": [
+          "20",
+          "22",
+          "24"
+        ]
+      },
+      "liara_json_options": [
+        {
+          "name": "mirror",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "modifyConfig",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "nodeVersion",
+          "type": "string",
+          "optional": false
+        }
+      ]
+    },
+    "go": {
+      "port": 8080,
+      "versions": {
+        "defaultVersion": "1.24",
+        "allVersions": [
+          "1.21",
+          "1.22",
+          "1.23",
+          "1.24",
+          "1.25"
+        ]
+      },
+      "liara_json_options": [
+        {
+          "name": "version",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "cgoEnabled",
+          "type": "boolean",
+          "optional": false
+        },
+        {
+          "name": "mainFile",
+          "type": "string",
+          "optional": false
+        },
+        {
+          "name": "timezone",
+          "type": "string",
+          "optional": false
+        }
+      ]
+    }
+  },
+  "detect_only_platforms": [
+    "wordpress"
+  ],
+  "liara_json_keys": [
+    "app",
+    "port",
+    "args",
+    "cron",
+    "disks",
+    "platform",
+    "build",
+    "healthCheck",
+    "team-id",
+    "envs",
+    "laravel",
+    "angular",
+    "dotnet",
+    "djnago",
+    "python",
+    "flask",
+    "react",
+    "node",
+    "next",
+    "vue",
+    "php",
+    "go"
+  ],
+  "constants": {
+    "MAIL_SERVICE_MODES": [
+      "DEV",
+      "LIVE"
+    ],
+    "MAIL_SERVICE_PLANS": [
+      "m1",
+      "m2",
+      "m3",
+      "m4",
+      "m5",
+      "m6",
+      "m7",
+      "m8"
+    ],
+    "OBJ_PERMISSION": [
+      "public",
+      "private"
+    ]
+  },
+  "api": {
+    "regions": {
+      "iran": "https://api.liara.ir",
+      "germany": "https://api.liara.ir"
+    },
+    "iran": "https://api.iran.liara.ir",
+    "object_storage": "https://storage-service.liara.ir"
+  }
+}

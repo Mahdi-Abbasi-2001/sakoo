@@ -1,0 +1,3 @@
+# Offline snapshot of GET /v1/me databaseVersions keys (2026-10-17). Live data overrides it
+# (LiaraAPI.live_catalog -> catalog.set_live_databases). Note Liara calls PostgreSQL "postgres".
+databases: [mysql, mariadb, postgres, mssql, mongodb, redis, elasticsearch, rabbitmq, clickhouse]

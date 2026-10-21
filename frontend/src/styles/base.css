@@ -1,0 +1,137 @@
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--f-sans);font-size:14px;line-height:22px;-webkit-font-smoothing:antialiased}
+html[lang="fa"] body{font-family:var(--f-fa);font-size:15px;line-height:27px}
+h1,h2,h3,p,ul,ol,dl,dd,figure{margin:0;padding:0}
+ul,ol{list-style:none}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.mono,.code{font-family:var(--f-mono)}
+.ltr{direction:ltr;unicode-bidi:isolate}
+.skip{position:fixed;top:8px;inset-inline-start:8px;z-index:100;display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:var(--r-ctl);background:var(--surface);color:var(--text);border:2px solid var(--accent);font-weight:700;text-decoration:none}
+.skip:not(:focus){position:absolute;width:1px;height:1px;min-height:0;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);border:0;white-space:nowrap}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+h1,h2{font-weight:800;letter-spacing:-.01em}
+html[lang="fa"] h1,html[lang="fa"] h2{font-weight:900;letter-spacing:0}
+
+/* app frame: the root is isolated so the page background can sit behind everything */
+.app{position:relative;isolation:isolate;min-height:100vh;display:flex;flex-direction:column;overflow-x:clip}
+.page{flex:1;width:100%;max-width:1440px;margin:0 auto;padding:40px 32px 64px}
+.page-narrow{max-width:980px}
+
+/* glass role: shell and hero only */
+.shell{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:20px;min-height:56px;padding:6px 32px;background:var(--glass);-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);border-bottom:1px solid var(--glassline)}
+.brand{display:flex;align-items:center;gap:10px;min-height:44px;font-weight:700;font-size:15px;text-decoration:none}
+.nav{display:flex;gap:4px;flex:1;min-width:0}
+.nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:8px;color:var(--text-2);text-decoration:none;font-size:13.5px;font-weight:500}
+.nav a:hover{color:var(--text)}
+.nav a[aria-current="page"]{color:var(--text);background:var(--raised)}
+.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:var(--r-ctl);overflow:hidden}
+.seg button:focus-visible{outline-offset:-4px}
+.seg button{min-width:44px;min-height:44px;padding:0 12px;background:transparent;border:0;color:var(--text-2);font-size:13px}
+.seg button[aria-pressed="true"],.seg button[aria-selected="true"]{background:var(--raised);color:var(--text);font-weight:700}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border-radius:var(--r-ctl);border:1px solid var(--line-strong);background:transparent}
+
+/* panel role: opaque, dense content */
+.card{position:relative;background:linear-gradient(180deg,var(--raised),var(--surface));border:1px solid var(--line);border-radius:var(--r-card);box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 16px 32px -18px var(--shadow)}
+.card::before{content:'';position:absolute;top:-1px;inset-inline:16px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent-2));opacity:.5;pointer-events:none}
+.card.pad{padding:24px}
+.card-plain::before{display:none}
+/* terminal role: logs and code, opaque, always left to right */
+.term{background:var(--code);border:1px solid var(--line);border-radius:var(--r-ctl);font-family:var(--f-mono);font-size:12.5px;line-height:20px;direction:ltr;text-align:left;unicode-bidi:isolate}
+
+/* controls */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:var(--r-pill);border:1px solid var(--line-strong);background:transparent;color:var(--text);font-size:14.5px;font-weight:800;text-decoration:none;white-space:nowrap}
+.btn-p{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:var(--accent-ink);border-color:transparent;box-shadow:0 0 0 1px color-mix(in srgb,#fff var(--bpi),transparent) inset,0 10px 30px -6px color-mix(in srgb,var(--accent) 60%,transparent)}
+.btn[disabled],.btn[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
+.btn-block{width:100%}
+.inp{display:block;width:100%;min-height:44px;padding:0 14px;border-radius:var(--r-ctl);border:1px solid var(--line-strong);background:var(--sunken);color:var(--text)}
+.inp::placeholder{color:var(--text-3)}
+.inp:focus{outline:2px solid var(--accent);outline-offset:1px}
+.inp.bad{border-color:var(--fail)}
+.inp.mono{font-family:var(--f-mono);direction:ltr;text-align:left}
+.lbl{display:block;font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:6px}
+.hint{font-size:13px;color:var(--text-3)}
+.field{display:flex;flex-direction:column}
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.code{font-size:12.5px;background:var(--sunken);padding:1px 5px;border-radius:6px;color:var(--text);direction:ltr;unicode-bidi:isolate;display:inline-block;line-height:20px}
+
+/* status: colour, shape and a word, always together */
+.badge{--c:var(--text-2);display:inline-flex;align-items:center;gap:6px;min-height:26px;padding:0 10px 0 8px;border-radius:var(--r-pill);font-size:12.5px;font-weight:500;color:color-mix(in srgb,var(--c),var(--bkc) var(--bk));background:color-mix(in srgb,var(--c) 14%,transparent);border:1px solid color-mix(in srgb,var(--c) 34%,transparent);white-space:nowrap}
+.badge svg{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.s-ok{--c:var(--ok)}.s-warn{--c:var(--warn)}.s-fail{--c:var(--fail)}.s-wait{--c:var(--wait)}.s-run{--c:var(--run)}.s-pend{--c:var(--text-3)}.s-acc{--c:var(--accent)}
+.ic{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* option rows (radio style choices) */
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:center;gap:12px;min-height:48px;padding:0 14px;border-radius:var(--r-ctl);border:1px solid var(--line-strong);background:var(--sunken);cursor:pointer;text-align:start;width:100%}
+.opt:hover{border-color:var(--accent)}
+.opt .rd{width:18px;height:18px;border-radius:50%;border:2px solid var(--line-strong);flex:none;position:relative}
+.opt[aria-checked="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--sunken))}
+.opt[aria-checked="true"] .rd{border-color:var(--accent)}
+.opt[aria-checked="true"] .rd::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--accent)}
+.opt .meta{margin-inline-start:auto;font-family:var(--f-mono);font-size:12px;color:var(--text-3)}
+
+/* numbered steps */
+.stp{display:flex;gap:14px;align-items:flex-start;padding:10px 0}
+.stn{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+.err{display:flex;gap:8px;align-items:flex-start;color:var(--text);font-size:13.5px}
+.err svg{color:var(--fail);margin-top:3px}
+.title{font-size:34px;line-height:42px}
+.lead{color:var(--text-2);font-size:16px;line-height:26px;max-width:46em}
+html[lang="fa"] .lead{line-height:32px}
+.sect{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase}
+html[lang="fa"] .sect{letter-spacing:0;text-transform:none;font-size:12.5px}
+
+/* motion that applies everywhere: page enter (rise only, text never fades), hover depth, skeleton shimmer */
+@keyframes mo-in{from{transform:translateY(8px)}to{transform:none}}
+@keyframes mo-shim{to{background-position:-200% 0}}
+.enter{animation:mo-in var(--t-enter) var(--ease-out) both}
+.card.lift{transition:transform var(--t-base) ease,box-shadow var(--t-base) ease}
+.card.lift:hover{transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 22px 36px -18px var(--shadow)}
+.btn{transition:background var(--t-base) ease,border-color var(--t-base) ease,transform var(--t-base) ease}
+.btn:not(.no-lift):hover{transform:translateY(-1px)}
+.sk{background:linear-gradient(90deg,var(--sunken) 25%,var(--raised) 50%,var(--sunken) 75%);background-size:200% 100%;animation:mo-shim 1.6s linear infinite;border-radius:8px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.btn:hover,.card.lift:hover{transform:none!important}}
+@media (max-width:900px){.page{padding:28px 20px 56px}.shell{padding:6px 16px;gap:10px}.title{font-size:28px;line-height:36px}}
+.nav-link{display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:8px;color:var(--text-2);text-decoration:none;font-size:14px}
+.nav-link:hover{color:var(--text);background:var(--raised)}
+@media (max-width:760px){.settings-grid{grid-template-columns:minmax(0,1fr)!important;gap:20px!important}.settings-nav{position:static!important;flex-direction:row!important;flex-wrap:wrap}}
+.brand span{white-space:nowrap}
+@media (max-width:700px){
+  .shell{flex-wrap:wrap;row-gap:0;padding-block:4px}
+  .shell .brand{order:1;margin-inline-end:auto}
+  .shell .seg{order:2}.shell .icon-btn{order:3}
+  .shell .nav{order:4;flex-basis:100%;flex:1 1 100%}
+  .shell>.badge{order:5}
+  .shell>span[style]{display:none}
+}
+.stack>.badge{align-self:flex-start}
+
+/* an arrow that points the way the text goes points the other way in a right-to-left page */
+[dir=rtl] .ic-flip{transform:scaleX(-1)}
+main:focus{outline:none}
+
+/* focus never lands under the sticky header or the bottom approval bar */
+html{scroll-padding-top:76px;scroll-padding-bottom:24px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+html:has(.sticky-bar){scroll-padding-bottom:110px}
+
+/* ---- scrollbars: thin, rounded, themed, no arrow buttons, the same in both directions and both themes ----
+   Chrome, Edge and Safari take the webkit pieces (so the arrow buttons can be removed); Firefox takes the standard properties. */
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-button{display:none;width:0;height:0}
+*::-webkit-scrollbar-track{background:transparent;border-radius:99px}
+*:hover::-webkit-scrollbar-track{background:var(--sb-track)}
+*::-webkit-scrollbar-thumb{background:var(--sb-thumb);border-radius:99px;border:2px solid transparent;background-clip:content-box;min-height:36px;min-width:36px}
+*::-webkit-scrollbar-thumb:hover,*::-webkit-scrollbar-thumb:active{background:var(--sb-thumb-hover);background-clip:content-box}
+*::-webkit-scrollbar-corner{background:transparent}
+@supports (-moz-appearance:none){
+  *{scrollbar-width:thin;scrollbar-color:var(--sb-thumb) transparent}
+  *:hover{scrollbar-color:var(--sb-thumb-hover) var(--sb-track)}
+}
+/* panels that scroll inside themselves keep their room for the bar, so content never jumps when it appears */
+.agent-scroll,.logs,.tabpanel,.dash-card,.dash-left{scrollbar-gutter:stable}

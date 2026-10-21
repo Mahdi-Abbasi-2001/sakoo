@@ -1,0 +1,1250 @@
+openapi: 3.0.1
+info:
+  title: Object Storage API Documentaion
+  description: |- 
+    A scalable, reliable, and cost effective Object Storage solution to
+    support your application from liara-cloud
+
+    Parameters:
+    - `teamID`: To access services in a team
+    
+  contact:
+    name: liara
+    url: https://liara.ir
+    email: support@liara.ir
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Liara Object Storage
+  url: https://docs.liara.ir/buckets/about/
+servers:
+- url: https://storage-service.liara.ir
+security:
+- jwt: []
+- bearerAuth: []
+tags:
+- name: Bucket
+  description: Operations about bucket
+- name: Key
+  description: Operations about key
+- name: Folder
+  description: Operations about folder
+- name: Object
+  description: Operations about object
+paths:
+  /api/v1/buckets:
+    get:
+      tags:
+      - Bucket
+      summary: List all Buckets
+      description: List all Bucket
+      operationId: getBuckets
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/List-Bucket'
+        401:
+          description: Missing authentication
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+    post:
+      tags:
+      - Bucket
+      summary: Create Bucket
+      description: creates a new bucket on an object storage
+      operationId: createBucket
+      requestBody:
+        description: 'create bucket. Acceptable values for permission: ( private /
+          public ) and for plan: ( 20g, 40g, 80g, 160g )'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Create-Bucket'
+        required: true
+      responses:
+        201:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        409:
+          description: Conflict
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+      x-codegen-request-body-name: body
+  /api/v1/buckets/migrations:
+    get:
+      tags:
+      - Bucket
+      summary: list migration operation
+      description: list migration operation
+      operationId: getMigrations
+      responses:
+        200:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  migrations: 
+                    type: array
+                    items:
+                      type: object
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+  '/api/v1/buckets/{bucket}/type/{permission}':
+    patch:
+      tags:
+      - Bucket
+      summary: change Bucket Access Policy
+      description: Change Bucket Access policy on an object storage ( public / private
+        )
+      operationId: changeBucketAccess
+      parameters:
+      - name: bucket
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: permission
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  permission:
+                    type: string
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+  '/api/v1/buckets/{bucket}/upgrade/{plan}':
+    patch:
+      tags:
+      - Bucket
+      summary: Upgrade Bucket
+      description: Upgrade Bucket plan ( just make space bigger )
+      operationId: upgradeBucket
+      parameters:
+      - name: bucket
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: plan
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  quota: 
+                    type: string
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+        502:
+          description: bad gateway
+          content: {}
+  '/api/v1/buckets/{bucket}':
+    get:
+      tags:
+      - Bucket
+      summary: Get Single Buckets
+      operationId: getSingleBuckets
+      parameters:
+      - name: bucket
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  bucket:
+                    $ref: '#/components/schemas/Bucket'
+
+        401:
+          description: Missing authentication
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+    delete:
+      tags:
+      - Bucket
+      summary: Destroy Bucket
+      description: Delete Bucket on an object storage
+      operationId: destroyBucket
+      parameters:
+      - name: bucket
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: successful operation
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+  '/api/v1/buckets/{bucket}/check-availability':
+    get:
+      tags:
+      - Bucket
+      summary: Check Bucket availability
+      description: Check if you can create Bucket with specified Name.
+      operationId: checkBucket
+      parameters:
+      - name: bucket
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        409:
+          description: Conflict
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+  /api/v1/buckets/migrates:
+    post:
+      tags:
+      - Bucket
+      summary: Migrating buckets
+      description: Move data from one bucket to another
+      operationId: migratingBuckets
+      requestBody:
+        description: Migrate buckets
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Migrate-Bucket'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+      x-codegen-request-body-name: body
+  /api/v1/buckets/migration/from:
+    get:
+      tags:
+      - Bucket
+      summary: List storage service buckets
+      description: List previous buckets of storage service in liara.
+      operationId: getListPreviousBuckets
+      responses:
+        200:
+          description: successful operation
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+  /api/v1/keys:
+    get:
+      tags:
+      - Key
+      summary: Get List of Keys
+      operationId: getListKeys
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Keys'
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+    post:
+      tags:
+      - Key
+      summary: Create Keys
+      description: Create access and secret key
+      operationId: createKey
+      requestBody:
+        description: Declare Buckets for access key
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Create-Key'
+        required: true
+      responses:
+        201:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data: 
+                    type: object
+                    properties:
+                      accessKey: 
+                        type: string
+                      secretKey:
+                        type: string
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+      x-codegen-request-body-name: body
+  '/api/v1/keys/{key}':
+    get:
+      tags:
+      - Key
+      summary: Get Key
+      description: Get a key
+      operationId: getKey
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+    delete:
+      tags:
+      - Key
+      summary: Delete Key
+      description: Delete access key
+      operationId: deleteKey
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: successful operation
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        409:
+          description: Conflict
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+    patch:
+      tags:
+      - Key
+      summary: Update key
+      description: Update buckets of key ( redefine )
+      operationId: updateKey
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Declare Buckets for access key
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Create-Key'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content: 
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: string
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        409:
+          description: Conflict
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+      x-codegen-request-body-name: body
+  '/api/v1/keys/{key}/revoke':
+    patch:
+      tags:
+      - Key
+      summary: Revoke secret key
+      description: Revoke secret key
+      operationId: revokeSecretKey
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                type: object  
+                properties:
+                  status: 
+                    type: string
+                  accessKey: 
+                    type: string
+                  secretKey: 
+                    type: string
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        409:
+          description: Conflict
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+  '/api/v1/buckets/{bucket}/download/${object}':
+    get:
+      tags:
+      - Object
+      summary: Download Object
+      description: Return presigned url for download object
+      operationId: downloadObject
+      parameters:
+      - name: bucket
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: object
+        in: path
+        description: specify object path
+        required: true
+        schema:
+          type: string
+      - name: expiry
+        in: query
+        description: 'example: 2 days 7 hours 45 minutes'
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data: 
+                    type: object
+                    properties:
+                      url:
+                        type: string
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        409:
+          description: Conflict
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+  '/api/v1/buckets/{bucket}/upload/{object}':
+    get:
+      tags:
+      - Object
+      summary: Upload Object
+      description: Return presigned url for download object
+      operationId: uploadObject
+      parameters:
+      - name: bucket
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: object
+        in: path
+        description: specify object path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data: 
+                    type: object
+                    properties:
+                      url:
+                        type: string
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        409:
+          description: Conflict
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+  '/api/v1/buckets/{bucket}/objects/{prefix}':
+    get:
+      tags:
+      - Object
+      summary: List Objects
+      description: Return list of objects ( max:50, min:1 )
+      operationId: getListObjects
+      parameters:
+      - name: bucket
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: prefix
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: number
+        in: query
+        description: 'specify number of object ( max: 50, min: 1 )'
+        schema:
+          type: string
+      - name: page
+        in: query
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Objects'
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        409:
+          description: Conflict
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+    delete:
+      tags:
+      - Object
+      summary: Delete Object
+      description: Delete an object from storage
+      operationId: deleteObject
+      parameters:
+      - name: bucket
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: prefix
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: successful operation
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        409:
+          description: Conflict
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+  '/api/v1/buckets/{bucket}/objects/statistics/{object}':
+    get:
+      tags:
+      - Object
+      summary: Get Stat Object
+      operationId: getStatObject
+      parameters:
+      - name: bucket
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: object
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stat'
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        409:
+          description: Conflict
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+  '/api/v1/buckets/{bucket}/folders':
+    post:
+      tags:
+      - Folder
+      summary: Create Folder
+      description: Create Folder in Bucket
+      operationId: createFolder
+      parameters:
+      - name: bucket
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Create-Folder'
+        required: true
+      responses:
+        201:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      folder:
+                        type: string
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        409:
+          description: Conflict
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+      - Folder
+      summary: Delete Folder
+      description: Delete Folder in Bucket
+      operationId: deleteFolder
+      parameters:
+      - name: bucket
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: path
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: successful operation
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        409:
+          description: Conflict
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+  '/api/v1/buckets/{bucket}/metrics/summary':
+    get:
+      tags:
+      - Metrics
+      summary: metrics summary
+      operationId: getMetricsSummary
+      parameters:
+      - name: bucket
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      bucket:
+                        type: string
+                      metrics:
+                        type: object
+                        properties:
+                          totol_objects:
+                            type: array
+                            items:
+                              oneOf:
+                                - type: number
+                                - type: string
+                          total_bytes:
+                            type: array
+                            items:
+                              oneOf:
+                                - type: number
+                                - type: string
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        409:
+          description: Conflict
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+  '/api/v1/buckets/{bucket}/metrics/historical':
+    get:
+      tags:
+      - Metrics
+      summary: hisotrical metrics
+      operationId: getHisotricalMetrics
+      parameters:
+      - name: bucket
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: since
+        in: query
+        description: unix time
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      bucket:
+                        type: string
+                      metrics:
+                        type: object
+                        properties:
+                          totol_objects:
+                            type: array
+                            items:
+                              oneOf:
+                                - type: number
+                                - type: string
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        409:
+          description: Conflict
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+  '/api/v1/buckets/{bucket}/metrics/{stat}':
+    get:
+      tags:
+        - Metrics
+      summary: get statistic
+      operationId: getMetrics
+      parameters:
+      - name: bucket
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: stat
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      bucket:
+                        type: string
+                      metrics:
+                        type: object
+                        properties:
+                          stat:
+                            type: array
+                            items:
+                              oneOf:
+                                - type: number
+                                - type: string
+        400:
+          description: Bad Request
+          content: {}
+        401:
+          description: Missing authentication
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+        409:
+          description: Conflict
+          content: {}
+        500:
+          description: server does not response
+          content: {}
+components:
+  schemas:
+    Stat:
+      type: object
+      properties:
+        status: 
+          type: string
+        data:
+          type: object
+          properties:
+            object:
+              type: object
+              properties:
+                size: 
+                  type: number
+                metaData:
+                  type: object
+                  properties:
+                    content-type:
+                      type: string
+                lastModified:
+                  type: string
+                versionId:
+                  type: string
+                etag:
+                  type: string
+    Objects:
+      type: object
+      properties:
+        status:
+          type: string
+        data: 
+          type: object
+          properties:
+            objects:
+              type: object 
+              properties:
+                IsTruncated: 
+                  type: boolean
+                Contents:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      Key:
+                        type: string
+                      LastModified:
+                        type: string
+                      ETag:
+                        type: string
+                      ChecksumAlgorithm:
+                        type: array
+                        items:
+                          type: object
+                          properties: {}
+                      Size:
+                        type: number
+                      StorageClass:
+                        type: string
+                Name:
+                  type: string
+                Prefix:
+                  type: string
+                Delimiter:
+                  type: string
+                MaxKeys:
+                  type: number
+                CommonPrefixes:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      Prefix:
+                        type: string
+                KeyCount:
+                  type: number
+    Key:
+      type: object
+      properties:
+        id:
+          type: string
+        buckets:
+          type: array
+          items:
+            type: object 
+            properties:
+              id: 
+                type: string
+              name: 
+                type: string
+              plan: 
+                type: string
+              status: 
+                type: string
+              permission: 
+                type: string
+              createdAt: 
+                type: string
+              updatedAt: 
+                type: string
+        status:
+          type: string
+        accessKey: 
+          type: string
+        description: 
+          type: string
+        createdAt: 
+          type: string
+        updatedAt: 
+          type: string
+    Keys:
+      type: object
+      properties:
+        status:
+          type: string
+        keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/Key'
+    Bucket:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        plan:
+          type: string
+        status:
+          type: string
+        permission:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    List-Bucket:
+      type: object
+      properties:
+        status:
+          type: string
+        buckets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bucket'
+    Migrate-Bucket:
+      type: object
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        path:
+          type: string
+    Create-Key:
+      type: object
+      properties:
+        buckets:
+          type: array
+          items:
+            type: object
+        description:
+          type: string
+    Create-Bucket:
+      type: object
+      properties:
+        name:
+          type: string
+        plan:
+          type: string
+        permission:
+          type: string
+    Create-Folder:
+      type: object
+      properties:
+        path:
+          type: string
+  securitySchemes:
+    jwt:
+      type: apiKey
+      name: Authorization
+      in: header
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+

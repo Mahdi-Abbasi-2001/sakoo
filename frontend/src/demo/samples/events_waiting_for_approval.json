@@ -1,0 +1,524 @@
+[
+ {
+  "id": 1,
+  "ts": 1792330480.1326933,
+  "kind": "run_started",
+  "data": {
+   "project": "blog",
+   "dry_run": false
+  }
+ },
+ {
+  "id": 2,
+  "ts": 1792330480.132714,
+  "kind": "phase_started",
+  "data": {
+   "phase": "analyze"
+  }
+ },
+ {
+  "id": 3,
+  "ts": 1792330480.1332254,
+  "kind": "phase_finished",
+  "data": {
+   "phase": "analyze",
+   "manifests": {
+    ".": [
+     "docker-compose.yml"
+    ],
+    "web": [
+     "Dockerfile"
+    ]
+   },
+   "hints": [
+    "platform=docker"
+   ],
+   "env_var_names": []
+  }
+ },
+ {
+  "id": 4,
+  "ts": 1792330480.1332436,
+  "kind": "phase_started",
+  "data": {
+   "phase": "plan"
+  }
+ },
+ {
+  "id": 5,
+  "ts": 1792330480.136863,
+  "kind": "question",
+  "data": {
+   "id": "9e099a83",
+   "text": "worker has no port; is it a background worker? (Liara apps still need a port setting, usually any value)",
+   "options": [
+    "worker",
+    "needs_port"
+   ],
+   "code": "worker_without_port",
+   "params": {
+    "service": "worker"
+   },
+   "expires_at": 1792330510.1
+  }
+ },
+ {
+  "id": 6,
+  "ts": 1792330480.1809187,
+  "kind": "answered",
+  "data": {
+   "id": "9e099a83",
+   "value": "worker"
+  }
+ },
+ {
+  "id": 7,
+  "ts": 1792330480.1921806,
+  "kind": "plan_ready",
+  "data": {
+   "how": "from docker-compose.yml",
+   "how_code": "from_compose",
+   "how_params": {
+    "file": "docker-compose.yml"
+   },
+   "plan": {
+    "apps": [
+     {
+      "name": "blog-web",
+      "path": "./web",
+      "platform": "docker",
+      "port": 3000,
+      "build_command": null,
+      "start_command": null,
+      "image": null,
+      "args": [],
+      "env": [
+       {
+        "name": "DATABASE_URL",
+        "reference": "postgres://$DB_blog-db_USER:$DB_blog-db_PASSWORD@$DB_blog-db_HOST:$DB_blog-db_PORT/$DB_blog-db_NAME",
+        "has_value": true
+       },
+       {
+        "name": "REDIS_HOST",
+        "reference": null,
+        "has_value": true
+       },
+       {
+        "name": "PORT",
+        "reference": null,
+        "has_value": true
+       }
+      ],
+      "disks": [
+       {
+        "name": "uploads",
+        "mount_to": "/app/uploads"
+       }
+      ],
+      "role": "web",
+      "evidence": [
+       {
+        "file": "docker-compose.yml",
+        "line": null,
+        "note": "service web"
+       }
+      ]
+     },
+     {
+      "name": "blog-worker",
+      "path": "./web",
+      "platform": "docker",
+      "port": null,
+      "build_command": null,
+      "start_command": null,
+      "image": null,
+      "args": [
+       "node",
+       "worker.js"
+      ],
+      "env": [
+       {
+        "name": "DATABASE_URL",
+        "reference": "postgres://$DB_blog-db_USER:$DB_blog-db_PASSWORD@$DB_blog-db_HOST:$DB_blog-db_PORT/$DB_blog-db_NAME",
+        "has_value": true
+       }
+      ],
+      "disks": [],
+      "role": "worker",
+      "evidence": [
+       {
+        "file": "docker-compose.yml",
+        "line": null,
+        "note": "service worker"
+       }
+      ]
+     }
+    ],
+    "databases": [
+     {
+      "kind": "postgres",
+      "id": "blog-db",
+      "version": "16.14",
+      "env_var": null,
+      "evidence": [
+       {
+        "file": "docker-compose.yml",
+        "line": null,
+        "note": "service db"
+       }
+      ]
+     },
+     {
+      "kind": "redis",
+      "id": "blog-cache",
+      "version": "7.2.3",
+      "env_var": null,
+      "evidence": [
+       {
+        "file": "docker-compose.yml",
+        "line": null,
+        "note": "service cache"
+       }
+      ]
+     }
+    ],
+    "env": [],
+    "questions": [
+     {
+      "text": "worker has no port; is it a background worker? (Liara apps still need a port setting, usually any value)",
+      "code": "worker_without_port",
+      "params": {
+       "service": "worker"
+      },
+      "options": [
+       "worker",
+       "needs_port"
+      ]
+     }
+    ],
+    "notes": [
+     {
+      "level": "info",
+      "message": "web.DATABASE_URL now uses the generated credentials of its database (the compose file's hardcoded ones are not used on Liara)",
+      "code": "credentials_wired",
+      "params": {
+       "service": "web",
+       "key": "DATABASE_URL"
+      },
+      "evidence": [
+       {
+        "file": "docker-compose.yml",
+        "line": null,
+        "note": "service web"
+       }
+      ]
+     },
+     {
+      "level": "warning",
+      "message": "web: host path ./config cannot be mounted; if it holds data, use a Liara disk at /app/config",
+      "code": "host_path_not_mountable",
+      "params": {
+       "service": "web",
+       "source": "./config",
+       "target": "/app/config"
+      },
+      "evidence": [
+       {
+        "file": "docker-compose.yml",
+        "line": null,
+        "note": "service web"
+       }
+      ]
+     },
+     {
+      "level": "info",
+      "message": "worker.DATABASE_URL now uses the generated credentials of its database (the compose file's hardcoded ones are not used on Liara)",
+      "code": "credentials_wired",
+      "params": {
+       "service": "worker",
+       "key": "DATABASE_URL"
+      },
+      "evidence": [
+       {
+        "file": "docker-compose.yml",
+        "line": null,
+        "note": "service worker"
+       }
+      ]
+     },
+     {
+      "level": "warning",
+      "message": "db runs init scripts on first start; Liara databases start empty, so import them manually or via a migration",
+      "code": "db_init_scripts",
+      "params": {
+       "service": "db"
+      },
+      "evidence": [
+       {
+        "file": "docker-compose.yml",
+        "line": null,
+        "note": "service db"
+       }
+      ]
+     },
+     {
+      "level": "info",
+      "message": "proxy (nginx:stable) is a reverse proxy; Liara provides routing and TLS, so it is dropped",
+      "code": "proxy_dropped",
+      "params": {
+       "service": "proxy",
+       "image": "nginx:stable"
+      },
+      "evidence": [
+       {
+        "file": "docker-compose.yml",
+        "line": null,
+        "note": "service proxy"
+       }
+      ]
+     },
+     {
+      "level": "info",
+      "message": "You answered 'worker has no port; is it a background worker? (Liara apps still need a port setting, usually any value)' with: worker",
+      "code": "question_answered",
+      "params": {
+       "question_code": "worker_without_port",
+       "question": "worker has no port; is it a background worker? (Liara apps still need a port setting, usually any value)",
+       "answer": "worker"
+      },
+      "evidence": []
+     }
+    ],
+    "links": [
+     {
+      "from": "blog-web",
+      "to": "blog-db",
+      "to_kind": "database",
+      "env": [
+       "DATABASE_URL"
+      ]
+     },
+     {
+      "from": "blog-web",
+      "to": "blog-cache",
+      "to_kind": "database",
+      "env": [
+       "REDIS_HOST"
+      ]
+     },
+     {
+      "from": "blog-worker",
+      "to": "blog-db",
+      "to_kind": "database",
+      "env": [
+       "DATABASE_URL"
+      ]
+     }
+    ]
+   },
+   "cost": {
+    "lines": [
+     {
+      "kind": "app",
+      "name": "blog-web",
+      "plan": "small-g2",
+      "tier": "basic",
+      "tier_label": "basic",
+      "hourly_incl_vat": 1145.83,
+      "monthly_incl_vat": 825000
+     },
+     {
+      "kind": "app",
+      "name": "blog-worker",
+      "plan": "small-g2",
+      "tier": "basic",
+      "tier_label": "basic",
+      "hourly_incl_vat": 1145.83,
+      "monthly_incl_vat": 825000
+     },
+     {
+      "kind": "database",
+      "name": "blog-db",
+      "plan": "small-g2",
+      "tier": "basic",
+      "tier_label": "basic",
+      "hourly_incl_vat": 1145.83,
+      "monthly_incl_vat": 825000
+     },
+     {
+      "kind": "database",
+      "name": "blog-cache",
+      "plan": "small-g2",
+      "tier": "basic",
+      "tier_label": "basic",
+      "hourly_incl_vat": 1145.83,
+      "monthly_incl_vat": 825000
+     }
+    ],
+    "total_hourly_incl_vat": 4583,
+    "total_monthly_incl_vat": 3300000
+   },
+   "disks": [
+    {
+     "app": "blog-web",
+     "name": "uploads",
+     "mount_to": "/app/uploads",
+     "price": null,
+     "billing": "unverified"
+    }
+   ],
+   "readiness": {
+    "counts": {},
+    "findings": []
+   },
+   "network_id": "net1",
+   "would_send": [
+    {
+     "method": "POST",
+     "path": "/v1/databases",
+     "summary": "create postgres 16.14 database blog-db (small-g2/basic)",
+     "op": "create_database",
+     "params": {
+      "name": "blog-db",
+      "type": "postgres",
+      "version": "16.14",
+      "plan": "small-g2",
+      "tier": "basic"
+     }
+    },
+    {
+     "method": "POST",
+     "path": "/v1/databases",
+     "summary": "create redis 7.2.3 database blog-cache (small-g2/basic)",
+     "op": "create_database",
+     "params": {
+      "name": "blog-cache",
+      "type": "redis",
+      "version": "7.2.3",
+      "plan": "small-g2",
+      "tier": "basic"
+     }
+    },
+    {
+     "method": "POST",
+     "path": "/v1/projects",
+     "summary": "create app blog-web (docker, small-g2/basic)",
+     "op": "create_app",
+     "params": {
+      "name": "blog-web",
+      "platform": "docker",
+      "plan": "small-g2",
+      "tier": "basic"
+     }
+    },
+    {
+     "method": "POST",
+     "path": "/v1/projects/update-envs",
+     "summary": "set 3 environment variables on blog-web",
+     "op": "set_env",
+     "params": {
+      "app": "blog-web",
+      "count": 3
+     }
+    },
+    {
+     "method": "POST",
+     "path": "/v2/projects/blog-web/sources",
+     "summary": "upload tmp7ut9374v.tar.gz (0 KB) to blog-web",
+     "op": "upload_source",
+     "params": {
+      "app": "blog-web"
+     }
+    },
+    {
+     "method": "POST",
+     "path": "/v2/projects/blog-web/releases",
+     "summary": "deploy blog-web on port 3000",
+     "op": "create_release",
+     "params": {
+      "app": "blog-web",
+      "port": 3000
+     }
+    },
+    {
+     "method": "POST",
+     "path": "/v1/projects",
+     "summary": "create app blog-worker (docker, small-g2/basic)",
+     "op": "create_app",
+     "params": {
+      "name": "blog-worker",
+      "platform": "docker",
+      "plan": "small-g2",
+      "tier": "basic"
+     }
+    },
+    {
+     "method": "POST",
+     "path": "/v1/projects/update-envs",
+     "summary": "set 1 environment variables on blog-worker",
+     "op": "set_env",
+     "params": {
+      "app": "blog-worker",
+      "count": 1
+     }
+    },
+    {
+     "method": "POST",
+     "path": "/v2/projects/blog-worker/sources",
+     "summary": "upload tmpd507u0ni.tar.gz (0 KB) to blog-worker",
+     "op": "upload_source",
+     "params": {
+      "app": "blog-worker"
+     }
+    },
+    {
+     "method": "POST",
+     "path": "/v2/projects/blog-worker/releases",
+     "summary": "deploy blog-worker on port 80",
+     "op": "create_release",
+     "params": {
+      "app": "blog-worker",
+      "port": 80
+     }
+    }
+   ],
+   "usage": null
+  }
+ },
+ {
+  "id": 8,
+  "ts": 1792330480.1926556,
+  "kind": "phase_finished",
+  "data": {
+   "phase": "plan"
+  }
+ },
+ {
+  "id": 9,
+  "ts": 1792330480.1926632,
+  "kind": "phase_started",
+  "data": {
+   "phase": "confirm"
+  }
+ },
+ {
+  "id": 10,
+  "ts": 1792330480.1926968,
+  "kind": "confirm_request",
+  "data": {
+   "id": "e11a1d29",
+   "prompt": "Create 2 app(s) and 2 database(s) on your Liara account? About 4,583 toman/hour (3,300,000/month) including VAT.",
+   "kind": "plan",
+   "price_delta_hourly": 4583.304000000001,
+   "code": "create_resources",
+   "params": {
+    "apps": 2,
+    "databases": 2,
+    "hourly": 4583,
+    "monthly": 3300000,
+    "readiness_warnings": 0
+   },
+   "expires_at": 1792330510.2
+  }
+ }
+]

@@ -1,0 +1,25 @@
+{
+ "_about": "Persian and English wording written from the code name and params only (not from a real sample). Confirm these first.",
+ "keys": [
+  "msg.fix.check_port_and_bind.title",
+  "msg.fix.db_point_host.title",
+  "msg.fix.declare_dependency.title",
+  "msg.fix.npm_install.detail",
+  "msg.fix.npm_install.title",
+  "msg.fix.outbound_options.title",
+  "msg.fix.patch_add_dependency.title",
+  "msg.fix.read_logs.title",
+  "msg.fix.reduce_memory.title",
+  "msg.fix.refresh_db_credentials.title",
+  "msg.fix.resize_plan.title",
+  "msg.fix.set_env.title",
+  "msg.fix.set_port",
+  "msg.kindlabel.hardcoded_secret.api_key",
+  "msg.kindlabel.hardcoded_secret.aws_access_key",
+  "status.cancelled",
+  "status.failed",
+  "status.interrupted",
+  "status.running",
+  "status.waiting"
+ ]
+}

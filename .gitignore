@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.egg-info/
+.env
+.pytest_cache/
+.agent-state/
+.web-data/
+build/
+frontend/dist/
+frontend/node_modules/
+frontend/test-results/
+frontend/playwright-report/
+*.pyc

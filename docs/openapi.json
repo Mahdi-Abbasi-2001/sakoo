@@ -1,0 +1,6371 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Liara Launchpad API",
+  "version": "0.1.0"
+ },
+ "paths": {
+  "/api/health": {
+   "get": {
+    "summary": "Health",
+    "operationId": "health_api_health_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/auth/register": {
+   "post": {
+    "summary": "Register",
+    "operationId": "register_api_auth_register_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/Credentials"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/UserOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/auth/login": {
+   "post": {
+    "summary": "Login",
+    "operationId": "login_api_auth_login_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/Credentials"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/UserOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/auth/logout": {
+   "post": {
+    "summary": "Logout",
+    "operationId": "logout_api_auth_logout_post",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OkOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/session": {
+   "get": {
+    "summary": "Session",
+    "description": "200 whether or not the visitor is signed in, so the UI can ask without a 401 appearing in the console.",
+    "operationId": "session_api_session_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SessionOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/me": {
+   "get": {
+    "summary": "Me",
+    "operationId": "me_api_me_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/MeOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/liara/check": {
+   "post": {
+    "summary": "Liara Check",
+    "description": "Validate a token WITHOUT storing it; tells the UI which teams, networks and existing apps are visible.",
+    "operationId": "liara_check_api_liara_check_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LiaraCheck"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CheckOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/settings": {
+   "get": {
+    "summary": "Get Settings ",
+    "operationId": "get_settings__api_settings_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SettingsOut"
+        }
+       }
+      }
+     }
+    }
+   },
+   "put": {
+    "summary": "Put Settings",
+    "operationId": "put_settings_api_settings_put",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SettingsIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SettingsOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/settings/alert-webhook": {
+   "put": {
+    "summary": "Put Alert Webhook",
+    "description": "Where outage alerts go (any https endpoint that accepts a JSON POST). Stored encrypted: Slack-style addresses are secrets.",
+    "operationId": "put_alert_webhook_api_settings_alert_webhook_put",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/WebhookIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SettingsOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "delete": {
+    "summary": "Delete Alert Webhook",
+    "operationId": "delete_alert_webhook_api_settings_alert_webhook_delete",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SettingsOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/settings/alert-webhook/test": {
+   "post": {
+    "summary": "Test Alert Webhook",
+    "operationId": "test_alert_webhook_api_settings_alert_webhook_test_post",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OkOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/settings/liara-token": {
+   "delete": {
+    "summary": "Delete Token",
+    "operationId": "delete_token_api_settings_liara_token_delete",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OkOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/liara/networks": {
+   "get": {
+    "summary": "Networks",
+    "operationId": "networks_api_liara_networks_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/NetworksOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects": {
+   "get": {
+    "summary": "List Projects",
+    "operationId": "list_projects_api_projects_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProjectsOut"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "summary": "Create Project",
+    "operationId": "create_project_api_projects_post",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "$ref": "#/components/schemas/Body_create_project_api_projects_post"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProjectCreatedOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/uptime": {
+   "get": {
+    "summary": "Uptime",
+    "operationId": "uptime_api_projects__pid__uptime_get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/UptimeOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/uptime/check": {
+   "post": {
+    "summary": "Uptime Now",
+    "operationId": "uptime_now_api_projects__pid__uptime_check_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/UptimeOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/metrics": {
+   "get": {
+    "summary": "Project Metrics",
+    "description": "CPU and memory of the running app, read from Liara (read-only).",
+    "operationId": "project_metrics_api_projects__pid__metrics_get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     },
+     {
+      "name": "hours",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "default": 6,
+       "title": "Hours"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/MetricsOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/limits": {
+   "get": {
+    "summary": "Project Limits",
+    "description": "How many releases of the app Liara allows a day and how many were made in the last 24 hours, and the things the agent cannot do through Liara's API.",
+    "operationId": "project_limits_api_projects__pid__limits_get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AppLimitsOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/fixes/preview": {
+   "post": {
+    "summary": "Fix Preview",
+    "description": "What a fix from the diagnosis would do, as the same approval card the assistant shows. Nothing is changed.",
+    "operationId": "fix_preview_api_projects__pid__fixes_preview_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/FixIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ChatActionOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/fixes/apply": {
+   "post": {
+    "summary": "Fix Apply",
+    "description": "Make the change after the person approved its card. The same code path as the assistant's approved card.",
+    "operationId": "fix_apply_api_projects__pid__fixes_apply_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/FixIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FixAppliedOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/diagnosis/latest": {
+   "get": {
+    "summary": "Live Diagnosis Latest",
+    "description": "What the agent found by itself the last time the uptime check saw the app go down (nothing when it never did).",
+    "operationId": "live_diagnosis_latest_api_projects__pid__diagnosis_latest_get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/LatestDiagnosisOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/diagnosis/analyze": {
+   "post": {
+    "summary": "Live Diagnosis Analyze",
+    "description": "Ask the language model to read the app's evidence (the log tail and what was measured, scrubbed) and propose causes: a second opinion below the rules.",
+    "operationId": "live_diagnosis_analyze_api_projects__pid__diagnosis_analyze_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AnalysisOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/diagnosis": {
+   "get": {
+    "summary": "Live Diagnosis Get",
+    "description": "Why the running app is failing or slow: the signals read now and the likely causes, most likely first, each with what points to it and the fix that follows.",
+    "operationId": "live_diagnosis_get_api_projects__pid__diagnosis_get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/LiveDiagnosisOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/wordpress": {
+   "get": {
+    "summary": "Wp Plan",
+    "description": "The theme, plugin and language files that would be sent (and the uploads folder if asked). Nothing leaves the server.",
+    "operationId": "wp_plan_api_projects__pid__wordpress_get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     },
+     {
+      "name": "uploads",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "boolean",
+       "default": false,
+       "title": "Uploads"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/WpPlanOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/wordpress/upload": {
+   "post": {
+    "summary": "Wp Upload",
+    "description": "Starts sending the files over FTPS with the access the person made in the Liara console. The password is used for this transfer and not stored.",
+    "operationId": "wp_upload_api_projects__pid__wordpress_upload_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/WpUploadIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "202": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/WpJobOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "get": {
+    "summary": "Wp Upload Status",
+    "operationId": "wp_upload_status_api_projects__pid__wordpress_upload_get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/WpJobOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/github/login": {
+   "get": {
+    "summary": "Github Login",
+    "description": "Starts GitHub's authorization. mode=signin: sign in or create an account (asks only for who you are; a server with an invite code needs `invite` for a NEW account).\nmode=connect (needs a session): also asks for the `repo` permission, so private repositories can be downloaded and fixes sent as pull requests. Off unless the server has an OAuth app.",
+    "operationId": "github_login_api_github_login_get",
+    "parameters": [
+     {
+      "name": "mode",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "default": "connect",
+       "title": "Mode"
+      }
+     },
+     {
+      "name": "invite",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "default": "",
+       "title": "Invite"
+      }
+     },
+     {
+      "name": "next",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "default": "",
+       "title": "Next"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/github/callback": {
+   "get": {
+    "summary": "Github Callback",
+    "description": "GitHub sends the person back here (a browser visit, so every outcome is a redirect). The state must match the signed cookie from the start of this round trip.",
+    "operationId": "github_callback_api_github_callback_get",
+    "parameters": [
+     {
+      "name": "code",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "default": "",
+       "title": "Code"
+      }
+     },
+     {
+      "name": "state",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "default": "",
+       "title": "State"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/github/connection": {
+   "delete": {
+    "summary": "Github Disconnect",
+    "operationId": "github_disconnect_api_github_connection_delete",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SettingsOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/github/repos": {
+   "get": {
+    "summary": "Github Repos",
+    "operationId": "github_repos_api_github_repos_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/GithubReposOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/oneclick": {
+   "get": {
+    "summary": "Oneclick List",
+    "description": "Liara's ready-made apps (a snapshot). Those with a spec can be installed here; the rest need a cloud server.",
+    "operationId": "oneclick_list_api_oneclick_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OneClickListOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/oneclick": {
+   "post": {
+    "summary": "Create Oneclick Project",
+    "description": "A project with no source: its plan comes from a ready-made app's spec. Nothing is created on Liara until the run is approved.",
+    "operationId": "create_oneclick_project_api_projects_oneclick_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/OneClickIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProjectCreatedOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/branches": {
+   "post": {
+    "summary": "Preview Branch",
+    "description": "A preview deployment: the same repository at another branch becomes its own project, so its app, databases and cleanup are separate\nfrom the main one's. The access token of a private repository is reused, never returned.",
+    "operationId": "preview_branch_api_projects__pid__branches_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/BranchIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProjectCreatedOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}": {
+   "get": {
+    "summary": "Get Project",
+    "operationId": "get_project_api_projects__pid__get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProjectDetailOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "delete": {
+    "summary": "Delete Project",
+    "description": "Deletes the project, ALL its runs and everything those runs created on Liara (apps, databases, disks, domains...). The project's name must be given as `confirm`.\nIf Liara cannot be cleaned (an error, or no saved token), nothing local is deleted either, so it can be tried again and nothing is left running unseen.",
+    "operationId": "delete_project_api_projects__pid__delete",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     },
+     {
+      "name": "confirm",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "default": "",
+       "title": "Confirm"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProjectDeletedOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/runs": {
+   "post": {
+    "summary": "Start Run",
+    "operationId": "start_run_api_projects__pid__runs_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RunIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RunCreatedOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/runs": {
+   "get": {
+    "summary": "List Runs",
+    "operationId": "list_runs_api_runs_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RunsOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/runs/{rid}": {
+   "get": {
+    "summary": "Get Run",
+    "operationId": "get_run_api_runs__rid__get",
+    "parameters": [
+     {
+      "name": "rid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Rid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RunDetailOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/runs/{rid}/events": {
+   "get": {
+    "summary": "Run Events",
+    "operationId": "run_events_api_runs__rid__events_get",
+    "parameters": [
+     {
+      "name": "rid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Rid"
+      }
+     },
+     {
+      "name": "after",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "default": 0,
+       "title": "After"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/EventsOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/runs/{rid}/stream": {
+   "get": {
+    "summary": "Run Stream",
+    "description": "Server-sent events. Reconnect with the Last-Event-ID header (or ?after=) to continue without gaps.",
+    "operationId": "run_stream_api_runs__rid__stream_get",
+    "parameters": [
+     {
+      "name": "rid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Rid"
+      }
+     },
+     {
+      "name": "after",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "default": 0,
+       "title": "After"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/runs/{rid}/cancel": {
+   "post": {
+    "summary": "Cancel Run",
+    "description": "Stop a run midway. It ends as cancelled at its next step; anything it already created stays (delete it from the run page), and a release already\nbuilding on Liara finishes there.",
+    "operationId": "cancel_run_api_runs__rid__cancel_post",
+    "parameters": [
+     {
+      "name": "rid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Rid"
+      }
+     }
+    ],
+    "responses": {
+     "202": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OkOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/runs/{rid}/respond": {
+   "post": {
+    "summary": "Respond",
+    "operationId": "respond_api_runs__rid__respond_post",
+    "parameters": [
+     {
+      "name": "rid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Rid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RespondIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OkOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/runs/{rid}/report": {
+   "get": {
+    "summary": "Run Report",
+    "description": "The run as a Markdown document (names only, no values), as a download.",
+    "operationId": "run_report_api_runs__rid__report_get",
+    "parameters": [
+     {
+      "name": "rid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Rid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/runs/{rid}/explain": {
+   "post": {
+    "summary": "Explain Run",
+    "description": "A plain-language reading of the run's log from the language model (scrubbed first; no tools, no secrets).",
+    "operationId": "explain_run_api_runs__rid__explain_post",
+    "parameters": [
+     {
+      "name": "rid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Rid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ExplainOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/runs/{rid}/cleanup": {
+   "post": {
+    "summary": "Cleanup",
+    "operationId": "cleanup_api_runs__rid__cleanup_post",
+    "parameters": [
+     {
+      "name": "rid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Rid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/CleanupIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CleanupOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/domains": {
+   "get": {
+    "summary": "List Domains",
+    "operationId": "list_domains_api_projects__pid__domains_get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DomainsOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "summary": "Connect Domain",
+    "operationId": "connect_domain_api_projects__pid__domains_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DomainCreateIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DomainOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/domains/guide": {
+   "get": {
+    "summary": "Domains Guide",
+    "description": "What the person does at the place the domain is registered (IRNIC's panel for a .ir domain), per domain of the app, with Liara's own nameservers and records filled in.",
+    "operationId": "domains_guide_api_projects__pid__domains_guide_get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     },
+     {
+      "name": "domain",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "string",
+       "default": "",
+       "title": "Domain"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DomainGuidesOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/domains/plan": {
+   "post": {
+    "summary": "Plan Domain",
+    "description": "What connecting the domain would do. Reads only; nothing is created.",
+    "operationId": "plan_domain_api_projects__pid__domains_plan_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DomainPlanIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DomainPlanOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/domains/{did}/check": {
+   "post": {
+    "summary": "Check Domain",
+    "description": "'Check records': asks Liara to look again, and nudges the nameserver check of a pending Liara DNS zone.",
+    "operationId": "check_domain_api_projects__pid__domains__did__check_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     },
+     {
+      "name": "did",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Did"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DomainOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/domains/{did}/dns-check": {
+   "get": {
+    "summary": "Dns Check",
+    "description": "Asks the zone's own nameservers and the big public resolvers about each record of the domain. Reads DNS only; nothing is changed.",
+    "operationId": "dns_check_api_projects__pid__domains__did__dns_check_get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     },
+     {
+      "name": "did",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Did"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DnsCheckOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/domains/{did}/ssl": {
+   "post": {
+    "summary": "Enable Ssl",
+    "operationId": "enable_ssl_api_projects__pid__domains__did__ssl_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     },
+     {
+      "name": "did",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Did"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DomainOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/domains/{did}/removal": {
+   "get": {
+    "summary": "Removal Plan",
+    "description": "The DNS records Liara added for this domain to a Liara DNS zone, which removing the domain can clean up too. Reads only.",
+    "operationId": "removal_plan_api_projects__pid__domains__did__removal_get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     },
+     {
+      "name": "did",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Did"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RemovalPlanOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/domains/{did}": {
+   "delete": {
+    "summary": "Detach Domain",
+    "operationId": "detach_domain_api_projects__pid__domains__did__delete",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     },
+     {
+      "name": "did",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Did"
+      }
+     },
+     {
+      "name": "remove_records",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "boolean",
+       "default": false,
+       "title": "Remove Records"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DomainRemovedOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/deploys": {
+   "get": {
+    "summary": "Deploys Get",
+    "description": "Releases of newer code made by this server (newest first): their state while they build, and how they ended.",
+    "operationId": "deploys_get_api_projects__pid__deploys_get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DeploysOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/redeploy": {
+   "post": {
+    "summary": "Redeploy Now",
+    "description": "Release the newest code of the project's repository on the app this agent already runs (same settings, nothing new created).",
+    "operationId": "redeploy_now_api_projects__pid__redeploy_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "202": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/StartedOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/pr": {
+   "get": {
+    "summary": "Pr Preview",
+    "operationId": "pr_preview_api_projects__pid__pr_get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/PrPreviewOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "summary": "Pr Create",
+    "description": "Opens a pull request on the person's repository with the agent's fixes, on a new branch. Needs a token that can write (the one given for a private repo, or a new one).",
+    "operationId": "pr_create_api_projects__pid__pr_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ConfirmIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/PrCreatedOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/releases": {
+   "get": {
+    "summary": "List Project Releases",
+    "description": "The app's releases on Liara, newest first, with whether each can be rolled back to.",
+    "operationId": "list_project_releases_api_projects__pid__releases_get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReleasesOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/releases/{rid}/rollback": {
+   "post": {
+    "summary": "Rollback Release",
+    "description": "Make an earlier release the running one again. Creates a new release (Liara builds nothing for a kept source it already knows, but it does deploy).",
+    "operationId": "rollback_release_api_projects__pid__releases__rid__rollback_post",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     },
+     {
+      "name": "rid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Rid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/RollbackIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RollbackOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/chat": {
+   "get": {
+    "summary": "Chat Get",
+    "operationId": "chat_get_api_chat_get",
+    "parameters": [
+     {
+      "name": "project_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "default": 0,
+       "title": "Project Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ChatOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   },
+   "delete": {
+    "summary": "Chat Clear",
+    "operationId": "chat_clear_api_chat_delete",
+    "parameters": [
+     {
+      "name": "project_id",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "default": 0,
+       "title": "Project Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OkOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/chat/messages": {
+   "post": {
+    "summary": "Chat Send",
+    "operationId": "chat_send_api_chat_messages_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ChatIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ChatOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/chat/actions/{action_id}": {
+   "post": {
+    "summary": "Chat Decide",
+    "operationId": "chat_decide_api_chat_actions__action_id__post",
+    "parameters": [
+     {
+      "name": "action_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Action Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ChatDecisionIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ChatOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/chat/messages/stream": {
+   "post": {
+    "summary": "Chat Send Stream",
+    "description": "Like POST /api/chat/messages, but the answer arrives live as server-sent events (step, delta, tool, card, then done).",
+    "operationId": "chat_send_stream_api_chat_messages_stream_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ChatIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/chat/actions/{action_id}/stream": {
+   "post": {
+    "summary": "Chat Decide Stream",
+    "operationId": "chat_decide_stream_api_chat_actions__action_id__stream_post",
+    "parameters": [
+     {
+      "name": "action_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Action Id"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ChatDecisionIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/limits": {
+   "get": {
+    "summary": "Limits",
+    "description": "The numbers behind the upload/Git error messages, so the UI can show them before the user hits them.",
+    "operationId": "limits_api_limits_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/LimitsOut"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "AiHypothesis": {
+    "properties": {
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "explanation": {
+      "type": "string",
+      "title": "Explanation"
+     },
+     "evidence": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Evidence",
+      "default": []
+     },
+     "next_step": {
+      "type": "string",
+      "title": "Next Step"
+     },
+     "confidence": {
+      "type": "string",
+      "title": "Confidence"
+     },
+     "grounded": {
+      "type": "boolean",
+      "title": "Grounded"
+     }
+    },
+    "type": "object",
+    "required": [
+     "title",
+     "explanation",
+     "next_step",
+     "confidence",
+     "grounded"
+    ],
+    "title": "AiHypothesis",
+    "description": "A second opinion from the language model when no rule explained the problem: below the rules, never acted on by itself."
+   },
+   "AnalysisOut": {
+    "properties": {
+     "hypotheses": {
+      "items": {
+       "$ref": "#/components/schemas/AiHypothesis"
+      },
+      "type": "array",
+      "title": "Hypotheses"
+     }
+    },
+    "type": "object",
+    "required": [
+     "hypotheses"
+    ],
+    "title": "AnalysisOut"
+   },
+   "AppLimitsOut": {
+    "properties": {
+     "daily_deployments": {
+      "$ref": "#/components/schemas/DailyDeploymentsOut"
+     },
+     "known": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Known"
+     }
+    },
+    "type": "object",
+    "required": [
+     "daily_deployments",
+     "known"
+    ],
+    "title": "AppLimitsOut",
+    "description": "What Liara's API limits for this project's app, and what the agent cannot do because the API has no call for it."
+   },
+   "AppliedFixOut": {
+    "properties": {
+     "code": {
+      "type": "string",
+      "title": "Code"
+     },
+     "kind": {
+      "type": "string",
+      "title": "Kind"
+     },
+     "params": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Params"
+     },
+     "cost_delta_hourly": {
+      "type": "number",
+      "title": "Cost Delta Hourly",
+      "default": 0
+     }
+    },
+    "type": "object",
+    "required": [
+     "code",
+     "kind"
+    ],
+    "title": "AppliedFixOut"
+   },
+   "Body_create_project_api_projects_post": {
+    "properties": {
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "git_url": {
+      "type": "string",
+      "title": "Git Url",
+      "default": ""
+     },
+     "git_token": {
+      "type": "string",
+      "title": "Git Token",
+      "default": ""
+     },
+     "git_branch": {
+      "type": "string",
+      "title": "Git Branch",
+      "default": ""
+     },
+     "file": {
+      "anyOf": [
+       {
+        "type": "string",
+        "contentMediaType": "application/octet-stream"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "File"
+     }
+    },
+    "type": "object",
+    "required": [
+     "name"
+    ],
+    "title": "Body_create_project_api_projects_post"
+   },
+   "BranchIn": {
+    "properties": {
+     "branch": {
+      "type": "string",
+      "maxLength": 100,
+      "title": "Branch"
+     }
+    },
+    "type": "object",
+    "required": [
+     "branch"
+    ],
+    "title": "BranchIn"
+   },
+   "ChatActionOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "tool": {
+      "type": "string",
+      "title": "Tool"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "summary": {
+      "type": "string",
+      "title": "Summary"
+     },
+     "code": {
+      "type": "string",
+      "title": "Code"
+     },
+     "params": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Params"
+     },
+     "files": {
+      "anyOf": [
+       {
+        "items": {
+         "additionalProperties": true,
+         "type": "object"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Files"
+     },
+     "diff": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Diff"
+     },
+     "needs_value": {
+      "type": "boolean",
+      "title": "Needs Value"
+     },
+     "value_label": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Value Label"
+     },
+     "confirm_name": {
+      "type": "boolean",
+      "title": "Confirm Name"
+     },
+     "price_delta_hourly": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Price Delta Hourly"
+     },
+     "warnings": {
+      "items": {
+       "$ref": "#/components/schemas/ChatWarningOut"
+      },
+      "type": "array",
+      "title": "Warnings"
+     },
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     },
+     "link": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Link"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "tool",
+     "status",
+     "summary",
+     "code",
+     "params",
+     "needs_value",
+     "confirm_name",
+     "warnings"
+    ],
+    "title": "ChatActionOut",
+    "description": "A change the assistant proposed: it runs only when the person approves this card."
+   },
+   "ChatDecisionIn": {
+    "properties": {
+     "project_id": {
+      "type": "integer",
+      "title": "Project Id",
+      "default": 0
+     },
+     "decision": {
+      "type": "string",
+      "pattern": "^(approve|decline)$",
+      "title": "Decision"
+     },
+     "value": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 5000
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Value"
+     },
+     "confirm_name": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 200
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Confirm Name"
+     }
+    },
+    "type": "object",
+    "required": [
+     "decision"
+    ],
+    "title": "ChatDecisionIn"
+   },
+   "ChatIn": {
+    "properties": {
+     "project_id": {
+      "type": "integer",
+      "title": "Project Id",
+      "default": 0
+     },
+     "text": {
+      "type": "string",
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Text"
+     }
+    },
+    "type": "object",
+    "required": [
+     "text"
+    ],
+    "title": "ChatIn"
+   },
+   "ChatMessageOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "at": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "At"
+     },
+     "role": {
+      "type": "string",
+      "title": "Role"
+     },
+     "text": {
+      "type": "string",
+      "title": "Text"
+     },
+     "hidden_secret": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Hidden Secret"
+     },
+     "looked": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Looked"
+     },
+     "actions": {
+      "anyOf": [
+       {
+        "items": {
+         "$ref": "#/components/schemas/ChatActionOut"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Actions"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "role",
+     "text"
+    ],
+    "title": "ChatMessageOut"
+   },
+   "ChatOut": {
+    "properties": {
+     "messages": {
+      "items": {
+       "$ref": "#/components/schemas/ChatMessageOut"
+      },
+      "type": "array",
+      "title": "Messages"
+     },
+     "pending": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Pending"
+     },
+     "available": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Available"
+     },
+     "hidden_secret": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Hidden Secret"
+     }
+    },
+    "type": "object",
+    "required": [
+     "messages"
+    ],
+    "title": "ChatOut"
+   },
+   "ChatWarningOut": {
+    "properties": {
+     "code": {
+      "type": "string",
+      "title": "Code"
+     },
+     "params": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Params"
+     }
+    },
+    "type": "object",
+    "required": [
+     "code",
+     "params"
+    ],
+    "title": "ChatWarningOut"
+   },
+   "CheckOut": {
+    "properties": {
+     "valid": {
+      "type": "boolean",
+      "title": "Valid"
+     },
+     "teams": {
+      "items": {
+       "$ref": "#/components/schemas/TeamOut"
+      },
+      "type": "array",
+      "title": "Teams"
+     },
+     "team_required": {
+      "type": "boolean",
+      "title": "Team Required",
+      "default": false
+     },
+     "networks": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Networks"
+     },
+     "apps": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Apps"
+     },
+     "code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Code"
+     },
+     "params": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Params"
+     }
+    },
+    "type": "object",
+    "required": [
+     "valid"
+    ],
+    "title": "CheckOut"
+   },
+   "CleanupIn": {
+    "properties": {
+     "confirm": {
+      "type": "string",
+      "title": "Confirm"
+     }
+    },
+    "type": "object",
+    "required": [
+     "confirm"
+    ],
+    "title": "CleanupIn"
+   },
+   "CleanupOut": {
+    "properties": {
+     "deleted": {
+      "$ref": "#/components/schemas/DeletedOut"
+     }
+    },
+    "type": "object",
+    "required": [
+     "deleted"
+    ],
+    "title": "CleanupOut"
+   },
+   "ConfirmIn": {
+    "properties": {
+     "confirm": {
+      "type": "boolean",
+      "title": "Confirm",
+      "default": false
+     },
+     "token": {
+      "type": "string",
+      "maxLength": 300,
+      "title": "Token",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "title": "ConfirmIn"
+   },
+   "CreatedOut": {
+    "properties": {
+     "apps": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Apps"
+     },
+     "databases": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Databases"
+     },
+     "database_ids": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Database Ids"
+     }
+    },
+    "type": "object",
+    "title": "CreatedOut"
+   },
+   "Credentials": {
+    "properties": {
+     "username": {
+      "type": "string",
+      "title": "Username"
+     },
+     "password": {
+      "type": "string",
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Password"
+     },
+     "invite": {
+      "type": "string",
+      "maxLength": 200,
+      "title": "Invite",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "required": [
+     "username",
+     "password"
+    ],
+    "title": "Credentials"
+   },
+   "DailyDeploymentsOut": {
+    "properties": {
+     "used": {
+      "type": "integer",
+      "title": "Used"
+     },
+     "cap": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Cap"
+     },
+     "remaining": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Remaining"
+     },
+     "unlimited": {
+      "type": "boolean",
+      "title": "Unlimited"
+     },
+     "tier": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Tier"
+     }
+    },
+    "type": "object",
+    "required": [
+     "used",
+     "unlimited"
+    ],
+    "title": "DailyDeploymentsOut"
+   },
+   "DeletedOut": {
+    "properties": {
+     "apps": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Apps"
+     },
+     "databases": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Databases"
+     },
+     "domains": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Domains"
+     },
+     "buckets": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Buckets"
+     },
+     "mail_servers": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Mail Servers"
+     },
+     "disks": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Disks"
+     },
+     "failed": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Failed"
+     }
+    },
+    "type": "object",
+    "required": [
+     "apps",
+     "databases"
+    ],
+    "title": "DeletedOut"
+   },
+   "DeployRowOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "ts": {
+      "type": "number",
+      "title": "Ts"
+     },
+     "finished_at": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Finished At"
+     },
+     "commit_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Commit Id"
+     },
+     "message": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Message"
+     },
+     "state": {
+      "type": "string",
+      "title": "State"
+     },
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     },
+     "tail": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Tail"
+     },
+     "run_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Run Id"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "ts",
+     "state"
+    ],
+    "title": "DeployRowOut"
+   },
+   "DeploysOut": {
+    "properties": {
+     "deploys": {
+      "items": {
+       "$ref": "#/components/schemas/DeployRowOut"
+      },
+      "type": "array",
+      "title": "Deploys"
+     }
+    },
+    "type": "object",
+    "required": [
+     "deploys"
+    ],
+    "title": "DeploysOut",
+    "description": "Releases of newer code made by this server, newest first."
+   },
+   "DnsCheckOut": {
+    "properties": {
+     "zone": {
+      "type": "string",
+      "title": "Zone"
+     },
+     "nameservers": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Nameservers"
+     },
+     "records": {
+      "items": {
+       "$ref": "#/components/schemas/DnsRecordCheckOut"
+      },
+      "type": "array",
+      "title": "Records"
+     },
+     "verdict": {
+      "type": "string",
+      "title": "Verdict"
+     }
+    },
+    "type": "object",
+    "required": [
+     "zone",
+     "nameservers",
+     "records",
+     "verdict"
+    ],
+    "title": "DnsCheckOut",
+    "description": "What the zone's own nameservers and the big public resolvers say about a domain's records. `verdict`: all_good | propagating | missing |\nwrong_value | not_at_liara | no_nameservers | unknown."
+   },
+   "DnsRecordCheckOut": {
+    "properties": {
+     "type": {
+      "type": "string",
+      "title": "Type"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "fqdn": {
+      "type": "string",
+      "title": "Fqdn"
+     },
+     "purpose": {
+      "type": "string",
+      "title": "Purpose",
+      "default": ""
+     },
+     "authoritative": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "type": "object",
+      "title": "Authoritative"
+     },
+     "public": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "type": "object",
+      "title": "Public"
+     },
+     "local": {
+      "type": "string",
+      "title": "Local"
+     }
+    },
+    "type": "object",
+    "required": [
+     "type",
+     "name",
+     "fqdn",
+     "authoritative",
+     "public",
+     "local"
+    ],
+    "title": "DnsRecordCheckOut"
+   },
+   "DomainCreateIn": {
+    "properties": {
+     "domain": {
+      "type": "string",
+      "maxLength": 300,
+      "minLength": 1,
+      "title": "Domain"
+     },
+     "use_liara_dns": {
+      "type": "boolean",
+      "title": "Use Liara Dns",
+      "default": false
+     },
+     "zone": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 253
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Zone"
+     },
+     "app": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "App"
+     },
+     "www": {
+      "type": "boolean",
+      "title": "Www",
+      "default": false
+     },
+     "confirm": {
+      "type": "boolean",
+      "title": "Confirm",
+      "default": false
+     }
+    },
+    "type": "object",
+    "required": [
+     "domain"
+    ],
+    "title": "DomainCreateIn"
+   },
+   "DomainGuidesOut": {
+    "properties": {
+     "guides": {
+      "items": {
+       "$ref": "#/components/schemas/RegistrarGuideOut"
+      },
+      "type": "array",
+      "title": "Guides"
+     }
+    },
+    "type": "object",
+    "required": [
+     "guides"
+    ],
+    "title": "DomainGuidesOut"
+   },
+   "DomainOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "status": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Status"
+     },
+     "certificates_status": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Certificates Status"
+     },
+     "redirect_to": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Redirect To"
+     },
+     "ready": {
+      "type": "boolean",
+      "title": "Ready"
+     },
+     "ssl_active": {
+      "type": "boolean",
+      "title": "Ssl Active"
+     },
+     "managed": {
+      "type": "boolean",
+      "title": "Managed",
+      "default": true
+     },
+     "records": {
+      "items": {
+       "$ref": "#/components/schemas/DomainRecordOut"
+      },
+      "type": "array",
+      "title": "Records"
+     },
+     "zone": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/ZoneOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "detail_keys": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Detail Keys"
+     },
+     "details": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Details"
+     },
+     "console_url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Console Url"
+     },
+     "created": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Created"
+     },
+     "zone_check": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Zone Check"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "ready",
+     "ssl_active"
+    ],
+    "title": "DomainOut"
+   },
+   "DomainPlanIn": {
+    "properties": {
+     "domain": {
+      "type": "string",
+      "maxLength": 300,
+      "minLength": 1,
+      "title": "Domain"
+     },
+     "use_liara_dns": {
+      "type": "boolean",
+      "title": "Use Liara Dns",
+      "default": false
+     },
+     "zone": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 253
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Zone"
+     },
+     "app": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "App"
+     },
+     "www": {
+      "type": "boolean",
+      "title": "Www",
+      "default": false
+     }
+    },
+    "type": "object",
+    "required": [
+     "domain"
+    ],
+    "title": "DomainPlanIn"
+   },
+   "DomainPlanOut": {
+    "properties": {
+     "domain": {
+      "type": "string",
+      "title": "Domain"
+     },
+     "app": {
+      "type": "string",
+      "title": "App"
+     },
+     "mode": {
+      "type": "string",
+      "title": "Mode"
+     },
+     "already_attached": {
+      "type": "boolean",
+      "title": "Already Attached"
+     },
+     "zone": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/ZoneOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "steps": {
+      "items": {
+       "$ref": "#/components/schemas/DomainStepOut"
+      },
+      "type": "array",
+      "title": "Steps"
+     }
+    },
+    "type": "object",
+    "required": [
+     "domain",
+     "app",
+     "mode",
+     "already_attached",
+     "steps"
+    ],
+    "title": "DomainPlanOut"
+   },
+   "DomainRecordOut": {
+    "properties": {
+     "type": {
+      "type": "string",
+      "title": "Type"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "value": {
+      "type": "string",
+      "title": "Value"
+     },
+     "purpose": {
+      "type": "string",
+      "title": "Purpose",
+      "default": ""
+     },
+     "status": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Status"
+     },
+     "derived": {
+      "type": "boolean",
+      "title": "Derived",
+      "default": false
+     }
+    },
+    "type": "object",
+    "required": [
+     "type",
+     "name",
+     "value"
+    ],
+    "title": "DomainRecordOut",
+    "description": "A DNS record Liara asks for. `purpose` is the key it was found under in Liara's answer (the API does not document it)."
+   },
+   "DomainRemovedOut": {
+    "properties": {
+     "ok": {
+      "type": "boolean",
+      "title": "Ok"
+     },
+     "records_removed": {
+      "type": "integer",
+      "title": "Records Removed",
+      "default": 0
+     }
+    },
+    "type": "object",
+    "required": [
+     "ok"
+    ],
+    "title": "DomainRemovedOut"
+   },
+   "DomainStepOut": {
+    "properties": {
+     "code": {
+      "type": "string",
+      "title": "Code"
+     },
+     "params": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Params"
+     }
+    },
+    "type": "object",
+    "required": [
+     "code"
+    ],
+    "title": "DomainStepOut"
+   },
+   "DomainsOut": {
+    "properties": {
+     "app": {
+      "type": "string",
+      "title": "App"
+     },
+     "console_url": {
+      "type": "string",
+      "title": "Console Url"
+     },
+     "domains": {
+      "items": {
+       "$ref": "#/components/schemas/DomainOut"
+      },
+      "type": "array",
+      "title": "Domains"
+     }
+    },
+    "type": "object",
+    "required": [
+     "app",
+     "console_url",
+     "domains"
+    ],
+    "title": "DomainsOut"
+   },
+   "EventOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "ts": {
+      "type": "number",
+      "title": "Ts"
+     },
+     "kind": {
+      "type": "string",
+      "title": "Kind"
+     },
+     "data": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Data"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "ts",
+     "kind",
+     "data"
+    ],
+    "title": "EventOut"
+   },
+   "EventsOut": {
+    "properties": {
+     "events": {
+      "items": {
+       "$ref": "#/components/schemas/EventOut"
+      },
+      "type": "array",
+      "title": "Events"
+     }
+    },
+    "type": "object",
+    "required": [
+     "events"
+    ],
+    "title": "EventsOut"
+   },
+   "ExplainOut": {
+    "properties": {
+     "explanation": {
+      "type": "string",
+      "title": "Explanation"
+     }
+    },
+    "type": "object",
+    "required": [
+     "explanation"
+    ],
+    "title": "ExplainOut"
+   },
+   "FixAppliedOut": {
+    "properties": {
+     "ok": {
+      "type": "boolean",
+      "title": "Ok"
+     },
+     "tool": {
+      "type": "string",
+      "title": "Tool"
+     },
+     "result": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Result",
+      "default": {}
+     }
+    },
+    "type": "object",
+    "required": [
+     "ok",
+     "tool"
+    ],
+    "title": "FixAppliedOut"
+   },
+   "FixIn": {
+    "properties": {
+     "tool": {
+      "type": "string",
+      "title": "Tool"
+     },
+     "args": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Args",
+      "default": {}
+     },
+     "value": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Value"
+     }
+    },
+    "type": "object",
+    "required": [
+     "tool"
+    ],
+    "title": "FixIn"
+   },
+   "GithubRepoOut": {
+    "properties": {
+     "full_name": {
+      "type": "string",
+      "title": "Full Name"
+     },
+     "private": {
+      "type": "boolean",
+      "title": "Private"
+     },
+     "default_branch": {
+      "type": "string",
+      "title": "Default Branch"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url"
+     },
+     "pushed_at": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Pushed At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "full_name",
+     "private",
+     "default_branch",
+     "url"
+    ],
+    "title": "GithubRepoOut"
+   },
+   "GithubReposOut": {
+    "properties": {
+     "repos": {
+      "items": {
+       "$ref": "#/components/schemas/GithubRepoOut"
+      },
+      "type": "array",
+      "title": "Repos"
+     }
+    },
+    "type": "object",
+    "required": [
+     "repos"
+    ],
+    "title": "GithubReposOut"
+   },
+   "HTTPValidationError": {
+    "properties": {
+     "detail": {
+      "items": {
+       "$ref": "#/components/schemas/ValidationError"
+      },
+      "type": "array",
+      "title": "Detail"
+     }
+    },
+    "type": "object",
+    "title": "HTTPValidationError"
+   },
+   "LastRunOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "mode": {
+      "type": "string",
+      "title": "Mode"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "created_at": {
+      "type": "number",
+      "title": "Created At"
+     },
+     "finished_at": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Finished At"
+     },
+     "cleaned_at": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Cleaned At"
+     },
+     "result": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/RunResultOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "mode",
+     "status",
+     "created_at"
+    ],
+    "title": "LastRunOut"
+   },
+   "LatestDiagnosisOut": {
+    "properties": {
+     "diagnosis": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/LiveDiagnosisOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "source": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source"
+     }
+    },
+    "type": "object",
+    "title": "LatestDiagnosisOut",
+    "description": "The diagnosis made automatically when the uptime check saw the app go down (null when it never did)."
+   },
+   "LiaraCheck": {
+    "properties": {
+     "token": {
+      "type": "string",
+      "maxLength": 500,
+      "minLength": 10,
+      "title": "Token"
+     },
+     "team_id": {
+      "type": "string",
+      "title": "Team Id",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "required": [
+     "token"
+    ],
+    "title": "LiaraCheck"
+   },
+   "LimitsOut": {
+    "properties": {
+     "max_upload_mb": {
+      "type": "integer",
+      "title": "Max Upload Mb"
+     },
+     "max_extracted_mb": {
+      "type": "integer",
+      "title": "Max Extracted Mb"
+     },
+     "max_files": {
+      "type": "integer",
+      "title": "Max Files"
+     },
+     "git_hosts": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Git Hosts"
+     },
+     "max_concurrent_runs": {
+      "type": "integer",
+      "title": "Max Concurrent Runs"
+     },
+     "approval_timeout_seconds": {
+      "type": "number",
+      "title": "Approval Timeout Seconds"
+     },
+     "max_heal_attempts": {
+      "type": "integer",
+      "title": "Max Heal Attempts"
+     },
+     "github_oauth": {
+      "type": "boolean",
+      "title": "Github Oauth",
+      "default": false
+     },
+     "registration_code_required": {
+      "type": "boolean",
+      "title": "Registration Code Required",
+      "default": false
+     }
+    },
+    "type": "object",
+    "required": [
+     "max_upload_mb",
+     "max_extracted_mb",
+     "max_files",
+     "git_hosts",
+     "max_concurrent_runs",
+     "approval_timeout_seconds",
+     "max_heal_attempts"
+    ],
+    "title": "LimitsOut"
+   },
+   "LiveDiagnosisAdvice": {
+    "properties": {
+     "code": {
+      "type": "string",
+      "title": "Code"
+     },
+     "params": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Params",
+      "default": {}
+     },
+     "fixes": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "type": "array",
+      "title": "Fixes",
+      "default": []
+     }
+    },
+    "type": "object",
+    "required": [
+     "code"
+    ],
+    "title": "LiveDiagnosisAdvice"
+   },
+   "LiveDiagnosisCause": {
+    "properties": {
+     "code": {
+      "type": "string",
+      "title": "Code"
+     },
+     "score": {
+      "type": "integer",
+      "title": "Score"
+     },
+     "params": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Params",
+      "default": {}
+     },
+     "evidence": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Evidence",
+      "default": []
+     },
+     "fixes": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "type": "array",
+      "title": "Fixes",
+      "default": []
+     }
+    },
+    "type": "object",
+    "required": [
+     "code",
+     "score"
+    ],
+    "title": "LiveDiagnosisCause"
+   },
+   "LiveDiagnosisOut": {
+    "properties": {
+     "app": {
+      "type": "string",
+      "title": "App"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url"
+     },
+     "checked_at": {
+      "type": "number",
+      "title": "Checked At"
+     },
+     "state": {
+      "type": "string",
+      "title": "State"
+     },
+     "signals": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Signals"
+     },
+     "causes": {
+      "items": {
+       "$ref": "#/components/schemas/LiveDiagnosisCause"
+      },
+      "type": "array",
+      "title": "Causes"
+     },
+     "advice": {
+      "items": {
+       "$ref": "#/components/schemas/LiveDiagnosisAdvice"
+      },
+      "type": "array",
+      "title": "Advice",
+      "default": []
+     },
+     "ai": {
+      "anyOf": [
+       {
+        "items": {
+         "$ref": "#/components/schemas/AiHypothesis"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Ai"
+     }
+    },
+    "type": "object",
+    "required": [
+     "app",
+     "url",
+     "checked_at",
+     "state",
+     "signals",
+     "causes"
+    ],
+    "title": "LiveDiagnosisOut"
+   },
+   "LiveOut": {
+    "properties": {
+     "run_id": {
+      "type": "string",
+      "title": "Run Id"
+     },
+     "urls": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "type": "object",
+      "title": "Urls"
+     },
+     "resources": {
+      "items": {
+       "$ref": "#/components/schemas/LiveResourceOut"
+      },
+      "type": "array",
+      "title": "Resources"
+     },
+     "hourly_incl_vat": {
+      "type": "number",
+      "title": "Hourly Incl Vat"
+     },
+     "monthly_incl_vat": {
+      "type": "number",
+      "title": "Monthly Incl Vat"
+     },
+     "free_address_expires_at": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Free Address Expires At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "run_id",
+     "urls",
+     "resources",
+     "hourly_incl_vat",
+     "monthly_incl_vat"
+    ],
+    "title": "LiveOut"
+   },
+   "LiveResourceOut": {
+    "properties": {
+     "kind": {
+      "type": "string",
+      "title": "Kind"
+     },
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "plan": {
+      "type": "string",
+      "title": "Plan"
+     },
+     "tier": {
+      "type": "string",
+      "title": "Tier"
+     },
+     "tier_label": {
+      "type": "string",
+      "title": "Tier Label"
+     },
+     "hourly_price": {
+      "type": "number",
+      "title": "Hourly Price"
+     },
+     "monthly_price": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Monthly Price"
+     }
+    },
+    "type": "object",
+    "required": [
+     "kind",
+     "id",
+     "plan",
+     "tier",
+     "tier_label",
+     "hourly_price"
+    ],
+    "title": "LiveResourceOut"
+   },
+   "MeOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "username": {
+      "type": "string",
+      "title": "Username"
+     },
+     "has_liara_token": {
+      "type": "boolean",
+      "title": "Has Liara Token"
+     },
+     "team_id": {
+      "type": "string",
+      "title": "Team Id"
+     },
+     "team_name": {
+      "type": "string",
+      "title": "Team Name"
+     },
+     "language": {
+      "type": "string",
+      "title": "Language"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "username",
+     "has_liara_token",
+     "team_id",
+     "team_name",
+     "language"
+    ],
+    "title": "MeOut"
+   },
+   "MetricPointOut": {
+    "properties": {
+     "ts": {
+      "type": "number",
+      "title": "Ts"
+     },
+     "value": {
+      "type": "number",
+      "title": "Value"
+     }
+    },
+    "type": "object",
+    "required": [
+     "ts",
+     "value"
+    ],
+    "title": "MetricPointOut"
+   },
+   "MetricsOut": {
+    "properties": {
+     "hours": {
+      "type": "integer",
+      "title": "Hours"
+     },
+     "cpu": {
+      "items": {
+       "$ref": "#/components/schemas/MetricPointOut"
+      },
+      "type": "array",
+      "title": "Cpu"
+     },
+     "memory": {
+      "items": {
+       "$ref": "#/components/schemas/MetricPointOut"
+      },
+      "type": "array",
+      "title": "Memory"
+     }
+    },
+    "type": "object",
+    "required": [
+     "hours",
+     "cpu",
+     "memory"
+    ],
+    "title": "MetricsOut",
+    "description": "CPU and memory of the running app, as Liara reports them (units are not documented, so none is promised)."
+   },
+   "NetworksOut": {
+    "properties": {
+     "networks": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Networks"
+     }
+    },
+    "type": "object",
+    "required": [
+     "networks"
+    ],
+    "title": "NetworksOut"
+   },
+   "OkOut": {
+    "properties": {
+     "ok": {
+      "type": "boolean",
+      "title": "Ok"
+     }
+    },
+    "type": "object",
+    "required": [
+     "ok"
+    ],
+    "title": "OkOut"
+   },
+   "OneClickAppOut": {
+    "properties": {
+     "app": {
+      "type": "string",
+      "title": "App"
+     },
+     "about": {
+      "type": "string",
+      "title": "About"
+     },
+     "categories": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Categories"
+     },
+     "installs": {
+      "type": "integer",
+      "title": "Installs"
+     },
+     "github": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Github"
+     },
+     "needs_vm": {
+      "type": "boolean",
+      "title": "Needs Vm"
+     },
+     "databases": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Databases"
+     },
+     "apps": {
+      "type": "integer",
+      "title": "Apps"
+     }
+    },
+    "type": "object",
+    "required": [
+     "app",
+     "about",
+     "categories",
+     "installs",
+     "needs_vm",
+     "databases",
+     "apps"
+    ],
+    "title": "OneClickAppOut"
+   },
+   "OneClickIn": {
+    "properties": {
+     "app": {
+      "type": "string",
+      "maxLength": 100,
+      "title": "App"
+     },
+     "name": {
+      "type": "string",
+      "maxLength": 100,
+      "title": "Name",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "required": [
+     "app"
+    ],
+    "title": "OneClickIn"
+   },
+   "OneClickListOut": {
+    "properties": {
+     "apps": {
+      "items": {
+       "$ref": "#/components/schemas/OneClickAppOut"
+      },
+      "type": "array",
+      "title": "Apps"
+     }
+    },
+    "type": "object",
+    "required": [
+     "apps"
+    ],
+    "title": "OneClickListOut"
+   },
+   "PrCreatedOut": {
+    "properties": {
+     "url": {
+      "type": "string",
+      "title": "Url"
+     },
+     "number": {
+      "type": "integer",
+      "title": "Number"
+     },
+     "branch": {
+      "type": "string",
+      "title": "Branch"
+     }
+    },
+    "type": "object",
+    "required": [
+     "url",
+     "number",
+     "branch"
+    ],
+    "title": "PrCreatedOut"
+   },
+   "PrFileOut": {
+    "properties": {
+     "path": {
+      "type": "string",
+      "title": "Path"
+     }
+    },
+    "type": "object",
+    "required": [
+     "path"
+    ],
+    "title": "PrFileOut"
+   },
+   "PrPreviewOut": {
+    "properties": {
+     "repo": {
+      "type": "string",
+      "title": "Repo"
+     },
+     "base": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Base"
+     },
+     "files": {
+      "items": {
+       "$ref": "#/components/schemas/PrFileOut"
+      },
+      "type": "array",
+      "title": "Files"
+     },
+     "diff": {
+      "type": "string",
+      "title": "Diff"
+     }
+    },
+    "type": "object",
+    "required": [
+     "repo",
+     "files",
+     "diff"
+    ],
+    "title": "PrPreviewOut",
+    "description": "What a pull request would contain. Nothing is sent to GitHub by the preview."
+   },
+   "ProjectCreatedOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name"
+    ],
+    "title": "ProjectCreatedOut"
+   },
+   "ProjectDeletedOut": {
+    "properties": {
+     "ok": {
+      "type": "boolean",
+      "title": "Ok"
+     },
+     "deleted": {
+      "$ref": "#/components/schemas/DeletedOut"
+     }
+    },
+    "type": "object",
+    "required": [
+     "ok",
+     "deleted"
+    ],
+    "title": "ProjectDeletedOut"
+   },
+   "ProjectDetailOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "source_kind": {
+      "type": "string",
+      "title": "Source Kind"
+     },
+     "git_url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Git Url"
+     },
+     "git_branch": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Git Branch"
+     },
+     "private": {
+      "type": "boolean",
+      "title": "Private",
+      "default": false
+     },
+     "down": {
+      "type": "boolean",
+      "title": "Down",
+      "default": false
+     },
+     "wordpress": {
+      "type": "boolean",
+      "title": "Wordpress",
+      "default": false
+     },
+     "created_at": {
+      "type": "number",
+      "title": "Created At"
+     },
+     "last_run": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/LastRunOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "live": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/LiveOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "runs": {
+      "items": {
+       "$ref": "#/components/schemas/RunRowOut"
+      },
+      "type": "array",
+      "title": "Runs"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "source_kind",
+     "created_at"
+    ],
+    "title": "ProjectDetailOut"
+   },
+   "ProjectRowOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "source_kind": {
+      "type": "string",
+      "title": "Source Kind"
+     },
+     "git_url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Git Url"
+     },
+     "git_branch": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Git Branch"
+     },
+     "private": {
+      "type": "boolean",
+      "title": "Private",
+      "default": false
+     },
+     "down": {
+      "type": "boolean",
+      "title": "Down",
+      "default": false
+     },
+     "wordpress": {
+      "type": "boolean",
+      "title": "Wordpress",
+      "default": false
+     },
+     "created_at": {
+      "type": "number",
+      "title": "Created At"
+     },
+     "last_run": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/LastRunOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "live": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/LiveOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "source_kind",
+     "created_at"
+    ],
+    "title": "ProjectRowOut"
+   },
+   "ProjectsOut": {
+    "properties": {
+     "projects": {
+      "items": {
+       "$ref": "#/components/schemas/ProjectRowOut"
+      },
+      "type": "array",
+      "title": "Projects"
+     }
+    },
+    "type": "object",
+    "required": [
+     "projects"
+    ],
+    "title": "ProjectsOut"
+   },
+   "RegistrarGuideOut": {
+    "properties": {
+     "domain": {
+      "type": "string",
+      "title": "Domain"
+     },
+     "kind": {
+      "type": "string",
+      "title": "Kind"
+     },
+     "mode": {
+      "type": "string",
+      "title": "Mode"
+     },
+     "panel_url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Panel Url"
+     },
+     "nameservers": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Nameservers"
+     },
+     "records": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "type": "array",
+      "title": "Records"
+     },
+     "steps": {
+      "items": {
+       "$ref": "#/components/schemas/DomainStepOut"
+      },
+      "type": "array",
+      "title": "Steps"
+     },
+     "wait_hours": {
+      "additionalProperties": {
+       "type": "integer"
+      },
+      "type": "object",
+      "title": "Wait Hours"
+     },
+     "sources": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Sources"
+     }
+    },
+    "type": "object",
+    "required": [
+     "domain",
+     "kind",
+     "mode",
+     "steps",
+     "wait_hours"
+    ],
+    "title": "RegistrarGuideOut"
+   },
+   "ReleaseOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "state": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "State"
+     },
+     "current": {
+      "type": "boolean",
+      "title": "Current",
+      "default": false
+     },
+     "port": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Port"
+     },
+     "type": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Type"
+     },
+     "image": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Image"
+     },
+     "created_at": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Created At"
+     },
+     "message": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Message"
+     },
+     "commit": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Commit"
+     },
+     "branch": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Branch"
+     },
+     "rollback": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Rollback"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id"
+    ],
+    "title": "ReleaseOut"
+   },
+   "ReleasesOut": {
+    "properties": {
+     "app": {
+      "type": "string",
+      "title": "App"
+     },
+     "current": {
+      "type": "string",
+      "title": "Current"
+     },
+     "total": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Total"
+     },
+     "releases": {
+      "items": {
+       "$ref": "#/components/schemas/ReleaseOut"
+      },
+      "type": "array",
+      "title": "Releases"
+     }
+    },
+    "type": "object",
+    "required": [
+     "app",
+     "current",
+     "releases"
+    ],
+    "title": "ReleasesOut"
+   },
+   "RemovalPlanOut": {
+    "properties": {
+     "domain": {
+      "type": "string",
+      "title": "Domain"
+     },
+     "zone": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/ZoneOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "records": {
+      "items": {
+       "$ref": "#/components/schemas/DomainRecordOut"
+      },
+      "type": "array",
+      "title": "Records"
+     }
+    },
+    "type": "object",
+    "required": [
+     "domain",
+     "records"
+    ],
+    "title": "RemovalPlanOut",
+    "description": "What removing a domain could also clean up in the developer's Liara DNS zone."
+   },
+   "RespondIn": {
+    "properties": {
+     "request_id": {
+      "type": "string",
+      "title": "Request Id"
+     },
+     "value": {
+      "title": "Value"
+     }
+    },
+    "type": "object",
+    "required": [
+     "request_id",
+     "value"
+    ],
+    "title": "RespondIn"
+   },
+   "RollbackIn": {
+    "properties": {
+     "confirm": {
+      "type": "boolean",
+      "title": "Confirm",
+      "default": false
+     }
+    },
+    "type": "object",
+    "title": "RollbackIn"
+   },
+   "RollbackOut": {
+    "properties": {
+     "release_id": {
+      "type": "string",
+      "title": "Release Id"
+     },
+     "state": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "State"
+     },
+     "ok": {
+      "type": "boolean",
+      "title": "Ok"
+     },
+     "via": {
+      "type": "string",
+      "title": "Via"
+     },
+     "url": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Url"
+     },
+     "serving": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Serving"
+     },
+     "reason": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reason"
+     }
+    },
+    "type": "object",
+    "required": [
+     "release_id",
+     "ok",
+     "via"
+    ],
+    "title": "RollbackOut"
+   },
+   "RunCreatedOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id"
+    ],
+    "title": "RunCreatedOut"
+   },
+   "RunDetailOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "project_id": {
+      "type": "integer",
+      "title": "Project Id"
+     },
+     "project": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Project"
+     },
+     "mode": {
+      "type": "string",
+      "title": "Mode"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "created_at": {
+      "type": "number",
+      "title": "Created At"
+     },
+     "finished_at": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Finished At"
+     },
+     "cleaned_at": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Cleaned At"
+     },
+     "result": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/RunResultOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "summary": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Summary"
+     },
+     "open_requests": {
+      "items": {
+       "$ref": "#/components/schemas/EventOut"
+      },
+      "type": "array",
+      "title": "Open Requests"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "project_id",
+     "mode",
+     "status",
+     "created_at"
+    ],
+    "title": "RunDetailOut"
+   },
+   "RunIn": {
+    "properties": {
+     "mode": {
+      "type": "string",
+      "title": "Mode",
+      "default": "deploy"
+     },
+     "network": {
+      "type": "string",
+      "title": "Network",
+      "default": ""
+     }
+    },
+    "type": "object",
+    "title": "RunIn"
+   },
+   "RunResultOut": {
+    "properties": {
+     "ok": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Ok"
+     },
+     "stopped": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Stopped"
+     },
+     "reason_code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reason Code"
+     },
+     "reason_params": {
+      "additionalProperties": true,
+      "type": "object",
+      "title": "Reason Params"
+     },
+     "failed_step": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Failed Step"
+     },
+     "diagnosis_code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Diagnosis Code"
+     },
+     "created": {
+      "$ref": "#/components/schemas/CreatedOut"
+     },
+     "urls": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "type": "object",
+      "title": "Urls"
+     },
+     "dry_run": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Dry Run"
+     },
+     "fixes": {
+      "items": {
+       "$ref": "#/components/schemas/AppliedFixOut"
+      },
+      "type": "array",
+      "title": "Fixes"
+     },
+     "heal_attempts": {
+      "type": "integer",
+      "title": "Heal Attempts",
+      "default": 0
+     }
+    },
+    "type": "object",
+    "title": "RunResultOut"
+   },
+   "RunRowOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "project_id": {
+      "type": "integer",
+      "title": "Project Id"
+     },
+     "project": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Project"
+     },
+     "mode": {
+      "type": "string",
+      "title": "Mode"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "created_at": {
+      "type": "number",
+      "title": "Created At"
+     },
+     "finished_at": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Finished At"
+     },
+     "cleaned_at": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Cleaned At"
+     },
+     "result": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/RunResultOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "summary": {
+      "anyOf": [
+       {
+        "additionalProperties": true,
+        "type": "object"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Summary"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "project_id",
+     "mode",
+     "status",
+     "created_at"
+    ],
+    "title": "RunRowOut"
+   },
+   "RunsOut": {
+    "properties": {
+     "runs": {
+      "items": {
+       "$ref": "#/components/schemas/RunRowOut"
+      },
+      "type": "array",
+      "title": "Runs"
+     }
+    },
+    "type": "object",
+    "required": [
+     "runs"
+    ],
+    "title": "RunsOut"
+   },
+   "SessionOut": {
+    "properties": {
+     "authenticated": {
+      "type": "boolean",
+      "title": "Authenticated"
+     },
+     "user": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/UserOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "type": "object",
+    "required": [
+     "authenticated"
+    ],
+    "title": "SessionOut",
+    "description": "Never an error: lets the UI ask \"am I signed in?\" without a 401 in the console."
+   },
+   "SettingsIn": {
+    "properties": {
+     "liara_token": {
+      "anyOf": [
+       {
+        "type": "string",
+        "maxLength": 500,
+        "minLength": 10
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Liara Token"
+     },
+     "team_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Team Id"
+     },
+     "team_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Team Name"
+     },
+     "language": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Language"
+     }
+    },
+    "type": "object",
+    "title": "SettingsIn"
+   },
+   "SettingsOut": {
+    "properties": {
+     "has_liara_token": {
+      "type": "boolean",
+      "title": "Has Liara Token"
+     },
+     "has_alert_webhook": {
+      "type": "boolean",
+      "title": "Has Alert Webhook",
+      "default": false
+     },
+     "github_login": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Github Login"
+     },
+     "team_id": {
+      "type": "string",
+      "title": "Team Id"
+     },
+     "team_name": {
+      "type": "string",
+      "title": "Team Name"
+     },
+     "language": {
+      "type": "string",
+      "title": "Language"
+     }
+    },
+    "type": "object",
+    "required": [
+     "has_liara_token",
+     "team_id",
+     "team_name",
+     "language"
+    ],
+    "title": "SettingsOut"
+   },
+   "StartedOut": {
+    "properties": {
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "run_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Run Id"
+     }
+    },
+    "type": "object",
+    "required": [
+     "status"
+    ],
+    "title": "StartedOut"
+   },
+   "TeamOut": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name"
+    ],
+    "title": "TeamOut"
+   },
+   "UptimeIncidentOut": {
+    "properties": {
+     "down_at": {
+      "type": "number",
+      "title": "Down At"
+     },
+     "up_at": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Up At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "down_at"
+    ],
+    "title": "UptimeIncidentOut"
+   },
+   "UptimeLastOut": {
+    "properties": {
+     "ts": {
+      "type": "number",
+      "title": "Ts"
+     },
+     "status": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Status"
+     },
+     "ms": {
+      "type": "integer",
+      "title": "Ms"
+     },
+     "url": {
+      "type": "string",
+      "title": "Url"
+     }
+    },
+    "type": "object",
+    "required": [
+     "ts",
+     "ms",
+     "url"
+    ],
+    "title": "UptimeLastOut"
+   },
+   "UptimeOut": {
+    "properties": {
+     "interval_seconds": {
+      "type": "number",
+      "title": "Interval Seconds"
+     },
+     "watching": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Watching"
+     },
+     "checks": {
+      "type": "integer",
+      "title": "Checks"
+     },
+     "up_percent": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Up Percent"
+     },
+     "current": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Current"
+     },
+     "last": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/UptimeLastOut"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "avg_ms": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Avg Ms"
+     },
+     "incidents": {
+      "items": {
+       "$ref": "#/components/schemas/UptimeIncidentOut"
+      },
+      "type": "array",
+      "title": "Incidents"
+     },
+     "series": {
+      "items": {
+       "$ref": "#/components/schemas/UptimePointOut"
+      },
+      "type": "array",
+      "title": "Series"
+     }
+    },
+    "type": "object",
+    "required": [
+     "interval_seconds",
+     "watching",
+     "checks",
+     "incidents",
+     "series"
+    ],
+    "title": "UptimeOut",
+    "description": "The last 24 hours of checks. `up_percent` and `current` are null until the first check."
+   },
+   "UptimePointOut": {
+    "properties": {
+     "ts": {
+      "type": "number",
+      "title": "Ts"
+     },
+     "ok": {
+      "type": "boolean",
+      "title": "Ok"
+     },
+     "ms": {
+      "type": "integer",
+      "title": "Ms"
+     }
+    },
+    "type": "object",
+    "required": [
+     "ts",
+     "ok",
+     "ms"
+    ],
+    "title": "UptimePointOut"
+   },
+   "UserOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "username": {
+      "type": "string",
+      "title": "Username"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "username"
+    ],
+    "title": "UserOut"
+   },
+   "ValidationError": {
+    "properties": {
+     "loc": {
+      "items": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "integer"
+        }
+       ]
+      },
+      "type": "array",
+      "title": "Location"
+     },
+     "msg": {
+      "type": "string",
+      "title": "Message"
+     },
+     "type": {
+      "type": "string",
+      "title": "Error Type"
+     },
+     "input": {
+      "title": "Input"
+     },
+     "ctx": {
+      "type": "object",
+      "title": "Context"
+     }
+    },
+    "type": "object",
+    "required": [
+     "loc",
+     "msg",
+     "type"
+    ],
+    "title": "ValidationError"
+   },
+   "WebhookIn": {
+    "properties": {
+     "url": {
+      "type": "string",
+      "maxLength": 1000,
+      "minLength": 10,
+      "title": "Url"
+     }
+    },
+    "type": "object",
+    "required": [
+     "url"
+    ],
+    "title": "WebhookIn"
+   },
+   "WpJobOut": {
+    "properties": {
+     "state": {
+      "type": "string",
+      "title": "State"
+     },
+     "sent": {
+      "type": "integer",
+      "title": "Sent"
+     },
+     "total": {
+      "type": "integer",
+      "title": "Total"
+     },
+     "bytes": {
+      "type": "integer",
+      "title": "Bytes"
+     },
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     }
+    },
+    "type": "object",
+    "required": [
+     "state",
+     "sent",
+     "total",
+     "bytes"
+    ],
+    "title": "WpJobOut"
+   },
+   "WpPlanOut": {
+    "properties": {
+     "files": {
+      "type": "integer",
+      "title": "Files"
+     },
+     "total_bytes": {
+      "type": "integer",
+      "title": "Total Bytes"
+     },
+     "parts": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Parts"
+     },
+     "uploads": {
+      "type": "boolean",
+      "title": "Uploads"
+     },
+     "sample": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Sample"
+     }
+    },
+    "type": "object",
+    "required": [
+     "files",
+     "total_bytes",
+     "parts",
+     "uploads",
+     "sample"
+    ],
+    "title": "WpPlanOut",
+    "description": "What would be sent to the managed WordPress site over FTPS. Nothing is sent by the preview."
+   },
+   "WpUploadIn": {
+    "properties": {
+     "host": {
+      "type": "string",
+      "maxLength": 253,
+      "title": "Host"
+     },
+     "port": {
+      "type": "integer",
+      "maximum": 65535.0,
+      "minimum": 1.0,
+      "title": "Port",
+      "default": 21
+     },
+     "user": {
+      "type": "string",
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "User"
+     },
+     "password": {
+      "type": "string",
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Password"
+     },
+     "implicit": {
+      "type": "boolean",
+      "title": "Implicit",
+      "default": false
+     },
+     "remote_root": {
+      "type": "string",
+      "maxLength": 200,
+      "title": "Remote Root",
+      "default": ""
+     },
+     "uploads": {
+      "type": "boolean",
+      "title": "Uploads",
+      "default": false
+     },
+     "confirm": {
+      "type": "boolean",
+      "title": "Confirm",
+      "default": false
+     }
+    },
+    "type": "object",
+    "required": [
+     "host",
+     "user",
+     "password"
+    ],
+    "title": "WpUploadIn"
+   },
+   "ZoneOut": {
+    "properties": {
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     },
+     "status": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Status"
+     },
+     "active": {
+      "type": "boolean",
+      "title": "Active"
+     },
+     "name_servers": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Name Servers"
+     },
+     "current_name_servers": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Current Name Servers"
+     }
+    },
+    "type": "object",
+    "required": [
+     "active"
+    ],
+    "title": "ZoneOut"
+   }
+  }
+ }
+}

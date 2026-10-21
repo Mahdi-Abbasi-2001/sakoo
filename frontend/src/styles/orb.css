@@ -1,0 +1,45 @@
+.orb{display:block;overflow:visible;--oc:var(--accent)}
+.orb .o-halo{fill:var(--oc);opacity:.10}
+.orb .o-ring{fill:none;stroke:var(--oc);stroke-width:1;stroke-dasharray:3 6;opacity:.7;transform-box:fill-box;transform-origin:center}
+.orb .o-arcs{fill:none;stroke:var(--oc);stroke-width:2;stroke-linecap:round;transform-box:fill-box;transform-origin:center}
+.orb .o-core{fill:var(--sunken);stroke:var(--oc);stroke-width:1.8;stroke-linejoin:round;transform-box:fill-box;transform-origin:center}
+.orb .gl{display:none;fill:none;stroke:var(--oc);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.orb .gl-fill{fill:var(--oc);stroke:none}
+.orb g[class^="g-"]{display:none}
+.orb .o-part{fill:var(--oc);opacity:0;transform-box:fill-box;transform-origin:center}
+.orb .o-burst{fill:none;stroke:var(--oc);stroke-width:2;opacity:0;transform-box:fill-box;transform-origin:center}
+.orb .o-halo{transform-box:fill-box;transform-origin:center}
+.orb[data-state=reading]{--oc:var(--accent)}.orb[data-state=thinking]{--oc:var(--accent-2)}.orb[data-state=waiting]{--oc:var(--wait)}
+.orb[data-state=working]{--oc:var(--run)}.orb[data-state=done]{--oc:var(--ok)}.orb[data-state=failed]{--oc:var(--fail)}
+.orb[data-state=reading] .g-reading,.orb[data-state=thinking] .g-thinking,.orb[data-state=waiting] .g-waiting,.orb[data-state=working] .g-working,.orb[data-state=done] .g-done,.orb[data-state=failed] .g-failed{display:inline}
+.orb[data-state=reading] .g-reading .gl,.orb[data-state=thinking] .g-thinking .gl,.orb[data-state=waiting] .g-waiting .gl,.orb[data-state=working] .g-working .gl,.orb[data-state=done] .g-done .gl,.orb[data-state=failed] .g-failed .gl{display:inline}
+/* one distinct animation per state: reading draws particles in, thinking turns two ways, waiting breathes, working runs, done bursts once, failed jolts twice */
+.orb[data-state=reading] .o-ring{animation:o-spin 18s linear infinite}
+.orb[data-state=reading] .o-part{animation:o-draw 1.7s cubic-bezier(.2,.7,.2,1) infinite}
+.orb[data-state=thinking] .o-arcs{animation:o-spin 2.4s linear infinite}
+.orb[data-state=thinking] .o-ring{animation:o-spinr 7s linear infinite}
+.orb[data-state=thinking] .o-core{animation:o-wob 2.2s ease-in-out infinite}
+.orb[data-state=waiting] .o-core,.orb[data-state=waiting] .o-halo{animation:o-breathe 3.2s ease-in-out infinite}
+.orb[data-state=waiting] .o-ring{opacity:.5}
+.orb[data-state=working] .o-arcs{animation:o-spin .9s linear infinite}
+.orb[data-state=working] .o-ring{animation:o-spin 3s linear infinite}
+[dir=rtl] .orb[data-state=working] .g-working{transform:scaleX(-1)}
+.orb[data-state=done] .o-burst{animation:o-burst 1s cubic-bezier(.2,.7,.2,1) 1 forwards}
+.orb[data-state=done] .o-ring{opacity:.3}
+.orb[data-state=failed] .o-core{animation:o-jolt .5s ease-in-out 2}
+.orb[data-state=failed] .o-ring{stroke-dasharray:14 9 3 9}
+@keyframes o-spin{to{transform:rotate(360deg)}}
+@keyframes o-spinr{to{transform:rotate(-360deg)}}
+@keyframes o-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+@keyframes o-wob{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.04) rotate(6deg)}}
+@keyframes o-draw{0%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1)}15%{opacity:1}100%{opacity:0;transform:translate(0,0) scale(.3)}}
+@keyframes o-burst{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(3.4)}}
+@keyframes o-jolt{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+/* paused while the tab is hidden */
+html.tab-hidden .orb *,html.tab-hidden .flow *,html.tab-hidden .sk{animation-play-state:paused!important}
+@media (prefers-reduced-motion:reduce){.orb *{animation:none!important}}
+/* number ticker: the final text holds the width */
+.tick{display:inline-grid;font-variant-numeric:tabular-nums}
+.tick>*{grid-area:1/1}
+.tick-final{visibility:hidden}
+.tick-anim{text-align:end}

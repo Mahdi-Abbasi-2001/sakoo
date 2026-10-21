@@ -1,0 +1,172 @@
+/* Landing page additions to the generated design stylesheet (landing.gen.css). Tokens map the design's short names to the app's. */
+.lp{--ac:var(--accent);--ac2:var(--accent-2);--acink:var(--accent-ink);--tx:var(--text);--tx2:var(--text-2);--tx3:var(--text-3);--line2:var(--line-strong);
+  --grid:rgba(54,73,85,.28);--grid2:rgba(54,73,85,.42);--spot:rgba(19,226,208,.10)}
+[data-theme="light"] .lp{--grid:rgba(6,118,108,.10);--grid2:rgba(6,118,108,.16);--spot:rgba(6,118,108,.10)}
+.lp{min-height:100vh}
+/* the header uses the app's language and theme controls */
+.lp .bar{gap:16px}
+.lp .bar .seg{margin-inline-start:0}
+.lp .acct{min-height:44px;text-decoration:none}
+.lp .btn{min-height:44px;padding:0 16px;font-size:13.5px}
+.lp .btn.reg{border-color:color-mix(in srgb,var(--accent) 45%,transparent);background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--text)}
+.lp .btn.reg:hover{background:color-mix(in srgb,var(--accent) 18%,transparent);border-color:var(--accent)}
+.lp .acct:hover{color:var(--tx)}
+.lp .lp-brand{min-height:44px}
+.lp .lp-link{display:inline-flex;align-items:center;min-height:44px;color:var(--tx);text-decoration:underline;text-underline-offset:3px}
+.lp .ft-links a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none;color:var(--tx2)}
+.lp .ft-links a:hover{color:var(--tx)}
+.lp .lp-nav a{display:inline-flex;align-items:center;min-height:44px}
+.lp .lp-drop .ltr{overflow-wrap:anywhere}
+/* the link-styled call to action keeps the design's button look */
+.lp a.cta{text-decoration:none}
+@container lp (max-width:600px){
+  .lp .bar .seg button{min-width:44px;padding:0 8px}
+}
+.lp .lp-brand{white-space:nowrap}
+@container lp (max-width:600px){
+  .lp .states li span{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.35}
+}
+
+.lp .lp-drop:has(input:focus-visible){outline:2px solid var(--tx);outline-offset:3px}
+.lp .lp-chip:focus-visible,.lp .lp-btn:focus-visible{outline-offset:2px}
+
+/* reduced motion: hover and focus change colour only, nothing lifts or moves */
+@media (prefers-reduced-motion:reduce){
+  .lp .tool:hover,.lp .tool:focus-within,.lp a.cta:hover,.lp .cta:hover,.lp .lp-btn:hover,.lp .lp-chip:hover{transform:none!important;box-shadow:none!important}
+}
+.lp.rm .tool:hover,.lp.rm .tool:focus-within,.lp.rm a.cta:hover,.lp.rm .cta:hover{transform:none!important;box-shadow:none!important}
+
+/* the price labels sit above the node boxes, over the network's grid lines when a resource lights its cells: give them the same halo the other scene text has */
+.lp .scene .node .dim-t{paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
+
+/* the six state names are never cut short, at any width */
+.lp .states li span{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.35}
+
+/* ---- Persian typography: Persian words and Persian digits are never set in the Latin mono face; sizes and spacing are tuned for Vazirmatn ---- */
+.lp[lang=fa]{font-size:17px}
+.lp[lang=fa] h1,.lp[lang=fa] h2,.lp[lang=fa] h3{text-wrap:balance}
+.lp[lang=fa] p,.lp[lang=fa] li{text-wrap:pretty}
+.lp[lang=fa] h1{font-size:clamp(38px,4.2vw,62px);line-height:1.4}
+.lp[lang=fa] h2{font-size:clamp(26px,2.5vw,34px);line-height:1.5}
+.lp[lang=fa] .lp-lead{font-size:18px;line-height:2;max-width:30em}
+.lp[lang=fa] .tag{font-family:var(--f-fa);font-size:14px;font-weight:500;letter-spacing:0;color:var(--tx3)}
+.lp[lang=fa] .lp-sub{font-family:var(--f-fa);font-size:13px}
+.lp[lang=fa] .src{font-family:var(--f-fa);font-size:13.5px;line-height:1.9}
+.lp[lang=fa] .lp-nav a{font-size:15px}
+.lp[lang=fa] .acct{font-size:14px}
+.lp[lang=fa] .drop b,.lp[lang=fa] .lp-drop b{font-size:16.5px}
+.lp[lang=fa] .lp-drop span,.lp[lang=fa] .fld label,.lp[lang=fa] .toolnote{font-size:14.5px}
+.lp[lang=fa] .cta{font-size:16px}
+.lp[lang=fa] .lp-btn{font-size:15.5px}
+.lp[lang=fa] .lp-chip{font-size:14.5px}
+.lp[lang=fa] .lp-appr .appr-txt{font-size:15.5px;line-height:1.9}
+.lp[lang=fa] .state-pill{font-size:14px}
+.lp[lang=fa] .readout .unit,.lp[lang=fa] .readout .lp-m{font-size:14px}
+.lp[lang=fa] .readout .lp-m b{font-family:var(--f-fa);font-weight:700;font-size:22px;letter-spacing:0;font-variant-numeric:normal}
+.lp[lang=fa] .readout .lp-big{font-variant-numeric:normal}
+.lp[lang=fa] .states li span{font-size:14.5px}
+.lp[lang=fa] .lp-steps h3{font-size:24px}
+.lp[lang=fa] .lp-steps p{font-size:16.5px;line-height:2}
+.lp[lang=fa] .lp-steps .ex-fa{font-family:var(--f-fa);direction:rtl;font-size:14.5px}
+.lp[lang=fa] .sec-grid>div:first-child p{font-size:16px;line-height:2}
+.lp[lang=fa] .rows p,.lp[lang=fa] .facts p{font-size:16.5px;line-height:2}
+.lp[lang=fa] .rows .lv{font-family:var(--f-fa);font-size:14.5px;font-weight:600}
+.lp[lang=fa] .facts .i{font-family:var(--f-fa);font-weight:700}
+.lp[lang=fa] .ft-links a,.lp[lang=fa] .ft-row{font-size:14.5px}
+/* the drawing: Persian words get a size and weight that hold up at drawing scale */
+.lp[lang=fa] .scene .stw,.lp[lang=fa] .scene .pu,.lp[lang=fa] .scene .tvl{font-size:12.5px;font-weight:500}
+.lp[lang=fa] .scene .q-ask text,.lp[lang=fa] .scene .q-ans text{font-size:12.5px;font-weight:500}
+.lp[lang=fa] .scene .netlbl{font-size:13px}
+@container lp (max-width:600px){
+  .lp[lang=fa] h1{font-size:clamp(32px,9.4vw,40px)}
+  .lp[lang=fa] .lp-lead{font-size:17px}
+}
+/* the dim evidence line inside a node was 3.85:1 on a live node in the narrow drawing */
+.lp .scene .ev{fill:var(--tx2)}
+
+/* ---- the plain-language section and the closing call to action ---- */
+.lp .why-head{max-width:40em;margin-bottom:40px}
+.lp .why-head .tag{display:block;margin-bottom:14px}
+.lp .why-head p{margin-top:14px;color:var(--tx2);font-size:17px}
+.lp .why-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.lp .why-card{background:linear-gradient(180deg,var(--raised),var(--surface));border:1px solid var(--line);border-radius:16px;padding:28px 24px 30px}
+.lp .why-ic{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:14px;color:var(--ac);background:color-mix(in srgb,var(--ac) 12%,transparent);border:1px solid color-mix(in srgb,var(--ac) 30%,transparent);margin-bottom:20px}
+.lp .why-card h3{font-size:19px;font-weight:700;line-height:1.35;letter-spacing:-.01em}
+.lp[lang=fa] .why-card h3{font-size:19.5px;font-weight:800;line-height:1.7;letter-spacing:0}
+.lp .why-card p{margin-top:10px;color:var(--tx2);font-size:15.5px;line-height:1.7}
+.lp[lang=fa] .why-card p{font-size:16.5px;line-height:2}
+.lp section.go{border-top:1px solid var(--line)}
+.lp .go-in{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
+.lp .go-in p{color:var(--tx2);font-size:17px;max-width:32em}
+.lp[lang=fa] .go-in h2{font-size:clamp(28px,3vw,38px)}
+.lp[lang=fa] .go-in p{font-size:18px;line-height:2}
+.lp .go-cta{width:auto;min-width:300px;padding:0 28px;margin-top:10px}
+@container lp (max-width:1100px){.lp .why-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@container lp (max-width:600px){.lp .why-grid{grid-template-columns:minmax(0,1fr)}.lp .go-cta{width:100%;min-width:0}}
+
+/* ---- hero picture: the launch pad (one 10 s loop; the last frame for reduced motion; paused off screen) ---- */
+.lpd{border:1px solid var(--glassline);border-radius:var(--r-glass);background:linear-gradient(180deg,rgba(7,13,17,.55),rgba(4,7,10,.7));overflow:hidden}
+[data-theme="light"] .lpd{background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(231,240,239,.8))}
+.lpd svg{width:100%;height:auto;display:block}
+.lpd-grid line{stroke:var(--line);stroke-width:1;opacity:.6}
+.lpd-pad ellipse{stroke:var(--accent)}
+.lpd-t{fill:var(--text);font-family:var(--f-sans)}
+html[lang="fa"] .lpd-t{font-family:var(--f-fa)}
+.lpd-mono{font-family:var(--f-mono)!important}
+.lpd-dim{fill:var(--text-3)}
+.lpd-card{fill:var(--raised);stroke:var(--line-strong)}
+.lpd-line{fill:var(--line-strong)}.lpd-line1{fill:var(--accent);opacity:.85}
+.lpd-hex{fill:var(--surface);stroke:var(--accent)}.lpd-hex2{stroke:var(--accent-2)}.lpd-dot{fill:var(--accent)}
+.lpd-tag{fill:var(--surface)}
+.lpd-live{fill:var(--surface);stroke:var(--accent-2)}
+.lpd-a,.lpd-ring{animation-duration:10s;animation-iteration-count:infinite;animation-timing-function:cubic-bezier(.2,.7,.2,1);transform-box:fill-box;transform-origin:center;opacity:0}
+.lpd-off .lpd-a,.lpd-off .lpd-ring{animation-play-state:paused}
+.lpd-still .lpd-a,.lpd-still .lpd-ring{animation-play-state:paused;animation-delay:-8.4s}
+@media (prefers-reduced-motion:reduce){.lpd .lpd-a,.lpd .lpd-ring{animation-play-state:paused;animation-delay:-8.4s}}
+@keyframes lpd-drop{0%{opacity:0;transform:translateY(-170px)}9%{opacity:1;transform:translateY(0)}41%{opacity:1;transform:translateY(0) scale(1)}52%{opacity:1;transform:translateY(98px) scale(.82)}58%,100%{opacity:0;transform:translateY(98px) scale(.5)}}
+@keyframes lpd-t1{0%,11%{opacity:0;transform:scale(.4)}16%,41%{opacity:1;transform:scale(1)}50%,100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.2)}}
+@keyframes lpd-t2{0%,17%{opacity:0;transform:scale(.4)}22%,41%{opacity:1;transform:scale(1)}50%,100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.2)}}
+@keyframes lpd-t3{0%,23%{opacity:0;transform:scale(.4)}28%,41%{opacity:1;transform:scale(1)}50%,100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.2)}}
+@keyframes lpd-t4{0%,29%{opacity:0;transform:scale(.4)}34%,41%{opacity:1;transform:scale(1)}50%,100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.2)}}
+@keyframes lpd-beam{0%,55%{opacity:0;transform:scaleY(.05)}62%{opacity:.9;transform:scaleY(1)}80%{opacity:.55;transform:scaleY(1)}90%,100%{opacity:0;transform:scaleY(1)}}
+@keyframes lpd-orb{0%,56%{opacity:0;transform:translateY(60px) scale(.5)}66%{opacity:1;transform:translateY(0) scale(1)}86%{opacity:1;transform:translateY(-6px) scale(1.04)}94%,100%{opacity:0;transform:translateY(-14px) scale(1.08)}}
+@keyframes lpd-pill{0%,66%{opacity:0;transform:translateY(14px) scale(.9)}72%{opacity:1;transform:translateY(0) scale(1)}90%{opacity:1}96%,100%{opacity:0}}
+@keyframes lpd-ring{0%,50%{opacity:0;transform:scale(.7)}54%{opacity:.8}70%,100%{opacity:0;transform:scale(1.5)}}
+.lpd-drop{animation-name:lpd-drop}.lpd-t1{animation-name:lpd-t1}.lpd-t2{animation-name:lpd-t2}.lpd-t3{animation-name:lpd-t3}.lpd-t4{animation-name:lpd-t4}
+.lpd-beam{animation-name:lpd-beam;transform-origin:50% 100%}.lpd-orb{animation-name:lpd-orb}.lpd-pill{animation-name:lpd-pill}.lpd-ring{animation-name:lpd-ring;animation-timing-function:ease-out}
+
+/* ---- "What it creates": the sample's private network (build-up once on entering the viewport; finished with reduced motion) ---- */
+.crd{border:1px solid var(--glassline);border-radius:var(--r-glass);background:linear-gradient(180deg,rgba(7,13,17,.55),rgba(4,7,10,.7));overflow:hidden;padding:6px 8px 4px}
+[data-theme="light"] .crd{background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(231,240,239,.8))}
+.crd svg{width:100%;height:auto;display:block;direction:ltr}
+.crd-net{fill:none;stroke:var(--line-strong);stroke-dasharray:6 6;stroke-width:1.5}
+.crd-t{fill:var(--text);font-family:var(--f-sans)}html[lang="fa"] .crd-t{font-family:var(--f-fa)}
+.crd-mono{font-family:var(--f-mono)!important}.crd-dim{fill:var(--text-3)}
+.crd-box{fill:var(--surface);stroke:var(--line-strong);stroke-width:1.5}
+.crd-link{fill:none;stroke:var(--line-strong);stroke-width:2}
+.crd-env{font-family:var(--f-mono);font-size:12px;fill:var(--text-2)}
+.crd-pill{fill:var(--surface);stroke:var(--line-strong)}
+.crd-flow{fill:var(--accent);opacity:0}
+.crd-price{fill:var(--accent)}
+.crd-tot{display:flex;gap:28px;align-items:baseline;flex-wrap:wrap;padding:8px 18px 4px}
+.crd-tot b{font-size:30px;font-weight:700;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.crd-tot span{color:var(--text-3);font-size:13px}
+.crd-note{margin:0;padding:4px 18px 16px;color:var(--text-3);font-size:12.5px;line-height:19px}
+html[lang="fa"] .crd-note{font-size:13.5px;line-height:23px}
+
+.crd-list{display:none;list-style:none;margin:0;padding:10px 12px 0}
+.crd .crd-li{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;margin:0 0 10px;border:1px solid var(--line-strong);border-radius:14px;background:var(--surface)}
+.crd .crd-li>svg{flex:none;stroke:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);border-radius:50%;padding:7px;width:40px;height:40px}
+.crd-li-b{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.crd-li-b span{color:var(--text-3);font-size:13px;line-height:20px}
+.crd .crd-use{font-size:12.5px!important;color:var(--text-2)!important;overflow-wrap:anywhere;unicode-bidi:plaintext}
+.crd .crd-li-b .crd-li-p{color:var(--accent);font-size:13px;margin-top:4px}
+@media (max-width:640px){.crd>svg{display:none}.crd-list{display:block}}
+
+/* the picture and the tool side by side: same top, same bottom (the picture sits in the middle of its taller box) */
+@container lp (min-width:1101px){
+  .lp .hero-grid{align-items:stretch}
+  .lp .sheet-col{display:flex;flex-direction:column}
+  .lp .sheet-col .lpd{flex:1;display:flex;align-items:center;justify-content:center}
+  .lp .sheet-col .lpd svg{height:auto;max-height:100%}
+}

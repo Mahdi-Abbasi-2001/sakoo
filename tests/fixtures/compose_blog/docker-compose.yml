@@ -1,0 +1,32 @@
+services:
+  web:
+    build: ./web
+    ports: ["8080:3000"]
+    environment:
+      DATABASE_URL: postgres://app:secret@db:5432/app
+      REDIS_HOST: cache
+      PORT: ${PORT:-3000}
+    depends_on: [db, cache]
+    volumes:
+      - uploads:/app/uploads
+      - ./config:/app/config
+  worker:
+    build: ./web
+    command: node worker.js
+    environment:
+      DATABASE_URL: postgres://app:secret@db:5432/app
+  db:
+    image: postgres:16.3-alpine
+    environment:
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  cache:
+    image: redis:7
+  proxy:
+    image: nginx:stable
+    ports: ["80:80"]
+volumes:
+  uploads:
+  pgdata:

@@ -1,0 +1,589 @@
+[
+ {
+  "id": 1,
+  "ts": 1792330480.4749844,
+  "kind": "run_started",
+  "data": {
+   "project": "api",
+   "dry_run": false
+  }
+ },
+ {
+  "id": 2,
+  "ts": 1792330480.4749987,
+  "kind": "phase_started",
+  "data": {
+   "phase": "analyze"
+  }
+ },
+ {
+  "id": 3,
+  "ts": 1792330480.4756966,
+  "kind": "phase_finished",
+  "data": {
+   "phase": "analyze",
+   "manifests": {
+    ".": [
+     "Dockerfile",
+     "package.json"
+    ]
+   },
+   "hints": [
+    "platform=docker",
+    "platform=node",
+    "db=postgres",
+    "db=redis"
+   ],
+   "env_var_names": [
+    "DATABASE_URL",
+    "JWT_SECRET",
+    "PORT"
+   ]
+  }
+ },
+ {
+  "id": 4,
+  "ts": 1792330480.4757307,
+  "kind": "phase_started",
+  "data": {
+   "phase": "plan"
+  }
+ },
+ {
+  "id": 5,
+  "ts": 1792330480.4834535,
+  "kind": "tool_call",
+  "data": {
+   "name": "submit_plan",
+   "arguments": "{\"apps\": [{\"name\": \"api\", \"platform\": \"node\", \"port\": 3000, \"start_command\": \"npm start\", \"env\": {\"DATABASE_URL\": \"postgres://$DB_api-db_USER:$DB_api-db_PASSWORD@$DB_api-db_HOST:$DB_api-db_PORT/$DB_api-db_NAME\"}, \"evidence\": [{\"file\": \"package.json\", \"line\": 1, \"note\": \"start script\"}]}], \"databases..."
+  }
+ },
+ {
+  "id": 6,
+  "ts": 1792330480.4843216,
+  "kind": "plan_updated",
+  "data": {
+   "apps": 1,
+   "databases": 1
+  }
+ },
+ {
+  "id": 7,
+  "ts": 1792330480.4881504,
+  "kind": "plan_ready",
+  "data": {
+   "how": "investigated by the agent",
+   "how_code": "investigated_by_agent",
+   "how_params": {},
+   "plan": {
+    "apps": [
+     {
+      "name": "api",
+      "path": ".",
+      "platform": "node",
+      "port": 3000,
+      "build_command": null,
+      "start_command": "npm start",
+      "image": null,
+      "args": [],
+      "env": [
+       {
+        "name": "DATABASE_URL",
+        "reference": "postgres://$DB_api-db_USER:$DB_api-db_PASSWORD@$DB_api-db_HOST:$DB_api-db_PORT/$DB_api-db_NAME",
+        "has_value": true
+       }
+      ],
+      "disks": [],
+      "role": "web",
+      "evidence": [
+       {
+        "file": "package.json",
+        "line": 1,
+        "note": "start script"
+       }
+      ]
+     }
+    ],
+    "databases": [
+     {
+      "kind": "postgres",
+      "id": "api-db",
+      "version": null,
+      "env_var": null,
+      "evidence": [
+       {
+        "file": "package.json",
+        "line": null,
+        "note": "dependency pg"
+       }
+      ]
+     }
+    ],
+    "env": [
+     {
+      "name": "JWT_SECRET",
+      "secret": true,
+      "source": "user",
+      "evidence": [
+       {
+        "file": "src/index.js",
+        "line": 4,
+        "note": ""
+       }
+      ]
+     }
+    ],
+    "questions": [],
+    "notes": [
+     {
+      "level": "info",
+      "message": "ioredis is a dependency but no Redis connection was found in the code, so no Redis database was planned",
+      "code": null,
+      "params": {},
+      "evidence": [
+       {
+        "file": "package.json",
+        "line": 1,
+        "note": "dependency ioredis"
+       }
+      ]
+     }
+    ],
+    "links": [
+     {
+      "from": "api",
+      "to": "api-db",
+      "to_kind": "database",
+      "env": [
+       "DATABASE_URL"
+      ]
+     }
+    ]
+   },
+   "cost": {
+    "lines": [
+     {
+      "kind": "app",
+      "name": "api",
+      "plan": "small-g2",
+      "tier": "basic",
+      "tier_label": "basic",
+      "hourly_incl_vat": 1145.83,
+      "monthly_incl_vat": 825000
+     },
+     {
+      "kind": "database",
+      "name": "api-db",
+      "plan": "small-g2",
+      "tier": "basic",
+      "tier_label": "basic",
+      "hourly_incl_vat": 1145.83,
+      "monthly_incl_vat": 825000
+     }
+    ],
+    "total_hourly_incl_vat": 2292,
+    "total_monthly_incl_vat": 1650000
+   },
+   "disks": [],
+   "readiness": {
+    "counts": {},
+    "findings": []
+   },
+   "network_id": "net1",
+   "would_send": [
+    {
+     "method": "POST",
+     "path": "/v1/databases",
+     "summary": "create postgres 18.4 database api-db (small-g2/basic)",
+     "op": "create_database",
+     "params": {
+      "name": "api-db",
+      "type": "postgres",
+      "version": "18.4",
+      "plan": "small-g2",
+      "tier": "basic"
+     }
+    },
+    {
+     "method": "POST",
+     "path": "/v1/projects",
+     "summary": "create app api (node, small-g2/basic)",
+     "op": "create_app",
+     "params": {
+      "name": "api",
+      "platform": "node",
+      "plan": "small-g2",
+      "tier": "basic"
+     }
+    },
+    {
+     "method": "POST",
+     "path": "/v1/projects/update-envs",
+     "summary": "set 1 environment variables on api",
+     "op": "set_env",
+     "params": {
+      "app": "api",
+      "count": 1
+     }
+    },
+    {
+     "method": "POST",
+     "path": "/v2/projects/api/sources",
+     "summary": "upload tmp6xr5bnge.tar.gz (0 KB) to api",
+     "op": "upload_source",
+     "params": {
+      "app": "api"
+     }
+    },
+    {
+     "method": "POST",
+     "path": "/v2/projects/api/releases",
+     "summary": "deploy api on port 3000",
+     "op": "create_release",
+     "params": {
+      "app": "api",
+      "port": 3000
+     }
+    }
+   ],
+   "usage": {
+    "calls": 1,
+    "prompt_tokens": 0,
+    "completion_tokens": 0
+   }
+  }
+ },
+ {
+  "id": 8,
+  "ts": 1792330480.488343,
+  "kind": "phase_finished",
+  "data": {
+   "phase": "plan"
+  }
+ },
+ {
+  "id": 9,
+  "ts": 1792330480.4883485,
+  "kind": "phase_started",
+  "data": {
+   "phase": "confirm"
+  }
+ },
+ {
+  "id": 10,
+  "ts": 1792330480.4883888,
+  "kind": "confirm_request",
+  "data": {
+   "id": "s",
+   "prompt": "Create 1 app(s) and 1 database(s) on your Liara account? About 2,292 toman/hour (1,650,000/month) including VAT.",
+   "kind": "plan",
+   "price_delta_hourly": 2291.6520000000005,
+   "code": "create_resources",
+   "params": {
+    "apps": 1,
+    "databases": 1,
+    "hourly": 2292,
+    "monthly": 1650000,
+    "readiness_warnings": 0
+   }
+  }
+ },
+ {
+  "id": 11,
+  "ts": 1792330480.4884105,
+  "kind": "confirm_response",
+  "data": {
+   "id": "s",
+   "accepted": true
+  }
+ },
+ {
+  "id": 12,
+  "ts": 1792330480.4884202,
+  "kind": "secret_request",
+  "data": {
+   "id": "s",
+   "name": "JWT_SECRET"
+  }
+ },
+ {
+  "id": 13,
+  "ts": 1792330480.4884279,
+  "kind": "secret_provided",
+  "data": {
+   "id": "s",
+   "name": "JWT_SECRET",
+   "provided": true
+  }
+ },
+ {
+  "id": 14,
+  "ts": 1792330480.4884357,
+  "kind": "phase_finished",
+  "data": {
+   "phase": "confirm",
+   "approved": true
+  }
+ },
+ {
+  "id": 15,
+  "ts": 1792330480.4884398,
+  "kind": "phase_started",
+  "data": {
+   "phase": "deploy"
+  }
+ },
+ {
+  "id": 16,
+  "ts": 1792330480.4884858,
+  "kind": "step_started",
+  "data": {
+   "step": "database:api-db"
+  }
+ },
+ {
+  "id": 17,
+  "ts": 1792330480.4888365,
+  "kind": "resource_created",
+  "data": {
+   "kind": "database",
+   "id": "api-db",
+   "type": "postgres",
+   "plan": "small-g2",
+   "tier": "basic",
+   "tier_label": "basic",
+   "hourly_price": 1145.83,
+   "monthly_price": 825000,
+   "dry_run": false
+  }
+ },
+ {
+  "id": 18,
+  "ts": 1792330485.4907193,
+  "kind": "step_finished",
+  "data": {
+   "step": "database:api-db",
+   "dry_run": false
+  }
+ },
+ {
+  "id": 19,
+  "ts": 1792330485.4908028,
+  "kind": "step_started",
+  "data": {
+   "step": "app:api"
+  }
+ },
+ {
+  "id": 20,
+  "ts": 1792330485.4930644,
+  "kind": "resource_created",
+  "data": {
+   "kind": "app",
+   "id": "api",
+   "platform": "node",
+   "plan": "small-g2",
+   "tier": "basic",
+   "tier_label": "basic",
+   "hourly_price": 1145.83,
+   "monthly_price": 825000,
+   "dry_run": false
+  }
+ },
+ {
+  "id": 21,
+  "ts": 1792330485.5075402,
+  "kind": "heal_attempt",
+  "data": {
+   "step": "app:api",
+   "attempt": 1,
+   "max_attempts": 3
+  }
+ },
+ {
+  "id": 22,
+  "ts": 1792330485.508315,
+  "kind": "diagnosis",
+  "data": {
+   "code": "build_timeout",
+   "params": {
+    "tier_label": "basic",
+    "limit_minutes": 5.0
+   },
+   "summary": "The build ran past this tier's time limit. This is a plan limit, not a bug in your code.",
+   "evidence": [
+    "build took more than 5 minutes"
+   ],
+   "fixes": [
+    {
+     "code": "resize_tier",
+     "kind": "resize",
+     "text": "move api from the basic tier to silver (builds may run 15 minutes instead of 5)",
+     "params": {
+      "plan": "small-g2",
+      "tier": "standard",
+      "tier_label": "silver",
+      "from_tier": "basic",
+      "from_tier_label": "basic",
+      "app": "api",
+      "build_minutes": 15.0,
+      "from_build_minutes": 5.0
+     },
+     "cost_delta_hourly": 305.56
+    },
+    {
+     "code": "shorten_build",
+     "kind": "manual",
+     "text": "or shorten the build: add a .dockerignore/.gitignore, avoid reinstalling dependencies, use a lighter base image",
+     "params": {},
+     "cost_delta_hourly": 0.0
+    }
+   ],
+   "app": "api"
+  }
+ },
+ {
+  "id": 23,
+  "ts": 1792330485.5085588,
+  "kind": "confirm_request",
+  "data": {
+   "id": "s",
+   "prompt": "move api from the basic tier to silver (builds may run 15 minutes instead of 5) (+306 toman/hour incl. VAT, about +220,002/month). Apply?",
+   "kind": "fix",
+   "price_delta_hourly": 305.558,
+   "code": "resize_tier",
+   "params": {
+    "plan": "small-g2",
+    "tier": "standard",
+    "tier_label": "silver",
+    "from_tier": "basic",
+    "from_tier_label": "basic",
+    "app": "api",
+    "build_minutes": 15.0,
+    "from_build_minutes": 5.0
+   }
+  }
+ },
+ {
+  "id": 24,
+  "ts": 1792330485.5086374,
+  "kind": "confirm_response",
+  "data": {
+   "id": "s",
+   "accepted": true
+  }
+ },
+ {
+  "id": 25,
+  "ts": 1792330485.5095177,
+  "kind": "resource_updated",
+  "data": {
+   "kind": "app",
+   "id": "api",
+   "plan": "small-g2",
+   "tier": "standard",
+   "tier_label": "silver",
+   "hourly_price": 1451.38,
+   "monthly_price": 1045000,
+   "previous": {
+    "plan": "small-g2",
+    "tier": "basic"
+   }
+  }
+ },
+ {
+  "id": 26,
+  "ts": 1792330485.5096548,
+  "kind": "fix_applied",
+  "data": {
+   "fix": "move api from the basic tier to silver (builds may run 15 minutes instead of 5)",
+   "note": "plan changed",
+   "kind": "resize",
+   "params": {
+    "plan": "small-g2",
+    "tier": "standard",
+    "tier_label": "silver",
+    "from_tier": "basic",
+    "from_tier_label": "basic",
+    "app": "api",
+    "build_minutes": 15.0,
+    "from_build_minutes": 5.0
+   },
+   "cost_delta_hourly": 305.56,
+   "app": "api",
+   "code": "resize_tier"
+  }
+ },
+ {
+  "id": 27,
+  "ts": 1792330485.514997,
+  "kind": "test_result",
+  "data": {
+   "step": "app:api",
+   "name": "http_200",
+   "ok": true,
+   "detail": "HTTP 200",
+   "url": "https://api.liara.run/"
+  }
+ },
+ {
+  "id": 28,
+  "ts": 1792330485.5150623,
+  "kind": "step_finished",
+  "data": {
+   "step": "app:api",
+   "state": "READY",
+   "dry_run": false
+  }
+ },
+ {
+  "id": 29,
+  "ts": 1792330485.515091,
+  "kind": "phase_finished",
+  "data": {
+   "phase": "deploy",
+   "ok": true
+  }
+ },
+ {
+  "id": 30,
+  "ts": 1792330485.515126,
+  "kind": "run_finished",
+  "data": {
+   "ok": true,
+   "dry_run": false,
+   "created": {
+    "apps": [
+     "api"
+    ],
+    "databases": [
+     "api-db"
+    ],
+    "database_ids": [
+     "db1"
+    ]
+   },
+   "urls": {
+    "api": "https://api.liara.run/"
+   },
+   "fixes": [
+    {
+     "code": "resize_tier",
+     "kind": "resize",
+     "params": {
+      "plan": "small-g2",
+      "tier": "standard",
+      "tier_label": "silver",
+      "from_tier": "basic",
+      "from_tier_label": "basic",
+      "app": "api",
+      "build_minutes": 15.0,
+      "from_build_minutes": 5.0
+     },
+     "cost_delta_hourly": 305.56
+    }
+   ],
+   "heal_attempts": 1
+  }
+ }
+]

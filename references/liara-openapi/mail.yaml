@@ -1,0 +1,2149 @@
+openapi: 3.0.1
+info:
+  title: Liara Mail API Documentaion
+  description: |-
+    A fully featured mail delivery platform for incoming & outgoing e-mail
+
+    Parameters:
+    - `teamID`: To access services in a team
+
+  contact:
+    name: liara
+    url: https://liara.ir
+    email: support@liara.ir
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Liara Mail Server
+  url: https://docs.liara.ir/email/create-mail-server/
+servers:
+  - url: https://mail-service.liara.ir
+security:
+  - jwt: []
+  - bearerAuth: []
+tags:
+  - name: mails
+    description: Everything about your mails
+  - name: inboundrules
+    description: Email address (or domain) that you would like to block from sending.
+  - name: smtp
+    description: SMTP endpoints.
+  - name: accounts
+    description: Accounts of your mails.
+  - name: messages
+    description: Messages endpoints.
+  - name: forward
+    description: Forward endpoints.
+  - name: attachments
+    description: Attachments endpoints.
+  - name: event
+    description: Event endpoints.
+  - name: tags
+    description: Tags endpoints.
+  - name: plan
+    description: Plan endpoints.
+paths:
+  /api/v1/mails:
+    get:
+      tags:
+        - mails
+      summary: get all mail servers
+      operationId: getMails
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MailServers"
+        500:
+          description: Unexpected error
+          content: {}
+    post:
+      tags:
+        - mails
+      summary: create mail server
+      operationId: postMails
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Model1"
+        required: false
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        400:
+          description: Invalid request for plan
+          content: {}
+        402:
+          description: Not enough balance
+          content: {}
+        403:
+          description: Allowed to create only one Mail Server on the free plan
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+      x-codegen-request-body-name: body
+  "/api/v1/mails/{mailServerID}":
+    get:
+      tags:
+        - mails
+      summary: get single mail server
+      operationId: getSingleMailServer
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MailServer"
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+    delete:
+      tags:
+        - mails
+      summary: delete mail server
+      operationId: deleteMailServer
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        204:
+          description: OK
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+    patch:
+      tags:
+        - mails
+      summary: edit mail server
+      operationId: editMailServer
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Model8"
+        required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+      x-codegen-request-body-name: body
+  "/api/v1/mails/{mailServerID}/smtp-credentials":
+    get:
+      tags:
+        - smtp
+      summary: get credential to connect to mail server with SMTP
+      operationId: getCredential
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SMTP"
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+    post:
+      tags:
+        - smtp
+      summary: generate credentials to connet mail server with SMTP
+      operationId: generateCredentials
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Model4"
+        required: false
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateSMTP"
+        400:
+          description: Bad Request
+          content: {}
+        403:
+          description: Allowed to create only 10 smtp credentials
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+      x-codegen-request-body-name: body
+    patch:
+      tags:
+        - smtp
+      summary: revoke credentials to connect mail server with SMTP
+      operationId: revokeCredentials
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Model9"
+        required: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateSMTP"
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server or Username not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+      x-codegen-request-body-name: body
+  "/api/v1/mails/{mailServerID}/counts":
+    get:
+      tags:
+        - mails
+      summary: count number of sent mails every day
+      operationId: getCountMails
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: lastNDays
+          in: query
+          schema:
+            maximum: 180
+            minimum: 1
+            type: number
+            default: 30
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CountMailPerDay"
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/dns-check":
+    get:
+      tags:
+        - mails
+      summary: mail server check dns status
+      operationId: checkMailServerDnsStatus
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckDNS"
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{domain}/check-availability":
+    get:
+      tags:
+        - mails
+      summary: check if domain name is available
+      operationId: checkDomainAvailable
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        400:
+          description: Bad Request
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  # '/api/v1/mails/{mailServerID}/remaining-free-emails':
+  #   get:
+  #     tags:
+  #       - mails
+  #     summary: count number of free mails every month
+  #     operationId: getCountFreeMails
+  #     parameters:
+  #       - name: mailServerID
+  #         in: path
+  #         required: true
+  #         schema:
+  #           pattern: ^[0-9a-fA-F]{24}$
+  #           type: string
+  #     responses:
+  #       200:
+  #         description: OK
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/RemainingFreeMails'
+  #       400:
+  #         description: Bad Request
+  #         content: {}
+  #       404:
+  #         description: Mail Server not found
+  #         content: {}
+  #       500:
+  #         description: Unexpected error
+  #         content: {}
+  "/api/v1/mails/{mailServerID}/accounts":
+    get:
+      tags:
+        - accounts
+      summary: get all mail accounts
+      operationId: getAllMailAccounts
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MailAccounts"
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+    post:
+      tags:
+        - accounts
+      summary: add mail account
+      operationId: createMailACcount
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Model5"
+        required: false
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        403:
+          description: Max number of accounts reached
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+      x-codegen-request-body-name: body
+  "/api/v1/mails/{mailServerID}/inboundrules":
+    get:
+      tags:
+        - inboundrules
+      summary: get all inbound rules.
+      operationId: getAllInboundRules
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MailInboundRules"
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        409:
+          description: Rule already exists.
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+    post:
+      tags:
+        - inboundrules
+      summary: add inbound rule.
+      operationId: addInboundRule
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Model11"
+        required: false
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mail/{mailServerID}/inboundrules/{inboundruleID}":
+    delete:
+      tags:
+        - inboundrules
+      summary: delete inbound rule.
+      operationId: deleteInboundRule
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: inboundruleID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        204:
+          description: OK
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server or Inbound rule not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/messages":
+    get:
+      tags:
+        - messages
+      summary: get all mails
+      operationId: getAllMails
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: number
+            default: 1
+            x-constraint:
+              sign: positive
+          x-constraint:
+            sign: positive
+        - name: count
+          in: query
+          schema:
+            maximum: 100
+            type: number
+            default: 15
+            x-constraint:
+              sign: positive
+          x-constraint:
+            sign: positive
+        - name: direction
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - incoming
+              - outgoing
+        - name: state
+          in: query
+          schema:
+            type: string
+        - name: subject
+          in: query
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+        - name: to
+          in: query
+          schema:
+            type: string
+        - name: isTrash
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MailMessages"
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+    post:
+      tags:
+        - messages
+      summary: send a mail
+      operationId: sendMail
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Model3"
+        required: false
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        400:
+          description: Bad Request
+          content: {}
+        403:
+          description: No valid dns records exists for this mail server
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        406:
+          description: The source and destination addresses must not be the same
+          content: {}
+        429:
+          description: Too mnay requests
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+      x-codegen-request-body-name: body
+  "/api/v1/mails/{mailServerID}/messages/{messageID}":
+    get:
+      tags:
+        - messages
+      summary: get single mail
+      operationId: getSingleMail
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: messageID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        $ref: "#/components/schemas/MailMessage"
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server or Mail Message not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/accounts/{accountID}/forwards":
+    get:
+      tags:
+        - forward
+      summary: get all extra address to forwarding mails
+      operationId: getListAddressForwarding
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: accountID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MailForwards"
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server or Mail Account not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+    post:
+      tags:
+        - forward
+      summary: add address endpoint to forwarding mails
+      operationId: createAddressForwarding
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: accountID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Model6"
+        required: false
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        400:
+          description: Bad Request
+          content: {}
+        403:
+          description: Reached maximum mail forwarder per account.
+          content: {}
+        404:
+          description: Mail Server or Mail Account not found
+          content: {}
+        409:
+          description: Address endpoint already exists
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+      x-codegen-request-body-name: body
+  "/api/v1/mails/{mailServerID}/accounts/{accountName}/check-availability":
+    get:
+      tags:
+        - accounts
+      summary: check if mail account is available
+      operationId: checkMailAvailable
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: accountName
+          in: path
+          required: true
+          schema:
+            maxLength: 64
+            pattern: ^[a-z0-9]+([.-][a-z0-9]+)*$
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        409:
+          description: Account already taken.
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/messages/{messageID}/render":
+    get:
+      tags:
+        - messages
+      summary: get single mail html
+      operationId: getSingleMailHtml
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: messageID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+            x-format:
+              guid:
+                version: uuidv4
+          x-format:
+            guid:
+              version: uuidv4
+      responses:
+        200:
+          description: success and returns some html text
+          content:
+            text/html: {}
+        400:
+          description: Bad Request
+          content: {}
+        403:
+          description: Forbidden
+          content: {}
+        404:
+          description: Mail Server or Mail Message not found
+          content: {}
+        409:
+          description: Account already taken.
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/messages/{messageID}/attachments":
+    get:
+      tags:
+        - attachments
+      summary: get all attachments for message
+      operationId: getAllAttachments
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: messageID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MailAttachments"
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server or Mail Message not found
+          content: {}
+        409:
+          description: Account already taken.
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/messages/{messageID}/events":
+    get:
+      tags:
+        - event
+      summary: get all events for message
+      operationId: getAllEvents
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: messageID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: number
+            default: 1
+            x-constraint:
+              sign: positive
+          x-constraint:
+            sign: positive
+        - name: count
+          in: query
+          schema:
+            maximum: 100
+            type: number
+            default: 15
+            x-constraint:
+              sign: positive
+          x-constraint:
+            sign: positive
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MailEvents"
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server or Mail Message not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/messages/{messageID}/attachments/{attachmentID}":
+    get:
+      tags:
+        - attachments
+      summary: download attachment
+      operationId: downloadAttachments
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: messageID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: attachmentID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      attachment:
+                        $ref: "#/components/schemas/MailAttachment"
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server or Mail Message not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/messages/{messageID}/temporary-access":
+    post:
+      tags:
+        - messages
+      summary: generate temporary access to email html
+      operationId: generateTemporary
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: messageID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: expiration
+          in: query
+          description: Specifying hourly expiration schedule options
+          schema:
+            maximum: 168
+            minimum: 1
+            type: number
+            default: 1
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TmpAccess"
+        400:
+          description: Bad Request
+          content: {}
+        403:
+          description: Generate token limitation
+          content: {}
+        404:
+          description: Mail Server or Mail Message not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/accounts/{accountID}":
+    delete:
+      tags:
+        - accounts
+      summary: delete mail account
+      operationId: deleteMailAccount
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: accountID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        204:
+          description: OK
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server or Mail Account not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/smtp-credentials/{username}":
+    delete:
+      tags:
+        - smtp
+      summary: delete smtp credential
+      operationId: deleteSmtpCredential
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: OK
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server or SMTP Credential not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/accounts/{accountID}/forwards/{addressID}":
+    delete:
+      tags:
+        - forward
+      summary: delete extra endpoint address
+      operationId: deleteExtraEndpoint
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: accountID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: addressID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        204:
+          description: OK
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server or Mail Account or Mail Forward not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/messages/{messageID}/":
+    patch:
+      tags:
+        - messages
+      summary: trash and untrash a message
+      operationId: trashMessage
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: messageID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Model19"
+        required: true
+        description: Pass "false" to untrash
+      responses:
+        200:
+          description: OK
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server or Mail Message not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+        - messages
+      summary: delete a message permenantly
+      operationId: deleteMessage
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: messageID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        200:
+          description: OK
+          content: {}
+        404:
+          description: Mail Server or Mail Message not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+      x-codegen-request-body-name: body
+  "/api/v1/mails/{mailServerID}/unfreeze":
+    patch:
+      tags:
+        - mails
+      summary: unfreeze mail server - If you had reserved a plan, it will be your new plan.
+      operationId: unfreeze
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        204:
+          description: OK
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/metrics":
+    get:
+      tags:
+        - mails
+      summary: gain more info on recent usage
+      operationId: getMetrics
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MailServerMetrics"
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/tags":
+    post:
+      tags:
+        - tags
+      summary: create a new tag
+      operationId: createTag
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tag:
+                  type: string
+                data:
+                  type: object
+                  properties:
+                    tag:
+                      type: string
+      responses:
+        201:
+          description: OK
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+    get:
+      tags:
+        - tags
+      summary: get all tags
+      operationId: getTags
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tag:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/tags/stats":
+    get:
+      tags:
+        - tags
+      summary: get tags stats
+      operationId: getTagsStats
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+        - name: lastNDays
+          in: query
+          schema:
+            maximum: 180
+            minimum: 1
+            type: integer
+            default: 30
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      result:
+                        type: array
+                        description: One item per day, from today back to lastNDays days ago
+                        items:
+                          type: object
+                          required:
+                            - date
+                          properties:
+                            date:
+                              type: integer
+                              description: Unix timestamp of the day
+                          additionalProperties:
+                            type: object
+                            description: Usage of the tag (the property name is the tag) on this day.
+                            properties:
+                              count:
+                                type: integer
+                                description: Number of mails sent with this tag
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+  "/api/v1/mails/{mailServerID}/plan":
+    post:
+      tags:
+        - plan
+      summary: change mail server plan
+      description: Upgrades take effect immediately, while downgrades are scheduled and applied after the current plan ends. Click on the request body schema to see all available plans.
+      operationId: changePlan
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                planName:
+                  type: string
+                  enum:
+                    - m1
+                    - m2
+                    - m3
+                    - m4
+                    - m5
+                    - m6
+                    - m7
+                    - m8
+                  default: "m3"
+      responses:
+        200:
+          description: OK
+          content: {}
+        400:
+          description: Bad Request - Invalid request for plan
+          content: {}
+        402:
+          description: Not enough balance.
+          content: {}
+        403:
+          description: You are allowed to create only one Mail Server on the free plan.
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        428:
+          description: You are already on the same plan
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+    get:
+      tags:
+        - plan
+      summary: get cuurent mail server plan history
+      operationId: getCurrentPlanHistory
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      currentPlanHistory:
+                        type: object
+                        description: details on current plan
+                      nextPlanStartDate:
+                        type: string
+                        format: date-time
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail Server not found
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+    delete:
+      tags:
+        - plan
+      summary: remove a reserved plan
+      description: Click on the request body schema to see all available plans.
+      operationId: deleteReservation
+      parameters:
+        - name: mailServerID
+          in: path
+          required: true
+          schema:
+            pattern: ^[0-9a-fA-F]{24}$
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reservedPlan:
+                  type: string
+                  enum:
+                    - m1
+                    - m2
+                    - m3
+                    - m4
+                    - m5
+                    - m6
+                    - m7
+                    - m8
+      responses:
+        200:
+          description: OK
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Mail server not found - Plan not found.
+          content: {}
+        428:
+          description: You are already on the same plan
+          content: {}
+        500:
+          description: Unexpected error
+          content: {}
+components:
+  schemas:
+    TmpAccess:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            token:
+              type: string
+    MailEvents:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            total:
+              type: number
+            events:
+              type: array
+              items:
+                type: object
+    MailAttachments:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            attachments:
+              type: array
+              items:
+                $ref: "#/components/schemas/MailAttachment"
+    MailAttachment:
+      type: object
+      properties:
+        name:
+          type: string
+        size:
+          type: number
+        content_type:
+          type: string
+        createdAt:
+          type: string
+        id:
+          type: string
+        data:
+          type: string
+    MailForwards:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            forwarders:
+              type: array
+              items:
+                type: object
+                properties:
+                  account:
+                    type: string
+                  address:
+                    type: string
+                  createdAt:
+                    type: string
+                  id:
+                    type: string
+    MailMessages:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            total:
+              type: number
+            messages:
+              type: array
+              items:
+                $ref: "#/components/schemas/MailMessage"
+    MailMessage:
+      type: object
+      properties:
+        createdAt:
+          type: string
+        direction:
+          type: string
+        from:
+          type: string
+        hasHtml:
+          type: boolean
+        isDev:
+          type: boolean
+        isFree:
+          type: boolean
+        spamScore:
+          type: boolean
+        subject:
+          type: string
+        to:
+          type: string
+        text:
+          type: string
+        status:
+          type: object
+          properties:
+            event:
+              type: string
+            state:
+              type: string
+            details:
+              type: string
+        id:
+          type: string
+        spamReson:
+          type: object
+          properties: {}
+    MailInboundRules:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            mailInboundrules:
+              type: array
+              items:
+                type: object
+                properties:
+                  createdAt:
+                    type: string
+                  rule:
+                    type: string
+                  mailServer:
+                    type: string
+    MailAccounts:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            domain:
+              type: string
+            accounts:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  createdAt:
+                    type: string
+                  id:
+                    type: string
+    # RemainingFreeMails:
+    #   type: object
+    #   properties:
+    #     status:
+    #       type: string
+    #     data:
+    #       type: object
+    #       properties:
+    #         count:
+    #           type: number
+    CheckDNSResponse:
+      type: object
+      properties:
+        dns_setup:
+          type: object
+          properties:
+            dkim:
+              type: object
+              properties:
+                dkim_error:
+                  type: string
+                dkim_record:
+                  type: string
+                dkim_record_name:
+                  type: string
+                dkim_status:
+                  type: string
+            mx_record:
+              type: object
+              properties:
+                mx_error:
+                  type: string
+                mx_status:
+                  type: string
+                mx_record_value:
+                  type: string
+            return_path:
+              type: object
+              properties:
+                return_path_domain:
+                  type: string
+                return_path_error:
+                  type: string
+                return_path_status:
+                  type: string
+                return_path_value:
+                  type: string
+            spf:
+              type: object
+              properties:
+                spf_error:
+                  type: string
+                spf_record:
+                  type: string
+                spf_status:
+                  type: string
+        user:
+          type: string
+        domain:
+          type: string
+        recordsStatus:
+          type: string
+        mode:
+          type: string
+        status:
+          type: string
+        checkDNSRecord:
+          type: boolean
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        id:
+          type: string
+        smtp_server:
+          type: string
+        smtp_port:
+          type: number
+    CheckDNS:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            mailServer:
+              $ref: "#/components/schemas/CheckDNSResponse"
+    CountMailPerDay:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            emailPerDay:
+              type: array
+              items:
+                type: object
+                properties:
+                  count:
+                    type: number
+                  date:
+                    type: number
+    CreateSMTP:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            username:
+              type: string
+            passowrd:
+              type: string
+    SMTP:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            credentials:
+              type: array
+              items:
+                type: object
+                properties:
+                  description:
+                    type: string
+                  createdAt:
+                    type: string
+                  username:
+                    type: string
+    MailServerResponse:
+      type: object
+      properties:
+        dns_setup:
+          type: object
+          properties:
+            dkim:
+              type: object
+              properties:
+                dkim_error:
+                  type: string
+                dkim_record:
+                  type: string
+                dkim_record_name:
+                  type: string
+                dkim_status:
+                  type: string
+            mx_record:
+              type: object
+              properties:
+                mx_error:
+                  type: string
+                mx_status:
+                  type: string
+                mx_record_value:
+                  type: string
+            return_path:
+              type: object
+              properties:
+                return_path_domain:
+                  type: string
+                return_path_error:
+                  type: string
+                return_path_status:
+                  type: string
+                return_path_value:
+                  type: string
+            spf:
+              type: object
+              properties:
+                spf_error:
+                  type: string
+                spf_record:
+                  type: string
+                spf_status:
+                  type: string
+        domain:
+          type: string
+        recordsStatus:
+          type: string
+        status:
+          type: string
+        rateLimitTier:
+          type: object
+          properties:
+            hourly:
+              type: number
+            daily:
+              type: number
+            monthly:
+              type: number
+        createdAt:
+          type: string
+        id:
+          type: string
+        smtp_server:
+          type: string
+        smtp_port:
+          type: number
+        rootPartOfDomain:
+          type: string
+    MailServer:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            mailServer:
+              $ref: "#/components/schemas/MailServerResponse"
+    MailServers:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            mailServers:
+              type: array
+              items:
+                $ref: "#/components/schemas/MailServerResponse"
+    mode:
+      type: string
+      enum:
+        - DEV
+        - LIVE
+    Model1:
+      required:
+        - domain
+        - mode
+        - plan
+      type: object
+      properties:
+        plan:
+          maxLength: 64
+          type: string
+        domain:
+          type: string
+          x-convert:
+            case: lower
+        mode:
+          $ref: "#/components/schemas/mode"
+    Model2:
+      required:
+        - content_type
+        - data
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+        content_type:
+          type: string
+        data:
+          type: string
+    attachments:
+      maxItems: 10
+      type: array
+      items:
+        $ref: "#/components/schemas/Model2"
+    Model3:
+      required:
+        - from
+        - subject
+        - to
+      type: object
+      properties:
+        html:
+          type: string
+        text:
+          type: string
+        subject:
+          type: string
+        to:
+          type: string
+          x-convert:
+            case: lower
+        from:
+          type: string
+          x-convert:
+            case: lower
+        replyTo:
+          type: string
+        attachments:
+          $ref: "#/components/schemas/attachments"
+    Model4:
+      type: object
+      properties:
+        description:
+          maxLength: 1000
+          type: string
+    Model5:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          maxLength: 64
+          pattern: ^[a-z0-9]+([.-][a-z0-9]+)*$
+          type: string
+    Model6:
+      required:
+        - address
+      type: object
+      properties:
+        address:
+          type: string
+          x-format:
+            email: true
+    Model11:
+      required:
+        - rule
+      type: object
+      properties:
+        rule:
+          type: string
+    Model19:
+      required:
+        - isTrash
+      type: object
+      properties:
+        isTrash:
+          type: boolean
+    Model8:
+      required:
+        - mode
+        - inboundSpamThreshold
+      type: object
+      properties:
+        mode:
+          $ref: "#/components/schemas/mode"
+        inboundSpamThreshold:
+          type: number
+    Model9:
+      required:
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+    Model10:
+      required:
+        - plan
+      type: object
+      properties:
+        plan:
+          maxLength: 64
+          type: string
+    MailServerMetrics:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            metrics:
+              type: object
+              properties:
+                messagesCountToday:
+                  type: number
+                messagesCountThisMonth:
+                  type: number
+  securitySchemes:
+    jwt:
+      type: apiKey
+      name: Authorization
+      in: header
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+

@@ -1,0 +1,3 @@
+Copied from https://github.com/liara-cloud/openapi on 2026-10-17.
+The README shows an MIT badge, but the repo contains no LICENSE file; confirm terms before redistributing this folder.
+Reference for the agent and for typed API calls; refresh by re-downloading spec/*.yaml.

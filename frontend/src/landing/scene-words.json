@@ -1,0 +1,34 @@
+{
+ "en": {
+  "land.w.proposed": "proposed",
+  "land.w.creating": "creating",
+  "land.w.live": "live",
+  "land.w.unverified": "price unverified",
+  "land.w.noport": "? worker has no port",
+  "land.w.answered": "answered: worker",
+  "land.w.unit_h": " toman/h",
+  "land.w.total": "TOTAL ",
+  "land.w.total_hm": " toman/h · ",
+  "land.w.per_mo": "/mo",
+  "land.w.notcreated": "not created",
+  "land.w.netlabel": "private network · net1",
+  "land.w.title_replay": "Replay: the agent reads a project, draws the plan with prices, waits for approval, then creates and verifies the resources",
+  "land.w.title_net": "The private network net1: each resource joins it when it is created"
+ },
+ "fa": {
+  "land.w.proposed": "پیشنهادی",
+  "land.w.creating": "در حال ساخت",
+  "land.w.live": "زنده",
+  "land.w.unverified": "قیمت تأییدنشده",
+  "land.w.noport": "? worker پورت ندارد",
+  "land.w.answered": "پاسخ: worker",
+  "land.w.unit_h": " تومان/ساعت",
+  "land.w.total": "جمع ",
+  "land.w.total_hm": " تومان/ساعت · ",
+  "land.w.per_mo": "/ماه",
+  "land.w.notcreated": "ساخته نشده",
+  "land.w.netlabel": "شبکه‌ی خصوصی · net1",
+  "land.w.title_replay": "بازپخش: عامل پروژه را می‌خواند، طرح را با قیمت می‌کشد، منتظر تأیید می‌ماند و سپس منابع را می‌سازد و بررسی می‌کند",
+  "land.w.title_net": "شبکه‌ی خصوصی net1: هر منبع هنگام ساخته شدن به آن می‌پیوندد"
+ }
+}

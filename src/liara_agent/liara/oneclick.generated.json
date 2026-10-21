@@ -1,0 +1,954 @@
+{
+ "matomo": {
+  "about": "Matomo یک نرم‌افزار آنالیز وب است که رفتار کاربران در وب‌سایت را ردیابی و تحلیل کرده و گزارش می‌دهد.",
+  "categories": [
+   "Product Analytics"
+  ],
+  "installs": 235,
+  "github": "matomo-org/matomo",
+  "spec": "apps:\n  - id: \"matomo\"\n    name: \"Matomo\"\n    image: registry.c2.liara.ir/one-click-apps/matomo:5.9.0-apache\n    availableImageTags:\n       - 5.9.0-apache\n       - 4-apache\n\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    port: 80\n    disks:\n      - name: \"data\"\n        mountTo: \"/var/www/html\"\n    envs:\n      MATOMO_DATABASE_ADAPTER: \"mysql\"\n      MATOMO_DATABASE_HOST: \"$DB_main_HOST:$DB_main_PORT\"\n      MATOMO_DATABASE_USERNAME: \"$DB_main_USER\"\n      MATOMO_DATABASE_PASSWORD: \"$DB_main_PASSWORD\"\n      MATOMO_DATABASE_DBNAME: \"matomo\"\n\ndatabases:\n  - type: \"mariadb\"\n    id: \"main\"\n    version: \"10.6.8\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n"
+ },
+ "n8n": {
+  "about": "N8N یک ابزار قدرتمند و مدرن برای خودکارسازی فرآیندهای کاری بدون نیاز به دخالت دستی است.",
+  "categories": [
+   "Internal Tools",
+   "No-Code"
+  ],
+  "installs": 6186,
+  "github": "n8n-io/n8n",
+  "spec": "apps:\n  - id: \"n8n\"\n    name: \"n8n\"\n    image: registry.c2.liara.ir/one-click-apps/n8n:2.26.2\n    availableImageTags:\n     - 2.26.2\n     - 2.6.3\n     - 1.93.0\n     - 1.72.1\n     - 1.36.4\n     - 1.112.3\n     - 1.100.0\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    port: 5678\n    disks:\n      - name: \"data\"\n        mountTo: \"/home/node/.n8n\"\n    envs:\n      N8N_HOST: \"$APP_NAME.liara.run\"\n      N8N_PORT: \"5678\"\n      N8N_PROTOCOL: \"https\"\n      NODE_ENV: \"production\"\n      N8N_DIAGNOSTICS_ENABLED: \"false\"\n      N8N_VERSION_NOTIFICATIONS_ENABLED: \"false\"\n      N8N_TEMPLATES_ENABLED: \"false\"\n      GENERIC_TIMEZONE: \"Asia/Tehran\"\n      TZ: \"Asia/Tehran\"\n      WEBHOOK_URL: \"https://$APP_NAME.liara.run\""
+ },
+ "freescout": {
+  "about": "با FreeScout، یک سیستم تیکتینگ متن‌باز و سبک‌وزن برای پشتیبانی مشتریان خود داشته باشید.",
+  "categories": [
+   "CRM"
+  ],
+  "installs": 31,
+  "github": "freescout-help-desk/freescout",
+  "spec": "apps:\n  - id: freescout\n    name: Freescout\n    image: \"registry.c2.liara.ir/one-click-apps/freescout:php8.2\"\n    bundlePlanID: standard\n    planID: small-g2\n    port: 80\n\n    disks:\n      - name: data\n        mountTo: /www/html\n        size: 20\n        maxSize: 2\n\n      - name: secondary\n        mountTo: /data\n        size: 20\n        maxSize: 2\n\n      - name: logs\n        mountTo: /www/logs\n        size: 10\n        maxSize: 0.5\n\n    envs:\n      \n      DB_TYPE: \"mysql\"\n      DB_HOST: \"$DB_main_HOST\"\n      DB_PORT: \"$DB_main_PORT\"\n      DB_NAME: \"$DB_main_NAME\"\n      DB_USER: \"$DB_main_USER\"\n      DB_PASS: \"$DB_main_PASSWORD\"\n\n      SITE_URL: https://$APP_NAME.liara.run\n\n      ADMIN_EMAIL: admin@admin.com\n      ADMIN_PASS: $RANDOM_STRING\n      ADMIN_FIRST_NAME: \"Admin\"\n      ADMIN_LAST_NAME: \"User\"\n      APPLICATION_NAME: \"Freescout\"\n\n      ENABLE_AUTO_UPDATE: \"FALSE\"\n      ENABLE_SSL_PROXY: \"TRUE\"\n      DISPLAY_ERRORS: \"TRUE\"\n      TIMEZONE: \"America/Vancouver\"\n\n\ndatabases:\n  - type: mariadb\n    id: main\n    version: 10.6.8\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "pocketbase": {
+  "about": "با استفاده از PocketBase می‌توانید بدون نوشتن کدهای Backend، اپلیکیشن خود را به راحتی بسازید.",
+  "categories": [
+   "Backend as a Service"
+  ],
+  "installs": 671,
+  "github": "pocketbase/pocketbase",
+  "spec": "apps:\n  - id: \"pocketbase\"\n    name: \"PocketBase\"\n    image: \"registry.c2.liara.ir/one-click-apps/pocketbase:0.40.4\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    port: 8090\n    disks:\n      - name: \"public\"\n        mountTo: \"/pb_public\"\n        size: 10\n        maxSize: 0.1\n      - name: \"migrations\"\n        mountTo: \"/pb_migrations\"\n        size: 10\n        maxSize: 0.1\n      - name: \"hooks\"\n        mountTo: \"/pb_hooks\"\n        size: 10\n        maxSize: 0.1\n      - name: \"data\"\n        mountTo: \"/pb_data\"\n"
+ },
+ "ghost": {
+  "about": "Ghost یک پلتفرم رایگان و متن‌باز برای وبلاگ‌نویسی است که با JavaScript نوشته شده است.",
+  "categories": [
+   "CMS"
+  ],
+  "installs": 215,
+  "github": "tryghost/ghost",
+  "spec": "apps:\n  - id: \"ghost\"\n    name: \"Ghost\"\n    image: registry.c2.liara.ir/one-click-apps/ghost:6.41.1\n    availableImageTags:\n      - 6.41.1\n      - 5\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    disks:\n      - name: \"content\"\n        mountTo: \"/var/lib/ghost/content\"\n    port: 2368\n    envs:\n      NODE_ENV: \"production\"\n      url: \"https://$APP_NAME.liara.run\"\n      database__client: \"mysql\"\n      database__connection__host: \"$DB_main_HOST\"\n      database__connection__port: \"$DB_main_PORT\"\n      database__connection__user: \"$DB_main_USER\"\n      database__connection__password: \"$DB_main_PASSWORD\"\n      database__connection__database: \"ghost\"\n\ndatabases:\n  - type: \"mariadb\"\n    id: \"main\"\n    version: \"10.6.8\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\""
+ },
+ "onedev": {
+  "about": "با OneDev، فرآیند توسعه نرم‌افزار خود را در یک پلتفرم یکپارچه و قدرتمند مدیریت کنید.",
+  "categories": [
+   "Internal Tools",
+   "Product Analytics"
+  ],
+  "installs": 39,
+  "github": "theonedev/onedev",
+  "spec": "apps:\n  - id: onedev\n    name: Onedev\n    image: registry.c2.liara.ir/one-click-apps/1dev-server:11.1.1\n   \n    bundlePlanID: standard\n    planID: medium-g2\n    disks:\n      - name: data\n        mountTo: /opt/onedev\n        size: 10\n        maxSize: 5\n\n    port: 6610\n    envs:\n      initial_user: \"root\"\n      initial_password: \"$RANDOM_STRING\"\n      initial_email: \"root@example.com\"\n      initial_server_url: \"https://$APP_NAME.liara.run\"\n"
+ },
+ "passbolt": {
+  "about": "رمزعبورهای تیم‌های خود را با Passbolt، بدون کمترین سردرگمی، به صورت امن، مدیریت کنید.",
+  "categories": [
+   "Internal Tools"
+  ],
+  "installs": 42,
+  "github": "passbolt/passbolt_api",
+  "spec": "apps:\n  - id: passbolt\n    name: PassBolt\n    image: registry.c2.liara.ir/one-click-apps/passbolt:4.9.1-1-ce\n    bundlePlanID: standard\n    planID: small-g2\n    port: 80\n    args: \n      - \"/docker-entrypoint.sh\"\n\n    disks:\n      - name: gpg\n        mountTo: /etc/passbolt/gpg\n        size: 10\n        maxSize: 0.5\n      - name: jwt\n        mountTo: /etc/passbolt/jwt\n        size: 10\n        maxSize: 0.5\n\n    envs:\n\n      APP_FULL_BASE_URL: \"https://$APP_NAME.liara.run\"\n      DATASOURCES_DEFAULT_HOST: \"$DB_main_HOST\"\n      DATASOURCES_DEFAULT_PORT: \"$DB_main_PORT\"\n      DATASOURCES_DEFAULT_USERNAME: \"$DB_main_USER\"\n      DATASOURCES_DEFAULT_PASSWORD: \"$DB_main_PASSWORD\"\n      DATASOURCES_DEFAULT_DATABASE: \"$DB_main_NAME\"\n      DEBUG: \"true\"\n\n      EMAIL_TRANSPORT_DEFAULT_CLASS_NAME: \"Smtp\"\n      EMAIL_DEFAULT_FROM_NAME: \"PassBolt\"\n      EMAIL_DEFAULT_FROM: \"replace@m.e\"\n      EMAIL_TRANSPORT_DEFAULT_HOST: \"smtp.c1.liara.email\"\n      EMAIL_TRANSPORT_DEFAULT_PORT: \"587\"\n      EMAIL_TRANSPORT_DEFAULT_USERNAME: \"replace-me\"\n      EMAIL_TRANSPORT_DEFAULT_PASSWORD: \"replace-me\"\n      EMAIL_TRANSPORT_DEFAULT_TLS: \"true\"\n\n      PASSBOLT_JS_BUILD: \"production\"\n      PASSBOLT_PLUGINS_PASSWORD_GENERATOR_DEFAULT_GENERATOR: \"password\"\n\ndatabases:\n  - type: \"mariadb\"\n    id: \"main\"\n    version: \"10.6.8\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n"
+ },
+ "zitadel": {
+  "about": "عملیات احراز هویت و مدیریت دسترسی کاربران را با ZITADEL، به‌صورت ایمن و مقیاس‌پذیر انجام دهید.",
+  "categories": [
+   "Auth & SSO"
+  ],
+  "installs": 17,
+  "github": "zitadel/zitadel",
+  "spec": "apps:\n  - id: zitadel\n    name: zitadel\n    image: registry.c2.liara.ir/one-click-apps/zitadel:v2.64.1\n    bundlePlanID: standard\n    planID: small-g2\n    port: 8080\n    \n    args: \n      - start-from-init\n      - '--masterkeyFromEnv'\n\n    envs:\n      ZITADEL_DATABASE_POSTGRES_HOST: \"$DB_main_HOST\"\n      ZITADEL_DATABASE_POSTGRES_PORT: \"$DB_main_PORT\"\n      ZITADEL_DATABASE_POSTGRES_DATABASE: \"postgres\"\n      ZITADEL_DATABASE_POSTGRES_USER_USERNAME: \"$DB_main_USER\"\n      ZITADEL_DATABASE_POSTGRES_USER_PASSWORD: \"$DB_main_PASSWORD\"\n      ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE: \"disable\"\n      ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME: \"$DB_main_USER\"\n      ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD: \"$DB_main_PASSWORD\"\n      ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE: \"disable\"\n      ZITADEL_EXTERNALSECURE: \"true\"\n      ZITADEL_MASTERKEY: \"psnXEX6z0XvnWK3wBxo3nkCglObr46Az\"\n      ZITADEL_PORT: \"8080\"\n      ZITADEL_EXTERNALPORT: \"8080\"\n      ZITADEL_EXTERNALDOMAIN: \"$APP_NAME.liara.run\"\n      ZITADEL_TLS_ENABLED: \"false\"\n\ndatabases:\n  - type: postgres\n    id: main\n    version: '16.14'\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "appsmith": {
+  "about": "Appsmith یک پلتفرم متن‌باز برای ساخت سریع و آسان رابط‌های کاربری داخلی و برنامه‌های تجاری است.",
+  "categories": [
+   "Workflow Automation"
+  ],
+  "installs": 99,
+  "github": "appsmithorg/appsmith",
+  "spec": "apps:\n  - id: \"appsmith\"\n    name: \"Appsmith\"\n    image: registry.c2.liara.ir/one-click-apps/appsmith-ee:v2.1\n    availableImageTags:\n      - v2.1\n      - v1.22.1\n\n    bundlePlanID: \"standard\"\n    planID: \"standard-plus-g2\"\n    disks:\n      - name: \"data\"\n        mountTo: \"/appsmith-stacks\"\n    port: 80"
+ },
+ "ackee": {
+  "about": "Ackee یک ابزار analytics برای کسانی است که به حفظ حریم خصوصی کاربران خود اهمیت می‌دهند.",
+  "categories": [
+   "Monitoring"
+  ],
+  "installs": 19,
+  "github": "electerious/ackee",
+  "spec": "apps:\n  - id: \"ackee\"\n    name: \"Ackee\"\n    image: registry.c2.liara.ir/one-click-apps/ackee:3.6.0\n    availableImageTags:\n      - 3.6.0\n      - 3.4.2\n\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    disks:\n      - name: \"root\"\n        mountTo: \"/root\"\n        size: 10\n        maxSize: 0.2\n      - name: \"dist\"\n        mountTo: \"/srv/app/dist\"\n    port: 3000\n    envs:\n      ACKEE_USERNAME: \"ackee\"\n      ACKEE_PASSWORD: \"$RANDOM_STRING\"\n      ACKEE_PORT: \"3000\"\n      ACKEE_ALLOW_ORIGIN: \"https://$APP_NAME.liara.run\"\n      ACKEE_MONGODB: \"mongodb://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/ackee?authSource=admin\"\n\ndatabases:\n  - type: \"mongodb\"\n    id: \"main\"\n    version: \"7.0.5\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n"
+ },
+ "odoo": {
+  "about": "Odoo مجموعه‌ای از برنامه‌های تجاری متن‌باز است که تمام نیازهای شرکت شما را پوشش می دهد.",
+  "categories": [
+   "CRM",
+   "Website Builder",
+   "Internal Tools",
+   "Knowledge Management"
+  ],
+  "installs": 587,
+  "github": "odoo/odoo",
+  "spec": "apps:\n  - id: \"odoo\"\n    name: \"Odoo\"\n    image: registry.c2.liara.ir/one-click-apps/odoo:19\n    availableImageTags:\n      - 19\n      - 18\n      - 17.0\n    bundlePlanID: \"standard\"\n    planID: \"medium-g2\"\n    port: 8069\n    \n    disks:\n      - name: \"addons\"\n        mountTo: \"/mnt/extra-addons\"\n        size: 10\n        maxSize: 0.5\n      - name: \"data\"\n        mountTo: \"/var/lib/odoo\"\n        size: 50\n        maxSize: 5\n      - name: \"config\"\n        mountTo: \"/etc/odoo\"\n        size: 10\n        maxSize: 0.5\n\n    envs:\n      HOST: \"$DB_main_HOST\"\n      PORT: \"$DB_main_PORT\"\n      USER: \"$DB_main_USER\"\n      PASSWORD: \"$DB_main_PASSWORD\"\n\ndatabases:\n  - type: \"postgres\"\n    id: \"main\"\n    version: \"16.14\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n"
+ },
+ "rocket.chat": {
+  "about": "راکت‌چت، یک پلتفرم است که می‌توانید به جای ایمیل و یا Slack، برای ارتباط درون تیمی استفاده کنید.",
+  "categories": [
+   "Communications",
+   "Internal Tools"
+  ],
+  "installs": 974,
+  "github": "rocketchat/rocket.chat",
+  "spec": "apps:\n  - id: \"rocketChat\"\n    name: \"Rocket.Chat\"\n    image: registry.c2.liara.ir/one-click-apps/rocket.chat:7.9.3\n    availableImageTags:\n      - 7.9.3\n      - 6.9.2\n      - 6.7.5\n    bundlePlanID: \"standard\"\n    planID: \"standard-base-g2\"\n    port: 3000\n    disks:\n      - name: \"uploads\"\n        mountTo: \"/app/uploads\"\n    envs:\n      NODE_ENV: \"production\"\n      ROOT_URL: \"https://$APP_NAME.liara.run\"\n      PORT: \"3000\"\n      MONGO_URL: \"mongodb://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/rocket-chat?authSource=admin&replicaSet=rs0&directConnection=true\"\n      MONGO_OPLOG_URL: \"mongodb://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/local?authSource=admin&replicaSet=rs0&directConnection=true\"\n      FileUpload_Storage_Type: \"FileSystem\"\n      FileUpload_FileSystemPath: \"/app/uploads\"\n\ndatabases:\n  - type: \"mongodb\"\n    id: \"main\"\n    version: \"7.0.5\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    options:\n      standaloneReplicaSet: true"
+ },
+ "flowise": {
+  "about": "با FlowiseAI، مدل‌های هوش مصنوعی خود را به‌صورت بصری و بدون نیاز به کدنویسی طراحی و پیاده‌سازی کنید.",
+  "categories": [
+   "AI"
+  ],
+  "installs": 331,
+  "github": "flowiseai/flowise",
+  "spec": "apps:\n  - id: \"flowiseai\"\n    name: \"FlowiseAI\"\n    image: \"registry.c2.liara.ir/one-click-apps/flowise:2.0.7\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    disks:\n      - name: \"flowise\"\n        mountTo: \"/root/.flowise\"\n        size: 10\n        maxSize: 5\n   \n    port: 3000\n    envs:\n      PORT: \"3000\"\n      DATABASE_PATH: \"/root/.flowise\"\n      APIKEY_PATH: \"/root/.flowise\"\n      SECRETKEY_PATH: \"/root/.flowise\"\n      LOG_PATH: \"/root/.flowise/logs\"\n      BLOB_STORAGE_PATH: \"/root/.flowise/storage\"\n      FLOWISE_USERNAME: flowise\n      FLOWISE_PASSWORD: \"$RANDOM_STRING\"\n      CORS_ORIGINS: \"*\"\n      FLOWISE_FILE_SIZE_LIMIT: \"50mb\"\n      DEBUG: \"true\"\n      LOG_LEVEL: \"debug\"\n      DISABLE_FLOWISE_TELEMETRY: \"true\""
+ },
+ "directus": {
+  "about": "با Directus، محتوای سفارشی و داده‌های برنامه‌های خود را به‌سادگی ایجاد و مدیریت کنید.",
+  "categories": [
+   "CMS"
+  ],
+  "installs": 192,
+  "github": "directus/directus",
+  "spec": "apps:\n  - id: directus\n    name: Directus\n    image: registry.c2.liara.ir/one-click-apps/directus:11.1.0\n    bundlePlanID: standard\n    planID: small-g2\n    disks:\n      - name: database\n        mountTo: /directus/database\n        size: 10\n        maxSize: 2\n      - name: uploads\n        mountTo: /directus/uploads\n        size: 10\n        maxSize: 5\n      - name: extensions\n        mountTo: /directus/extensions\n        size: 10\n        maxSize: 3\n    port: 8055\n    envs:\n      SECRET: \"$RANDOM_STRING\"\n      ADMIN_EMAIL: \"admin@example.com\"\n      ADMIN_PASSWORD: \"$RANDOM_STRING\"\n      DB_CLIENT: \"sqlite3\"\n      DB_FILENAME: \"/directus/database/data.db\"\n      WEBSOCKETS_ENABLED: \"false\"\n      WEBSOCKETS_GRAPHQL_ENABLED: \"false\"\n      WEBSOCKETS_REST_ENABLED: \"false\"\n"
+ },
+ "grist": {
+  "about": "داده‌های خود را به‌صورت پویا و سفارشی با Grist، در صفحات گسترده و پایگاه‌های داده مدیریت کنید.",
+  "categories": [
+   "Website Analytics",
+   "Database"
+  ],
+  "installs": 47,
+  "github": "gristlabs/grist-core",
+  "spec": "apps:\n  - id: grist\n    name: Grist\n    image: registry.c2.liara.ir/one-click-apps/grist-oss:1.1.18\n    bundlePlanID: standard\n    planID: small-g2\n    port: 8484\n\n    disks:\n      - name: data\n        mountTo: /persist\n        size: 10\n        maxSize: 0.5\n\n    envs:\n      GRIST_SESSION_SECRET: \"$RANDOM_STRING\"\n      GRIST_SANDBOX_FLAVOR: \"gvisor\"\n      APP_HOME_URL: \"https://$APP_NAME.liara.run\""
+ },
+ "keila": {
+  "about": "کمپین‌های ایمیل مارکتینگ خود را به‌صورت متن‌باز و کارآمد با Keila، مدیریت کنید.",
+  "categories": [
+   "Email"
+  ],
+  "installs": 2,
+  "github": "pentacent/keila",
+  "spec": "apps:\n  - id: keila\n    name: Keila\n    image: registry.c2.liara.ir/one-click-apps/keila:0.15\n    bundlePlanID: standard\n    planID: small-g2\n    port: 4000\n  \n\n    envs:\n      DB_URL: \"postgres://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/postgres\"\n      KEILA_USER: \"admin@example.com\"\n      KEILA_PASSWORD: \"$RANDOM_STRING\" \n      URL_HOST: \"$APP_NAME.liara.run\"\n      URL_SCHEMA: \"https\"\n      PORT: \"4000\"\n      SECRET_KEY_BASE: \"d3d986ae0dca09cb98e9694d3bd8d57d67027$RANDOM_STRINGf771e057c31df35f52ea1ee1fc7e8b816ac64767fc50eb2c7ab60b4a1a1695e12e652b2f84d57b17b8c1017311a\"\n\n      MAILER_TYPE: \"smtp\"\n      MAILER_SMTP_HOST: \"smtp.c1.liara.email\"\n      MAILER_SMTP_PORT: \"587\"\n      MAILER_SMTP_USER: \"replace-me\"\n      MAILER_SMTP_PASSWORD: \"replace-me\"\n      MAILER_SMTP_FROM_EMAIL: \"replace@m.e\"\n      MAILER_ENABLE_STARTTLS: \"true\"\n\n\ndatabases:\n  - type: postgres\n    id: main\n    version: '15.18'\n    bundlePlanID: standard\n    planID: small-g2"
+ },
+ "moodle": {
+  "about": "با Moodle، سیستم مدیریت یادگیری (LMS) خود را متناسب با نیازهایتان، خلق کنید.",
+  "categories": [
+   "Communications"
+  ],
+  "installs": 161,
+  "github": "moodle/moodle",
+  "spec": "apps:\n  - id: moodleapp\n    name: moodleapp\n    image: registry.c2.liara.ir/one-click-apps/moodle:4.4.4\n    bundlePlanID: standard\n    planID: medium-g2\n    disks:\n      - name: moodle\n        mountTo: /bitnami/moodle\n        size: 50\n        maxSize: 5\n      - name: data\n        mountTo: /bitnami/moodledata\n        size: 50\n        maxSize: 5\n\n    port: 8080\n    envs:\n      MOODLE_DATABASE_TYPE: \"mariadb\"\n      MOODLE_DATABASE_HOST: \"$DB_main_HOST\"\n      MOODLE_DATABASE_PORT_NUMBER: \"$DB_main_PORT\"\n      MOODLE_DATABASE_USER: \"$DB_main_USER\"\n      MOODLE_DATABASE_NAME: \"$DB_main_NAME\"\n      MOODLE_DATABASE_PASSWORD: \"$DB_main_PASSWORD\"\n      \n      MOODLE_SITE_NAME: \"Moodle\"\n      MOODLE_SSLPROXY: \"yes\"\n      MOODLE_LANG: \"en\"\n      MOODLE_USERNAME: \"admin\"\n      MOODLE_PASSWORD: \"$RANDOM_STRING\"\n\n      MOODLE_EMAIL: \"admin@example.com\"\n\n      MOODLE_SMTP_HOST: \"\"\n      MOODLE_SMTP_PORT_NUMBER: \"\"\n      MOODLE_SMTP_USER: \"\"\n      MOODLE_SMTP_PASSWORD: \"\"\n      MOODLE_SMTP_PROTOCOL: \"\"\n\n\ndatabases:\n  - type: mariadb\n    id: main\n    version: 10.6.8\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "infisical": {
+  "about": "اطلاعات حساس و کلیدهای API را در پروژه‌های‌تان با Infisical، به صورت امن و ساده، مدیریت کنید.",
+  "categories": [
+   "Auth & SSO",
+   "Internal Tools"
+  ],
+  "installs": 5,
+  "github": "infisical/infisical",
+  "spec": "apps:\n\n  - id: db-migration\n    name: infisical-db-migration\n    image: registry.c2.liara.ir/one-click-apps/infisical:v0.94.1-postgres\n    bundlePlanID: standard\n    planID: standard-base-g2\n    port: 8080\n    args:\n      - \"bash\"\n      - \"-c\"\n      - \"npm run migration:latest\"\n\n    envs:\n      NODE_ENV: \"production\"\n      POSTGRES_PASSWORD: \"$DB_main_PASSWORD\"\n      POSTGRES_USER: \"$DB_main_USER\"\n      POSTGRES_DB: \"postgres\"\n      DB_CONNECTION_URI: \"postgresql://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/postgres\"\n      ENCRYPTION_KEY: \"d7947e700b156615c98a6c8a70dc65a3\"\n      AUTH_SECRET: \"32aPbqtEB7NCboa4XgyuSBIK3wdw27bmITfJA8xH4WewE=\"\n      REDIS_URL: \"redis://:$DB_base_PASSWORD@$DB_base_HOST:$DB_base_PORT/0\"\n      SITE_URL: \"https://$APP_NAME.liara.run\"\n      PORT: \"8080\"\n\n  - id: infisical\n    name: infisical\n    image: infisical/infisical:v0.94.1-postgres\n    bundlePlanID: standard\n    planID: standard-base-g2\n    port: 8080\n\n    envs:\n      NODE_ENV: \"production\"\n      POSTGRES_PASSWORD: \"$DB_main_PASSWORD\"\n      POSTGRES_USER: \"$DB_main_USER\"\n      POSTGRES_DB: \"postgres\"\n      DB_CONNECTION_URI: \"postgresql://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/postgres\"\n      ENCRYPTION_KEY: \"d7947e700b156615c98a6c8a70dc65a3\"\n      AUTH_SECRET: \"32aPbqtEB7NCboa4XgyuSBIK3wdw27bmITfJA8xH4WewE=\"\n      REDIS_URL: \"redis://:$DB_base_PASSWORD@$DB_base_HOST:$DB_base_PORT/0\"\n      SITE_URL: \"https://$APP_NAME.liara.run\"\n      PORT: \"8080\"\n\ndatabases:\n  - type: postgres\n    id: main\n    version: '14.23'\n    bundlePlanID: standard\n    planID: small-g2\n  - type: redis\n    id: base\n    version: 7.2.3\n    bundlePlanID: standard\n    planID: small-g2"
+ },
+ "drupal": {
+  "about": "وب‌سایت‌های قدرتمند و مقیاس‌پذیر خود را با Drupal، با انعطاف‌پذیری بالا طراحی و مدیریت کنید.",
+  "categories": [
+   "CMS"
+  ],
+  "installs": 21,
+  "github": "drupal/drupal",
+  "spec": "apps:\n  - id: \"drupal\"\n    name: \"drupal\"\n    image: \"registry.c2.liara.ir/one-click-apps/drupal:11.0.7\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    disks:\n      - name: \"data\"\n        mountTo: \"/bitnami/drupal\"\n    port: 8080\n    envs:\n      DRUPAL_USERNAME: \"admin\"\n      DRUPAL_PASSWORD: \"$RANDOM_STRING\"\n      DRUPAL_EMAIL: \"admin@example.com\"\n      DRUPAL_DATABASE_HOST: \"$DB_main_HOST\"\n      DRUPAL_DATABASE_PORT_NUMBER: \"$DB_main_PORT\"\n      DRUPAL_DATABASE_NAME: \"$DB_main_NAME\"\n      DRUPAL_DATABASE_USER: \"$DB_main_USER\"\n      DRUPAL_DATABASE_PASSWORD: \"$DB_main_PASSWORD\"\n\ndatabases:\n  - type: \"mariadb\"\n    id: \"main\"\n    version: \"10.6.8\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\""
+ },
+ "typesense": {
+  "about": "با Typesense، جستجوی فوق‌العاده سریع و مرتبط را در برنامه‌های خود پیاده‌سازی کنید.",
+  "categories": [
+   "API Platform"
+  ],
+  "installs": 63,
+  "github": "typesense/typesense",
+  "spec": "apps:\n  - id: typesense\n    name: typesense\n    image: registry.c2.liara.ir/one-click-apps/typesense:27.0\n    bundlePlanID: standard\n    planID: standard-base-g2\n    port: 8108\n  \n    disks:\n      - name: typesense-data\n        mountTo: /data\n\n    envs:\n      TYPESENSE_API_KEY: \"$RANDOM_STRING\"\n      TYPESENSE_DATA_DIR: \"/data\"\n      TYPESENSE_ENABLE_CORS: \"true\"\n      TYPESENSE_PEERING_PORT: \"8107\"\n      "
+ },
+ "chrome": {
+  "about": "با Headless Chrome و ابزارهایی مثل Selenium یا Puppeteer، داده‌های مورد نیاز خود را Crawl کنید.",
+  "categories": [
+   "Software Development"
+  ],
+  "installs": 1061,
+  "github": "browserless/browserless",
+  "spec": "apps:\n  - id: \"chrome\"\n    name: \"Chrome\"\n    image: \"registry.c2.liara.ir/one-click-apps/chrome:1.61-chrome-stable\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    port: 3000\n    envs:\n      TOKEN: \"$RANDOM_STRING\"\n      MAX_CONCURRENT_SESSIONS: \"5\"\n      CONNECTION_TIMEOUT: \"30000\"\n      ENABLE_DEBUGGER: \"true\"\n      ENABLE_CORS: \"false\"\n      EXIT_ON_HEALTH_FAILURE: \"true\"\n"
+ },
+ "gitea": {
+  "about": "Gitea یک نرم‌افزار رایگان و متن‌باز مشابه و جایگزین Github و Gitlab مناسب پروژه‌های شخصی است.",
+  "categories": [
+   "Software Development"
+  ],
+  "installs": 611,
+  "github": "go-gitea/gitea",
+  "spec": "apps:\n  - id: \"gitea\"\n    name: \"Gitea\"\n    image: registry.c2.liara.ir/one-click-apps/gitea:1.26.2-rootless\n    availableImageTags:\n       - 1.26.2-rootless\n       - 1.21.1-rootless\n\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    port: 3000\n    disks:\n      - name: \"config\"\n        mountTo: \"/etc/gitea\"\n        size: 10\n        maxSize: 0.1\n      - name: \"data\"\n        mountTo: \"/var/lib/gitea\"\n    envs:\n      GITEA__SERVER__ROOT_URL: \"https://$APP_NAME.liara.run\"\n      GITEA__TIME__DEFAULT_UI_LOCATION: \"Asia/Tehran\"\n      GITEA__SERVER__DISABLE_SSH: \"true\"\n"
+ },
+ "nextcloud": {
+  "about": "NextCloud یک سرویس ابری مانند Google Drive است که شما می‌توانید به‌صورت شخصی از آن استفاده کنید.",
+  "categories": [
+   "Productivity",
+   "Internal Tools"
+  ],
+  "installs": 566,
+  "github": "nextcloud/server",
+  "spec": "apps:\n  - id: \"nextcloud\"\n    name: \"NextCloud\"\n    image: registry.c2.liara.ir/one-click-apps/nextcloud:33.0.5\n    availableImageTags:\n      - 33.0.5\n      - 25\n\n    bundlePlanID: \"standard\"\n    planID: \"standard-base-g2\"\n    port: 80\n    disks:\n      - name: \"tmp\"\n        mountTo: \"/tmp\"\n        size: 10\n        maxSize: 1\n      - name: \"data\"\n        mountTo: \"/var/www/html\"\n    envs:\n      OVERWRITEHOST: \"$APP_NAME.liara.run\"\n      OVERWRITEPROTOCOL: \"https\"\n      MYSQL_HOST: \"$DB_main_HOST:$DB_main_PORT\"\n      MYSQL_USER: \"$DB_main_USER\"\n      MYSQL_PASSWORD: \"$DB_main_PASSWORD\"\n      MYSQL_DATABASE: \"nextcloud\"\n\ndatabases:\n  - type: \"mariadb\"\n    id: \"main\"\n    version: \"11.2.3\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n"
+ },
+ "chroma": {
+  "about": "Chroma یک کتابخانه متن‌باز  برای مدیریت و کار با پایگاه داده‌های برداری مخصوص Machine Learning است.",
+  "categories": [
+   "Database"
+  ],
+  "installs": 96,
+  "github": "chroma-core/chroma",
+  "spec": "apps:\n  - id: \"chroma\"\n    name: \"Chroma\"\n    image: registry.c2.liara.ir/one-click-apps/chroma:1.5.10.dev81\n    availableImageTags:\n      - 1.5.10.dev81\n      - 1.0.16.dev99\n      - 1.0.13.dev57\n      - 0.5.1.dev16\n\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    disks:\n      - name: \"data\"\n        mountTo: \"/chroma/chroma\"\n    port: 8000\n    envs:\n      CHROMA_SERVER_AUTH_CREDENTIALS: \"$RANDOM_STRING\"\n      CHROMA_SERVER_AUTH_CREDENTIALS_PROVIDER: \"chromadb.auth.token.TokenConfigServerAuthCredentialsProvider\"\n      CHROMA_SERVER_AUTH_PROVIDER: \"chromadb.auth.token.TokenAuthServerProvider\"\n"
+ },
+ "paperless": {
+  "about": "اسناد خود را با paperless به‌صورت دیجیتالی مدیریت و ذخیره کنید و از کاغذبازی رها شوید.",
+  "categories": [
+   "Knowledge Management",
+   "Notetaking"
+  ],
+  "installs": 34,
+  "github": "paperless-ngx/paperless-ngx",
+  "spec": "apps:\n  - id: paperless\n    name: paperless\n    image: registry.c2.liara.ir/one-click-apps/paperless-ngx:2.12\n    bundlePlanID: standard\n    planID: medium-g2\n\n    disks:\n      - name: data\n        mountTo: /usr/src/paperless/data\n        size: 10\n        maxSize: 0.5\n      - name: media\n        mountTo: /usr/src/paperless/media\n        size: 10\n        maxSize: 0.5\n      - name: export\n        mountTo: /usr/src/paperless/export\n        size: 10\n        maxSize: 0.5\n      - name: consume\n        mountTo: /usr/src/paperless/consume\n        size: 10\n        maxSize: 0.5\n  \n    port: 8000\n    envs:\n\n      PAPERLESS_URL: \"https://$APP_NAME.liara.run\"\n      PAPERLESS_SECRET_KEY: \"$RANDOM_STRING\"\n      PAPERLESS_TIME_ZONE: \"Asia/Tehran\"\n      PAPERLESS_REDIS: \"redis://:$DB_base_PASSWORD@$DB_base_HOST:$DB_base_PORT/0\"\n      PAPERLESS_DBENGINE: \"postgresql\"\n      PAPERLESS_DBHOST: \"$DB_main_HOST\"\n      PAPERLESS_DBPORT: \"$DB_main_PORT\"\n      PAPERLESS_DBNAME: \"postgres\"\n      PAPERLESS_DBUSER: \"$DB_main_USER\"\n      PAPERLESS_DBPASS: \"$DB_main_PASSWORD\"\n      PAPERLESS_ADMIN_USER: \"paperless\"\n      PAPERLESS_ADMIN_MAIL: \"admin@example.com\"\n      PAPERLESS_ADMIN_PASSWORD: \"$RANDOM_STRING\"\n      PAPERLESS_OCR_LANGUAGES: \"eng fas\"\n      PAPERLESS_OCR_LANGUAGE: \"eng\"\n      PAPERLESS_APP_TITLE: \"Paperless-ngx\"\n      PAPERLESS_EMAIL_HOST: \"smtp.c1.liara.email\"\n      PAPERLESS_EMAIL_PORT: \"587\"\n      PAPERLESS_EMAIL_HOST_USER: \"replace-me\"\n      PAPERLESS_EMAIL_FROM: \"replace@m.e\"\n      PAPERLESS_EMAIL_HOST_PASSWORD: \"replace-me\"\n      PAPERLESS_EMAIL_USE_TLS: \"true\"\n\ndatabases:\n  - type: postgres\n    id: main\n    version: '15.18'\n    bundlePlanID: standard\n    planID: small-g2\n\n  - type: redis\n    id: base\n    version: '7.2.3'\n    bundlePlanID: standard\n    planID: small-g2\n  \n"
+ },
+ "formbricks": {
+  "about": "فرم‌های کاربران‌تان را با Formbricks، به‌صورت هوشمندانه مدیریت و تجزیه‌وتحلیل کنید.",
+  "categories": [
+   "Internal Tools",
+   "Low-Code",
+   "Website Analytics"
+  ],
+  "installs": 33,
+  "github": "formbricks/formbricks",
+  "spec": "apps:\n  - id: formbricks\n    name: formbricks\n    image: registry.c2.liara.ir/one-click-apps/formbricks:v2.5.3\n    bundlePlanID: standard\n    planID: small-g2\n    port: 3000\n\n    disks:\n      - name: uploads\n        mountTo: \"/home/nextjs/apps/web/uploads/\"\n        size: 10\n        maxSize: 1\n\n    envs:\n      WEBAPP_URL: \"https://$APP_NAME.liara.run\"\n      NEXTAUTH_URL: \"https://$APP_NAME.liara.run\"\n      DATABASE_URL: \"postgres://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/postgres\"\n      NEXTAUTH_SECRET: \"$RANDOM_STRING\"\n      ENCRYPTION_KEY: \"48754c6d6eb3f285971b7cc7daa010b242fc75e3d205fb32d364a681823cc9c7\"\n      CRON_SECRET: \"$RANDOM_STRING\"\n      UPLOADS_DIR: \"/home/nextjs/apps/web/uploads/\"\n      EMAIL_VERIFICATION_DISABLED: \"1\"\n\ndatabases:\n  - type: postgres\n    id: main\n    version: '15.18'\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "activepieces": {
+  "about": "با Activepieces، فرآیندهای خودکارسازی را بدون نیاز به کدنویسی، ایجاد و مدیریت کنید.",
+  "categories": [
+   "No-Code",
+   "Workflow Automation",
+   "AI"
+  ],
+  "installs": 31,
+  "github": "activepieces/activepieces",
+  "spec": "apps:\n  - id: activepieces\n    name: ActivePieces\n    image: registry.c2.liara.ir/one-click-apps/activepieces:0.39.2\n\n    availableImageTags:\n      - \"0.39.2\"\n      - \"0.62.0\"\n    bundlePlanID: standard\n    planID: medium-g2\n\n    disks:\n      - name: cache\n        mountTo: /usr/src/app/cache\n        size: 50\n        maxSize: 5\n\n    port: 80\n\n    envs:\n\n      AP_ENGINE_EXECUTABLE_PATH: \"dist/packages/engine/main.js\"\n      AP_API_KEY: \"$RANDOM_STRING\"\n      AP_ENCRYPTION_KEY: \"e281c5988aee9cce572636a2dc65720e\"\n      AP_JWT_SECRET: \"d821498c4410060b71e92b6f6c02db411e03eb0189f7eee633038025a3f24780\"\n\n      AP_ENVIRONMENT: \"prod\"\n      AP_FRONTEND_URL: https://$APP_NAME.liara.run\n      AP_WEBHOOK_TIMEOUT_SECONDS: \"30\"\n      AP_TRIGGER_DEFAULT_POLL_INTERVAL: \"5\"\n\n      AP_DB_TYPE: \"POSTGRES\"\n      AP_POSTGRES_DATABASE: postgres\n      AP_POSTGRES_HOST: \"$DB_main_HOST\"\n      AP_POSTGRES_PORT: \"$DB_main_PORT\"\n      AP_POSTGRES_USERNAME: \"$DB_main_USER\"\n      AP_POSTGRES_PASSWORD: \"$DB_main_PASSWORD\"\n\n      AP_EXECUTION_MODE: \"UNSANDBOXED\"\n\n      AP_REDIS_HOST: \"$DB_base_HOST\"\n      AP_REDIS_PORT: \"$DB_base_PORT\"\n      AP_REDIS_PASSWORD: \"$DB_base_PASSWORD\"\n\n      AP_FLOW_TIMEOUT_SECONDS: \"600\"\n      AP_TELEMETRY_ENABLED: \"true\"\n      AP_TEMPLATES_SOURCE_URL: \"https://cloud.activepieces.com/api/v1/flow-templates\"\n\ndatabases:\n  - type: postgres\n    id: main\n    version: '16.14'\n    bundlePlanID: standard\n    planID: small-g2\n  - type: redis\n    id: base\n    version: 7.2.3\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "varnish cache": {
+  "about": "Varnish Cache یک سیستم کشینگ HTTP است که باعث افزایش سرعت وب‌سایت‌ها تا 100ها برابر می‌شود.",
+  "categories": [
+   "Software Development"
+  ],
+  "installs": 110,
+  "github": "varnishcache/varnish-cache",
+  "spec": "apps:\n  - id: \"varnish\"\n    name: \"Varnish\"\n    image: \"registry.c2.liara.ir/one-click-apps/varnish:7.5.0\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    port: 80\n    disks:\n      - name: \"cache\"\n        mountTo: \"/var/lib/varnish\"\n        size: 10\n        maxSize: 2\n      - name: \"config\"\n        mountTo: \"/etc/varnish\"\n        size: 10\n        maxSize: 0.5\n    envs:\n      VARNISH_BACKEND_HOST: \"my_host\"\n      VARNISH_BACKEND_PORT: \"8000\"\n      VARNISH_TTL: \"3600\"\n      VARNISH_SIZE: \"2G\"\n"
+ },
+ "umami": {
+  "about": "وب‌سایت‌هایتان را با umami، به سادگی و پرقدرت تحلیل و آنالیز کنید.",
+  "categories": [
+   "Monitoring"
+  ],
+  "installs": 115,
+  "github": "umami-software/umami",
+  "spec": "apps:\n  - id: umami\n    name: Umami\n    image: registry.c2.liara.ir/one-click-apps/umami:postgresql-v2.13.2\n    bundlePlanID: standard\n    planID: small-g2\n    port: 3000\n    envs:\n      DATABASE_URL: >-\n        postgresql://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/postgres\n      DATABASE_TYPE: postgresql\n      APP_SECRET: $RANDOM_STRING\n      FORCE_SSL: '1'\ndatabases:\n  - type: postgres\n    id: main\n    version: '16.14'\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "mattermost": {
+  "about": "Mattermost یک پلتفرم متن‌باز و امن برای پیام‌رسانی و همکاری تیمی است.",
+  "categories": [
+   "Communications"
+  ],
+  "installs": 3320,
+  "github": "mattermost/mattermost",
+  "spec": "apps:\n  - id: \"mattermost\"\n    name: \"Mattermost\"\n    image: registry.c2.liara.ir/one-click-apps/mattermost-team-edition:9.7.2\n    availableImageTags:\n      - 9.7.2\n      - 11.7.2\n      - 10.9\n      - 10.11.0\n\n    bundlePlanID: \"pro\"\n    planID: \"medium-g2\"\n    disks:\n      - name: \"logs\"\n        mountTo: \"/mattermost/logs\"\n        size: 10\n        maxSize: 0.1\n      - name: \"plugins\"\n        mountTo: \"/mattermost/plugins\"\n        size: 10\n        maxSize: 0.5\n      - name: \"client-plugins\"\n        mountTo: \"/mattermost/client/plugins\"\n        size: 10\n        maxSize: 0.1\n      - name: \"config\"\n        mountTo: \"/mattermost/config\"\n        size: 10\n        maxSize: 0.1\n      - name: \"temp\"\n        mountTo: \"/tmp\"\n        size: 10\n        maxSize: 2\n      - name: \"data\"\n        mountTo: \"/mattermost/data\"\n    port: 8065\n    envs:\n      MM_SQLSETTINGS_DATASOURCE: \"postgresql://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/postgres?sslmode=disable&connect_timeout=10\"\n      MM_SERVICESETTINGS_SITEURL: 'https://$APP_NAME.liara.run'\n\n\ndatabases:\n  - type: \"postgres\"\n    id: \"main\" \n    version: \"16.14\" \n    bundlePlanID: \"standard\"\n    planID: \"small-g2\""
+ },
+ "affine": {
+  "about": "با Affine، داده‌های خود را با یک پلتفرم قدرتمند و بصری به سادگی تجزیه و تحلیل کنید.",
+  "categories": [
+   "Notetaking",
+   "Knowledge Management"
+  ],
+  "installs": 48,
+  "github": "toeverything/affine",
+  "spec": "apps:\n  - id: affine\n    name: AFFiNE\n    image: registry.c2.liara.ir/one-click-apps/affine-graphql:stable-eb0466e\n    bundlePlanID: standard\n    planID: small-g2\n    args:\n      - 'sh'\n      - '-c'\n      - 'node ./scripts/self-host-predeploy && node ./dist/index.js'\n\n    disks:\n      - name: config\n        mountTo: /root/.affine/config\n        size: 10\n        maxSize: 2\n      - name: storage\n        mountTo: /root/.affine/storage\n        size: 10\n        maxSize: 2\n    port: 3010\n    envs:\n      NODE_OPTIONS: \"--import=./scripts/register.js\"\n      AFFINE_SERVER_HOST: \"$APP_NAME.liara.run\"\n      AFFINE_SERVER_PORT: \"3010\"\n      AFFINE_SERVER_HTTPS: \"true\"\n      AFFINE_CONFIG_PATH: \"/root/.affine/config\"\n      REDIS_SERVER_HOST: \"$DB_base_HOST\"\n      REDIS_SERVER_PORT: \"$DB_base_PORT\"\n      REDIS_SERVER_PASSWORD: \"$DB_base_PASSWORD\"\n      DATABASE_URL: \"postgres://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/postgres\"\n      NODE_ENV: \"production\"\n      AFFINE_ADMIN_EMAIL: \"default@example.com\"\n      AFFINE_ADMIN_PASSWORD: \"$RANDOM_STRING\"\n      TELEMETRY_ENABLE: \"false\"\n      MAILER_HOST: \"smtp.c1.liara.email\"\n      MAILER_PORT: \"587\"\n      MAILER_USER: \"empty-for-now\"\n      MAILER_PASSWORD: \"empty-for-now\"\n      MAILER_SENDER: \"admin@example.com\"\n\ndatabases:\n  - type: postgres\n    id: main\n    version: '16.14'\n    bundlePlanID: standard\n    planID: small-g2\n\n  - type: redis\n    id: base\n    version: '7.2.3'\n    bundlePlanID: standard\n    planID: small-g2\n  \n"
+ },
+ "unleash": {
+  "about": "یک راه حل مدیریت ویژگی که باعث بهبود فرایند کاری تیم توسعه شما و تحویل سریع‌تر نرم‌افزار می‌شود.",
+  "categories": [
+   "API Platform"
+  ],
+  "installs": 9,
+  "github": "unleash/unleash",
+  "spec": "apps:\n  - id: \"unleash\"\n    name: \"Unleash\"\n    image: registry.c2.liara.ir/one-click-apps/unleash-server:8\n    availableImageTags:\n      - 8\n      - 5\n\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    port: 4242\n    envs:\n      DATABASE_USERNAME: \"$DB_main_USER\"\n      DATABASE_PASSWORD: \"$DB_main_PASSWORD\"\n      DATABASE_HOST: \"$DB_main_HOST\"\n      DATABASE_SSL: \"false\"\n      CHECK_VERSION: \"false\"\n      LOG_LEVEL: \"info\"\n      DATABASE_NAME: \"postgres\"\n\ndatabases:\n  - type: \"postgres\"\n    id: \"main\"\n    version: \"16.14\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n"
+ },
+ "supertokens": {
+  "about": "با Supertokens، سیستم‌های احراز هویت خود را به ساده‌ترین و امن‌ترین شکل مدیریت کنید.",
+  "categories": [
+   "Internal Tools"
+  ],
+  "installs": 27,
+  "github": "supertokens/supertokens-core",
+  "spec": "apps:\n  - id: \"supertoken\"\n    name: \"SuperToken\"\n    image: \"registry.c2.liara.ir/one-click-apps/supertokens-mysql:9.2.0\"\n   \n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    port: 3567\n    envs:\n      MYSQL_USER: \"$DB_main_USER\"\n      MYSQL_HOST: \"$DB_main_HOST\"\n      MYSQL_PORT: \"$DB_main_PORT\"\n      MYSQL_PASSWORD: \"$DB_main_PASSWORD\"\n      MYSQL_DATABASE_NAME: \"$DB_main_NAME\"\n      MYSQL_CONNECTION_POOL_SIZE: \"10\"\n\ndatabases:\n  - type: \"mysql\"\n    id: \"main\"\n    version: \"8.0.30\"\n    bundlePlanID: \"standard\"\n    planID: \"medium-g2\"\n"
+ },
+ "pghero": {
+  "about": "با PgHero، پایگاه‌داده PostgreSQL خود را به راحتی بهینه و نظارت کنید.",
+  "categories": [
+   "Monitoring",
+   "Database"
+  ],
+  "installs": 51,
+  "github": "ankane/pghero",
+  "spec": "apps:\n  - id: pghero\n    name: PgHero\n    image: \"registry.c2.liara.ir/one-click-apps/pghero:v3.6.0\"\n    bundlePlanID: standard\n    planID: small-g2\n    port: 8080\n    envs:\n      DATABASE_URL: \"postgres://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/postgres\"\n      PGHERO_USERNAME: \"pghero\"\n      PGHERO_PASSWORD: \"$RANDOM_STRING\"\n\ndatabases:\n  - type: postgres\n    id: main\n    version: \"16.14\"\n    bundlePlanID: standard\n    planID: small-g2"
+ },
+ "actual": {
+  "about": "کیف پول و هزینه‌های خود را با Actual، به‌سادگی مدیریت کنید.",
+  "categories": [
+   "Financial Service"
+  ],
+  "installs": 34,
+  "github": "actualbudget/actual",
+  "spec": "apps:\n  - id: actual\n    name: Actual\n    image: registry.c2.liara.ir/one-click-apps/actual-server:sha-fe85325\n    bundlePlanID: standard\n    planID: small-g2\n    port: 80\n\n    disks:\n      - name: data\n        mountTo: /data\n        size: 10\n        maxSize: 0.5  \n\n    envs:\n      ACTUAL_PORT: \"80\"\n      ACTUAL_LOGIN_METHOD: \"password\"\n"
+ },
+ "listmonk": {
+  "about": " کمپین‌های ایمیلی خود را به‌صورت مقیاس‌پذیر و متن‌باز با Listmonk، مدیریت کنید.",
+  "categories": [
+   "Communities",
+   "Commerce",
+   "Email"
+  ],
+  "installs": 13,
+  "github": "knadh/listmonk",
+  "spec": "apps:\n  - id: listmonk\n    name: listmonk\n    image: registry.c2.liara.ir/one-click-apps/listmonk:v4.1.0\n    bundlePlanID: standard\n    planID: small-g2\n    port: 9000\n\n    disks:\n      - name: \"uploads\"\n        mountTo: \"/listmonk/uploads\"\n        size: 50\n        maxSize: 5\n    \n    envs:\n      LISTMONK_app__address: \"0.0.0.0:9000\"\n      LISTMONK_db__user: \"$DB_main_USER\"\n      LISTMONK_db__password: \"$DB_main_PASSWORD\"\n      LISTMONK_db__database: \"postgres\"\n      LISTMONK_db__host: \"$DB_main_HOST\"\n      LISTMONK_db__port: \"$DB_main_PORT\"\n      LISTMONK_db__ssl_mode: \"disable\"\n      LISTMONK_db__max_open: \"25\"\n      LISTMONK_db__max_idle: \"25\"\n      LISTMONK_db__max_lifetime: \"300s\"\n      TZ: \"Etc/UTC\"\n\n      LISTMONK_ADMIN_USER: \"admin\"\n      LISTMONK_ADMIN_PASSWORD: \"$RANDOM_STRING\"\n\n    args: \n      - \"sh\"\n      - \"-c\"\n      - \"./listmonk --install --idempotent --yes --config '' && ./listmonk --upgrade --yes --config '' && ./listmonk --config ''\"\n\ndatabases:\n  - type: postgres\n    id: main\n    version: '16.14'\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "linkstack": {
+  "about": "با LinkStack، تمام لینک‌های خود را در یک صفحه زیبا و قابل شخصی‌سازی، قرار دهید.",
+  "categories": [
+   "Observability",
+   "Commerce"
+  ],
+  "installs": 67,
+  "github": "linkstackorg/linkstack",
+  "spec": "apps:\n  - id: linkstack\n    name: linkstack\n    image: registry.c2.liara.ir/one-click-apps/linkstack:V4\n    bundlePlanID: standard\n    planID: small-g2\n    port: 80\n\n    disks:\n      - name: \"data\"\n        mountTo: \"/htdocs\"\n        size: 50\n        maxSize: 5\n    \n    envs:\n      TZ: \"UTC\"\n      SERVER_ADMIN: \"admin@example.com\"\n      HTTPS_SERVER_NAME: \"$APP_NAME.liara.run\"\n      LOG_LEVEL: \"debug\"\n      PHP_MEMORY_LIMIT: \"512M\"\n      UPLOAD_MAX_FILESIZE: \"16M\"\n      APP_URL: \"https://$APP_NAME.liara.run\"\n      DB_CONNECTION: \"sqlite\"\n\n      MAIL_HOST: \"\"\n      MAIL_PORT: \"\"\n      MAIL_USERNAME: \"\"\n      MAIL_PASSWORD: \"\"\n      MAIL_ENCRYPTION: \"\"\n      MAIL_FROM_ADDRESS: \"\"\n      MAIL_FROM_NAME: \"\"\n\n      FORCE_HTTPS: \"true\"\n      \n"
+ },
+ "etherpad": {
+  "about": "با Etherpad، اسناد را به‌صورت هم‌زمان و متن‌باز با دیگران ویرایش کنید.",
+  "categories": [
+   "Notetaking"
+  ],
+  "installs": 62,
+  "github": "ether/etherpad-lite",
+  "spec": "apps:\n  - id: etherpad\n    name: Etherpad\n    image: registry.c2.liara.ir/one-click-apps/etherpad:2.2.6\n    bundlePlanID: standard\n    planID: small-g2\n    disks:\n      - name: database \n        mountTo: /var\n        size: 30\n        maxSize: 5\n\n    port: 9001\n    envs:\n      TITLE: \"Etherpad\"\n      FAVICON: 'favicon.ico'\n      IP: \"0.0.0.0\"\n      PORT: \"9001\"\n\n      DB_TYPE: \"sqlite\"\n      DB_FILENAME: \"var/etherpad.sq3\""
+ },
+ "openproject": {
+  "about": "پروژه‌های خود را به‌صورت جامع و کارآمد با OpenProject،  در یک پلتفرم، مدیریت و دنبال کنید.",
+  "categories": [
+   "Communities",
+   "Software Development"
+  ],
+  "installs": 157,
+  "github": "opf/openproject",
+  "spec": "apps:\n  - id: openproject\n    name: OpenProject\n    image: registry.c2.liara.ir/one-click-apps/openproject:14\n    bundlePlanID: standard\n    planID: standard-plus-g2\n    port: 8080\n  \n    disks:\n      - name: pg-data\n        mountTo: /var/openproject/pgdata\n        size: 10\n        maxSize: 0.5\n      - name: assets\n        mountTo: /var/openproject/assets\n        size: 10\n        maxSize: 0.5\n        \n    envs:\n      OPENPROJECT_SECRET_KEY_BASE: \"$RANDOM_STRING\"\n      OPENPROJECT_HOST__NAME: \"$APP_NAME.liara.run\"\n      OPENPROJECT_HTTPS: \"true\"\n      OPENPROJECT_DEFAULT__LANGUAGE: \"en\""
+ },
+ "rallly": {
+  "about": "جلسات و رویدادهای خود را با Rallly، به‌سادگی، برنامه‌ریزی و هماهنگ کنید.",
+  "categories": [
+   "Communications"
+  ],
+  "installs": 22,
+  "github": "lukevella/rallly",
+  "spec": "apps:\n  - id: rallly\n    name: rallly\n    image: registry.c2.liara.ir/one-click-apps/rallly:3\n    bundlePlanID: standard\n    planID: small-g2\n    port: 3000\n\n    envs:\n      DATABASE_URL: \"postgres://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/postgres\"\n      SECRET_PASSWORD: \"Akoz2uz0Nl8J0GB931xI4DJ9lrK9AFJ06I7wQJ/MVzg=\" \n      NEXT_PUBLIC_BASE_URL: \"https://$APP_NAME.liara.run\"\n      # ALLOWED_EMAILS: \"*@gmail.com, @yahoo.com, *@liara.ir\"\n      SUPPORT_EMAIL: \"admin@example.com\"\n      SMTP_HOST: \"smtp.c1.liara.email\"\n      SMTP_PORT: \"587\"\n      SMTP_SECURE: \"false\"\n      SMTP_USER: \"replace-me\"\n      SMTP_PWD: \"replace-me\"\n   \ndatabases:\n  - type: postgres\n    id: main\n    version: '15.18'\n    bundlePlanID: standard\n    planID: small-g2\n\n"
+ },
+ "imgproxy": {
+  "about": "با Imgproxy به سرعت و بدون نیاز به نرم‌افزارهای ویرایش عکس، تصاویر خود را پردازش و ویرایش کنید.",
+  "categories": [
+   "API Platform",
+   "Software Development"
+  ],
+  "installs": 53,
+  "github": "imgproxy/imgproxy",
+  "spec": "apps:\n  - id: \"imgproxy\"\n    name: \"Imgproxy\"\n    image: registry.c2.liara.ir/one-click-apps/imgproxy:v4.0.3\n    availableImageTags:\n      - v4.0.3\n      - v3.29.1\n      - v3.28.0\n      - v3.27.2\n      - v3\n\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    port: 80\n    envs:\n      IMGPROXY_BIND: \":80\"\n      IMGPROXY_KEY: \"\"\n      IMGPROXY_SALT: \"\"\n      IMGPROXY_SECRET: \"\"\n"
+ },
+ "prestashop": {
+  "about": "PrestaShop یکی از محبوب‌ترین و بزرگ‌ترین نرم‌افزارهای متن‌باز برای ساخت فروشگاه‌های آنلاین است.",
+  "categories": [
+   "CMS",
+   "Commerce"
+  ],
+  "installs": 242,
+  "github": "prestashop/prestashop",
+  "spec": "apps:\n  - id: \"prestashop\"\n    name: \"PrestaShop\"\n    image: registry.c2.liara.ir/one-click-apps/prestashop:8.2.0\n    availableImageTags:\n       - 8.2.0\n       - 8\n\n    bundlePlanID: \"standard\"\n    planID: \"medium-g2\"\n    port: 80\n\n    disks:\n      - name: \"data\"\n        mountTo: \"/var/www/html\"\n        size: \"50\"\n        maxSize: \"5\" \n\n    envs:\n      PS_DEV_MODE: \"0\"\n      PS_HOST_MODE: \"1\"\n      PS_INSTALL_DB: \"0\"\n      PS_INSTALL_AUTO: \"1\"\n      PS_ENABLE_SSL: \"0\"\n\n      PS_DOMAIN: \"$APP_NAME.liara.run\"\n\n      PS_FOLDER_ADMIN: \"admin\"\n\n      ADMIN_MAIL: \"admin@prestashop.com\"\n      ADMIN_PASSWD: \"$RANDOM_STRING\"\n      \n      PS_HANDLE_DYNAMIC_DOMAIN: \"1\"\n      DB_SERVER: \"$DB_main_HOST\"\n      DB_USER: \"$DB_main_USER\"\n      DB_PASSWD: \"$DB_main_PASSWORD\"\n      DB_NAME: \"$DB_main_NAME\"\n\ndatabases:\n  - type: \"mysql\"\n    id: \"main\"\n    version: \"8.0.30\"\n    bundlePlanID: \"standard\"\n    planID: \"medium-g2\"\n"
+ },
+ "focalboard": {
+  "about": "با Focalboard، پروژه‌ها و وظایف خود را به‌صورت بصری و کارآمد مدیریت کنید.",
+  "categories": [
+   "Knowledge Management",
+   "Notetaking"
+  ],
+  "installs": 143,
+  "github": "mattermost-community/focalboard",
+  "spec": "apps:\n  - id: focalboard\n    name: Focalboard\n    image: registry.c2.liara.ir/one-click-apps/focalboard:7.8.9\n    bundlePlanID: standard\n    planID: small-g2  \n    disks:\n      - name: data\n        mountTo: /opt/focalboard/data\n        size: 10\n        maxSize: 0.5\n\n    port: 8000\n    "
+ },
+ "ntfy": {
+  "about": "اعلان‌ها و پیام‌های بلادرنگ را با Ntfy، به‌صورت ساده، مدیریت و ارسال کنید.",
+  "categories": [
+   "Internal Tools",
+   "Communications"
+  ],
+  "installs": 141,
+  "github": "binwiederhier/ntfy",
+  "spec": "apps:\n  - id: ntfy\n    name: ntfy\n    image: registry.c2.liara.ir/one-click-apps/ntfy:v2.11.0\n    bundlePlanID: standard\n    planID: small-g2\n    port: 80\n    args:\n      - \"serve\"\n  \n    disks:\n      - name: cache\n        mountTo: /var/cache/ntfy\n        size: 10\n        maxSize: 0.5\n      - name: data\n        mountTo: /etc/ntfy\n        size: 10\n        maxSize: 0.5\n        \n    envs:\n      TZ: \"UTC\"\n      NTFY_BASE_URL: \"https://$APP_NAME.liara.run\"\n      NTFY_AUTH_DEFAULT_ACCESS: \"deny-all\"\n      NTFY_BEHIND_PROXY: \"true\"\n"
+ },
+ "mixpost": {
+  "about": "با Mixpost، محتوای شبکه‌های اجتماعی خود را به‌صورت متمرکز و کارآمد، مدیریت کنید.",
+  "categories": [
+   "Communities"
+  ],
+  "installs": 24,
+  "github": "inovector/mixpost",
+  "spec": "apps:\n  - id: mixpost\n    name: mixpost\n    image: registry.c2.liara.ir/one-click-apps/mixpost:v1.7.2\n    bundlePlanID: standard\n    planID: small-g2\n    port: 80\n\n    disks:\n      - name: storage\n        mountTo: /var/www/html/storage/app\n        size: 10\n        maxSize: 0.5\n      - name: logs\n        mountTo: /var/www/html/storage/logs\n        size: 10\n        maxSize: 0.5\n\n    envs:\n      APP_NAME: \"Mixpost\"\n      APP_KEY: \"base64:YIfKh8T8itKnnT1vnGntzXyxLXFj0Pp6k+TPKkzZXRc=\"\n      APP_DEBUG: \"true\"\n      APP_DOMAIN: \"$APP_NAME.liara.run\"\n      APP_URL: \"https://$APP_NAME.liara.run\"\n      \n      DB_HOST: \"$DB_main_HOST\"\n      DB_PORT: \"$DB_main_PORT\"\n      DB_DATABASE: \"$DB_main_NAME\"\n      DB_USERNAME: \"$DB_main_USER\"\n      DB_PASSWORD: \"$DB_main_PASSWORD\"\n\n      REDIS_HOST: \"$DB_base_HOST\"\n      REDIS_PORT: \"$DB_base_PORT\"\n      REDIS_PASSWORD: \"$DB_base_PASSWORD\"\n\n   \ndatabases:\n  - type: mariadb\n    id: main\n    version: 10.6.8\n    bundlePlanID: standard\n    planID: small-g2\n  - type: redis\n    id: base\n    version: 7.2.3\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "cyberchef": {
+  "about": "با CyberChef، عملیات پیچیده روی داده‌ها را به‌سادگی و در محیطی تعاملی، انجام دهید.",
+  "categories": [
+   "Internal Tools"
+  ],
+  "installs": 6,
+  "github": "gchq/cyberchef",
+  "spec": "apps:\n  - id: \"cyberchef\"\n    name: \"CyberChef\"\n    image: \"registry.c2.liara.ir/one-click-apps/cyberchef:10.19.4\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    port: 80"
+ },
+ "apache answer": {
+  "about": "Apache Answer به شما کمک می‌کند تا یک جامعه بین کاربران و تیم خود ایجاد و مشکلات‌تان را حل نمایید.",
+  "categories": [
+   "Communities"
+  ],
+  "installs": 41,
+  "github": "apache/incubator-answer",
+  "spec": "apps:\n  - id: \"apache-answer\"\n    name: \"Apache Answer\"\n    image: registry.c2.liara.ir/one-click-apps/apache-answer:2.0.1\n    availableImageTags:\n      - 2.0.1\n      - 1.3.0\n\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    disks:\n      - name: \"data\"\n        mountTo: \"/data\"\n    port: 80\n"
+ },
+ "wordpress-new": {
+  "about": "WordPress یک سیستم مدیریت محتوا با قابلیت تنظیم قالب سفارشی‌سازی شده است.",
+  "categories": [
+   "CMS"
+  ],
+  "installs": 10215,
+  "github": "wordpress/wordpress",
+  "spec": "apps:\n  - id: \"wordpress\"\n    name: \"WordPress\"\n    image: \"registry.c2.liara.ir/one-click-apps/wordpress:6-php7.4\"\n    availableImageTags:\n      - \"6-php7.4\"\n      - \"6-php8.1\"\n      - \"6-php8.2\"\n      - \"6-php8.3\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    disks:\n      - name: \"tmp\"\n        mountTo: \"/tmp\"\n        size: 10\n        maxSize: 0.5\n      - name: \"data\"\n        mountTo: \"/var/www/html\"\n    port: 80\n    envs:\n      WORDPRESS_DB_HOST: \"$DB_main_HOST:$DB_main_PORT\"\n      WORDPRESS_DB_USER: \"$DB_main_USER\"\n      WORDPRESS_DB_PASSWORD: \"$DB_main_PASSWORD\"\n      WORDPRESS_DB_NAME: \"$DB_main_NAME\"\n      PHP_INI_CONFIG: |\n        file_uploads = On\n        memory_limit = 256M\n        upload_max_filesize = 64M\n        post_max_size = 128M\n        max_execution_time = 600\n\ndatabases:\n  - type: \"mariadb\"\n    id: \"main\"\n    version: \"10.6.8\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n"
+ },
+ "kibana": {
+  "about": "Kibana یک رابط کاربری متن‌باز است که امکان visualize کردن داده‌های Elastic را برای شما فراهم می‌کند.",
+  "categories": [
+   "Monitoring"
+  ],
+  "installs": 160,
+  "github": "elastic/kibana",
+  "spec": "apps:\n  - id: \"kibana\"\n    name: \"Kibana\"\n    image: registry.c2.liara.ir/one-click-apps/kibana:9.4.2\n    availableImageTags:\n      - 9.4.2\n      - 8.11.1\n\n    bundlePlanID: \"standard\"\n    planID: \"medium-g2\"\n    port: 5601\n    disks:\n      - name: \"data\"\n        mountTo: \"/bitnami/kibana\"\n        size: 70\n        maxSize: 10\n      - name: \"config\"\n        mountTo: \"/opt/bitnami/kibana/config\"\n        size: 10\n        maxSize: 0.1\n      - name: \"plugins\"\n        mountTo: \"/opt/bitnami/kibana/plugins\"\n        size: 10\n        maxSize: 0.2\n      - name: \"tmp\"\n        mountTo: \"/opt/bitnami/kibana/tmp\"\n        size: 10\n        maxSize: 0.2\n    envs:\n      KIBANA_PASSWORD: \"$RANDOM_STRING\"\n      KIBANA_ELASTICSEARCH_URL: \"$DB_main_HOST\"\n      KIBANA_ELASTICSEARCH_PORT_NUMBER: \"$DB_main_PORT\"\n      KIBANA_ELASTICSEARCH_PASSWORD: \"$DB_main_PASSWORD\"\n      KIBANA_CREATE_USER: \"1\"\n      KIBANA_SERVER_NAME: \"$APP_NAME\"\n      KIBANA_SERVER_PUBLICBASEURL: \"https://$APP_NAME.liara.run\"\n      KIBANA_INITSCRIPTS_START_SERVER: \"no\"\n\ndatabases:\n  - type: \"elasticsearch\"\n    id: \"main\"\n    version: \"8.11.1\"\n    bundlePlanID: \"standard\"\n    planID: \"standard-base-g2\"\n"
+ },
+ "wiki.js": {
+  "about": "با Wiki.js، مستندات و دانش سازمانی خود را به‌صورت حرفه‌ای و متن‌باز مدیریت کنید.",
+  "categories": [
+   "Knowledge Management",
+   "Notetaking"
+  ],
+  "installs": 84,
+  "github": "requarks/wiki",
+  "spec": "apps:\n  - id: wiki\n    name: wiki\n    image: registry.c2.liara.ir/one-click-apps/wiki-js:2.5.305\n    bundlePlanID: standard\n    planID: small-g2\n    port: 3000\n\n    disks:\n      - name: content\n        mountTo: /wiki/data/content\n        size: 50\n        maxSize: 5\n\n    envs:\n      \n      DB_TYPE: \"mariadb\"\n      DB_HOST: \"$DB_main_HOST\"\n      DB_PORT: \"$DB_main_PORT\"\n      DB_USER: \"$DB_main_USER\"\n      DB_PASS: \"$DB_main_PASSWORD\"\n      DB_NAME: \"$DB_main_NAME\"\n\n      SSL_ACTIVE: \"false\"\n\n\ndatabases:\n  - type: mariadb\n    id: main\n    version: 10.6.8\n    bundlePlanID: standard\n    planID: small-g2"
+ },
+ "vikunja": {
+  "about": "پروژه‌ها و تسک‌های تیم محور خود را، با Vikunja، به‌صورت سازمان‌یافته مدیریت کنید.",
+  "categories": [
+   "Software Development",
+   "Notetaking"
+  ],
+  "installs": 78,
+  "github": "vikunja/go-vikunja",
+  "spec": "apps:\n  - id: vikunja\n    name: Vikunja\n    image: registry.c2.liara.ir/one-click-apps/vikunja:0.24.5\n    bundlePlanID: standard\n    planID: small-g2\n    port: 3456\n    envs:\n      VIKUNJA_SERVICE_PUBLICURL: \"https://$APP_NAME.liara.run\"\n      VIKUNJA_DATABASE_HOST: \"$DB_main_HOST\"\n      VIKUNJA_DATABASE_PASSWORD: \"$DB_main_PASSWORD\"\n      VIKUNJA_DATABASE_TYPE: \"mysql\"\n      VIKUNJA_DATABASE_USER: \"$DB_main_USER\"\n      VIKUNJA_DATABASE_PORT: \"$DB_main_PORT\"\n      VIKUNJA_DATABASE_DATABASE: \"$DB_main_NAME\"\n      VIKUNJA_SERVICE_JWTSECRET: \"$RANDOM_STRING\"\n\n    disks:\n      - name: files\n        mountTo: \"/app/vikunja/files\"\n        size: 60\n        maxSize: 6\n\ndatabases:\n  - type: \"mariadb\"\n    id: \"main\"\n    version: \"10.6.8\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\""
+ },
+ "grafana": {
+  "about": "با Grafana به سادگی، نمودارها، جداول و نمایشگرهای دیگر را بسازید و به تحلیل آن‌ها بپردازید.",
+  "categories": [
+   "Monitoring"
+  ],
+  "installs": 182,
+  "github": "grafana/grafana",
+  "spec": "apps:\n  - id: \"grafana\"\n    name: \"Grafana\"\n    image: registry.c2.liara.ir/one-click-apps/grafana:13.0.2\n    availableImageTags:\n      - 13.0.2\n      - 10.4.2\n\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    port: 3000\n    disks:\n      - name: \"data\"\n        mountTo: \"/var/lib/grafana\"\n"
+ },
+ "meilisearch": {
+  "about": "Meilisearch یک موتور جستجو بسیار سریع است که شما می‌توانید به‌راحتی آن را به پروژه خود اضافه کنید.",
+  "categories": [
+   "API Platform"
+  ],
+  "installs": 157,
+  "github": "meilisearch/meilisearch",
+  "spec": "apps:\n  - id: \"meilisearch\"\n    name: \"Meilisearch\"\n    image: registry.c2.liara.ir/one-click-apps/meilisearch:v1.7\n    availableImageTags:\n      - v1.7\n      - v1.45.2\n\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    port: 7700\n    disks:\n      - name: \"data\"\n        mountTo: \"/meili_data\"\n    envs:\n      MEILI_MASTER_KEY: \"$RANDOM_STRING\"\n      MEILI_ENV: \"production\"\n      MEILI_NO_ANALYTICS: \"true\"\n"
+ },
+ "metabase": {
+  "about": "Metabase نرم‌افزاری رایگان است که به وسیله آن می‌توانید داده‌های خود را تحلیل و نمودار محور کنید.",
+  "categories": [
+   "Internal Tools"
+  ],
+  "installs": 281,
+  "github": "metabase/metabase",
+  "spec": "apps:\n  - id: \"metabase\"\n    name: \"Metabase\"\n    image: registry.c2.liara.ir/one-click-apps/metabase:v0.61.3.6\n    availableImageTags:\n     - v0.61.3.6\n     - v0.52.3.2\n     - v0.49.7\n    bundlePlanID: \"standard\"\n    planID: \"standard-base-g2\"\n    port: 3000\n\n    disks:\n      - name: \"tmp\"\n        mountTo: \"/tmp\"\n        size: 50\n        maxSize: 5\n\n      - name: \"plugins\"\n        mountTo: \"/plugins\"\n        size: 20\n        maxSize: 2\n\n    envs:\n      MB_DB_TYPE: \"postgres\"\n      MB_DB_DBNAME: \"postgres\"\n      MB_DB_USER: \"$DB_main_USER\"\n      MB_DB_PASS: \"$DB_main_PASSWORD\"\n      MB_DB_HOST: \"$DB_main_HOST\"\n      MB_DB_PORT: \"$DB_main_PORT\"\n      JAVA_TIMEZONE: \"Asia/Tehran\"\n\ndatabases:\n  - type: \"postgres\"\n    id: \"main\"\n    version: \"16.14\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n"
+ },
+ "strapi": {
+  "about": "با Strapi، محتوای دیجیتال خود را به‌صورت کاملاً سفارشی و منعطف، مدیریت کنید.",
+  "categories": [
+   "CMS"
+  ],
+  "installs": 332,
+  "github": "strapi/strapi",
+  "spec": "apps:\n  - id: \"strapi\"\n    name: \"Strapi\"\n    image: \"registry.c2.liara.ir/one-click-apps/strapi:node18\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    disks:\n      - name: \"data\"\n        mountTo: \"/opt/app/\"\n        size: 10\n        maxSize: 5\n      \n    port: 1337\n\n    envs:\n      HOST: \"0.0.0.0\"\n      PORT: \"1337\"\n      DATABASE_CLIENT: \"mysql\"\n      DATABASE_HOST: \"$DB_main_HOST\"\n      DATABASE_PORT: \"$DB_main_PORT\"\n      DATABASE_NAME: \"$DB_main_NAME\"\n      DATABASE_USERNAME: \"$DB_main_USER\"\n      DATABASE_PASSWORD: \"$DB_main_PASSWORD\"\n      JWT_SECRET: \"$RANDOM_STRING\"\n      ADMIN_JWT_SECRET: \"$RANDOM_STRING\"\n      APP_KEYS: \"$RANDOM_STRING\"\n      API_TOKEN_SALT: \"$RANDOM_STRING\"\n      TRANSFER_TOKEN_SALT: \"$RANDOM_STRING\"\n      NODE_ENV: \"production\"\n\ndatabases:\n  - type: \"mariadb\"\n    id: \"main\"\n    version: \"10.6.8\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n"
+ },
+ "vvveb": {
+  "about": "وب‌سایت خود را به‌صورت بصری و بدون نیاز به کدنویسی با vvveb، طراحی کنید و توسعه دهید.",
+  "categories": [
+   "Low-Code",
+   "Website Builder"
+  ],
+  "installs": 60,
+  "github": "givanz/vvveb",
+  "spec": "apps:\n  - id: vvveb\n    name: vvveb\n    image: registry.c2.liara.ir/one-click-apps/vvvebcms:php8.3-apache\n    bundlePlanID: standard\n    planID: small-g2\n    port: 80\n\n    disks:\n      - name: data\n        mountTo: \"/var/www/html\"\n        size: 10\n        maxSize: 1\n      - name: database\n        mountTo: \"/var/lib/mysql\"\n        size: 10\n        maxSize: 1\n\n    envs:\n      DB_HOST: $DB_main_HOST\n      DB_DATABASE: $DB_main_NAME\n      DB_USER: $DB_main_USER\n      DB_PASSWORD: $DB_main_PASSWORD\n      DB_ENGINE: mysqli \n      DB_PORT: $DB_main_PORT\n      \ndatabases:\n  - type: mariadb\n    id: main\n    version: 10.6.8\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "soketi": {
+  "about": "سرور اختصاصی جایگزین Pusher برای ساخت برنامه‌های Real-time و Websocket به صورت ایمن.",
+  "categories": [
+   "Software Development",
+   "Communications"
+  ],
+  "installs": 358,
+  "github": "soketi/soketi",
+  "spec": "apps:\n  - id: \"soketi\"\n    name: \"Soketi\"\n    image: \"registry.c2.liara.ir/one-click-apps/soketi:1.6-16-debian\"\n    bundlePlanID: \"basic\"\n    planID: \"small-g2\"\n    port: 6001\n    envs:\n      SOKETI_DEFAULT_APP_ID: \"pusher\"\n      SOKETI_DEFAULT_APP_KEY: \"$RANDOM_STRING\"\n      SOKETI_DEFAULT_APP_SECRET: \"$RANDOM_STRING\"\n      HOME: \"/tmp\"\n"
+ },
+ "uptime kuma": {
+  "about": "Uptime Kuma یک ابزار برای مانیتورینگ دقیق و سریع وبسایت‌ها و سرویس‌ها است.",
+  "categories": [
+   "Monitoring"
+  ],
+  "installs": 364,
+  "github": "louislam/uptime-kuma",
+  "spec": "apps:\n  - id: \"uptime-kuma\"\n    name: \"Uptime Kuma\"\n    image: \"registry.c2.liara.ir/one-click-apps/uptime-kuma:1\"\n    availableImageTags:\n      - \"1\"\n      - \"2.0.0-beta.0\"    \n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    port: 3001\n    disks:\n      - name: \"data\"\n        mountTo: \"/app/data\"\n\n    envs:\n      UPTIME_KUMA_DB_TYPE: \"sqlite\""
+ },
+ "docuseal": {
+  "about": "با Docuseal، اسناد خود را به‌صورت دیجیتالی و امن امضا و مدیریت کنید.",
+  "categories": [
+   "Notetaking"
+  ],
+  "installs": 17,
+  "github": "docusealco/docuseal",
+  "spec": "apps:\n  - id: docuseal\n    name: DocuSeal\n    image: registry.c2.liara.ir/one-click-apps/docuseal:1.7.2\n    bundlePlanID: standard\n    planID: small-g2\n    port: 3000\n\n    disks:\n      - name: data\n        mountTo: /data\n        size: 10\n        maxSize: 1\n"
+ },
+ "discourse": {
+  "about": "با Discourse، انجمن‌های خود را متناسب با نیازتان، ایجاد کنید.",
+  "categories": [
+   "Communications",
+   "Low-Code"
+  ],
+  "installs": 36,
+  "github": "discourse/discourse",
+  "spec": "apps:\n  - id: discourse\n    name: discourse\n    image: registry.c2.liara.ir/one-click-apps/discourse:3\n    bundlePlanID: standard\n    planID: pro-g2\n    port: 3000\n\n    disks:\n      - name: data\n        mountTo: /bitnami/discourse\n        size: 50\n        maxSize: 40\n\n    envs: \n      DISCOURSE_HOST: \"$APP_NAME.liara.run\"\n      DISCOURSE_ENABLE_HTTPS: \"yes\"\n      DISCOURSE_PORT_NUMBER: \"3000\"\n      DISCOURSE_EXTERNAL_HTTP_PORT_NUMBER: \"3000\"\n      DISCOURSE_USERNAME: \"admin\"\n      DISCOURSE_PASSWORD: \"$RANDOM_STRING\"\n\n      DISCOURSE_DATABASE_HOST: \"$DB_main_HOST\"\n      DISCOURSE_DATABASE_PORT_NUMBER: \"$DB_main_PORT\"\n      DISCOURSE_DATABASE_USER: \"$DB_main_USER\"\n      DISCOURSE_DATABASE_NAME: \"postgres\"\n      DISCOURSE_DATABASE_PASSWORD: \"$DB_main_PASSWORD\"\n\n      DISCOURSE_REDIS_HOST: \"$DB_base_HOST\"\n      DISCOURSE_REDIS_PORT_NUMBER: \"$DB_base_PORT\"\n      DISCOURSE_REDIS_PASSWORD: \"$DB_base_PASSWORD\"\n\n      DISCOURSE_EMAIL: \"user@example.com\"\n      DISCOURSE_SMTP_HOST: \"\"\n      DISCOURSE_SMTP_PORT_NUMBER: \"\"\n      DISCOURSE_SMTP_USER: \"\"\n      DISCOURSE_SMTP_PASSWORD: \"\"\n      DISCOURSE_SMTP_PROTOCOL: \"\"\n\n\n  - id: sidekiq\n    name: sidekiq\n    image: registry.c2.liara.ir/one-click-apps/discourse:3\n    bundlePlanID: standard\n    planID: medium-g2\n    port: 3000\n\n    args:\n      - \"/opt/bitnami/scripts/discourse-sidekiq/run.sh\"\n\n    disks:\n      - name: data\n        mountTo: /bitnami/discourse\n        size: 50\n        maxSize: 40\n\n    envs: \n      DISCOURSE_HOST: \"$APP_discourse_NAME.liara.run\"\n      DISCOURSE_ENABLE_HTTPS: \"yes\"\n      DISCOURSE_PORT_NUMBER: \"3000\"\n      DISCOURSE_EXTERNAL_HTTP_PORT_NUMBER: \"3000\"\n      DISCOURSE_USERNAME: \"admin\"\n      DISCOURSE_PASSWORD: \"$RANDOM_STRING\"\n\n      DISCOURSE_DATABASE_HOST: \"$DB_main_HOST\"\n      DISCOURSE_DATABASE_PORT_NUMBER: \"$DB_main_PORT\"\n      DISCOURSE_DATABASE_USER: \"$DB_main_USER\"\n      DISCOURSE_DATABASE_NAME: \"postgres\"\n      DISCOURSE_DATABASE_PASSWORD: \"$DB_main_PASSWORD\"\n\n      DISCOURSE_REDIS_HOST: \"$DB_base_HOST\"\n      DISCOURSE_REDIS_PORT_NUMBER: \"$DB_base_PORT\"\n      DISCOURSE_REDIS_PASSWORD: \"$DB_base_PASSWORD\"\n\n      DISCOURSE_EMAIL: \"user@example.com\"\n      DISCOURSE_SMTP_HOST: \"\"\n      DISCOURSE_SMTP_PORT_NUMBER: \"\"\n      DISCOURSE_SMTP_USER: \"\"\n      DISCOURSE_SMTP_PASSWORD: \"\"\n      DISCOURSE_SMTP_PROTOCOL: \"\"\n\n\ndatabases:\n  - type: postgres\n    id: main\n    version: '16.14'\n    bundlePlanID: standard\n    planID: small-g2\n\n  - type: redis\n    id: base\n    version: 7.2.3\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "automatisch": {
+  "about": "با Automatisch، فرآیندهای کاری خود را با یک ابزار متن‌باز و قدرتمند خودکار کنید.",
+  "categories": [
+   "No-Code",
+   "Workflow Automation"
+  ],
+  "installs": 8,
+  "github": "automatisch/automatisch",
+  "spec": "apps:\n  - id: main\n    name: Automatisch\n    image: registry.c2.liara.ir/one-click-apps/automatisch:0.14.0\n    bundlePlanID: standard\n    planID: small-g2\n\n    disks:\n      - name: storage\n        mountTo: /automatisch/storage\n        size: 50\n        maxSize: 5\n\n    port: 3000\n    envs:\n\n      APP_ENV: \"production\"\n      HOST: \"$APP_NAME.liara.run\"\n      PROTOCOL: \"https\"\n      PORT: \"3000\"\n\n      ENCRYPTION_KEY: \"6oR5Nm2Gl9o9P6Dm4CLWX5g+lnMF2JNVlmGXy3qPmDvTtu0U\" # run openssl rand -base64 36 yourself\n      WEBHOOK_SECRET_KEY: \"hGvW35qQaC48ffJ+j1M09YMR/zWWTgB41+gibAgmrb2Ypvmq\" # run openssl rand -base64 36 yourself\n      APP_SECRET_KEY: \"$RANDOM_STRING\"\n      \n      POSTGRES_HOST: \"$DB_main_HOST\"\n      POSTGRES_PORT: \"$DB_main_PORT\"\n      POSTGRES_DATABASE: \"postgres\"\n      POSTGRES_USERNAME: \"$DB_main_USER\"\n      POSTGRES_PASSWORD: \"$DB_main_PASSWORD\"\n\n      REDIS_HOST: \"$DB_base_HOST\"\n      REDIS_PORT: \"$DB_base_PORT\"\n      REDIS_PASSWORD: \"$DB_base_PASSWORD\"\n\n  - id: worker\n    name: Automatisch\n    image: automatischio/automatisch:0.14.0\n    bundlePlanID: standard\n    planID: small-g2\n\n    disks:\n      - name: storage\n        mountTo: /automatisch/storage\n        size: 50\n        maxSize: 5\n\n    port: 3000\n    envs:\n      \n      WORKER: \"true\"\n      APP_ENV: \"production\"\n      HOST: \"$APP_main_NAME.liara.run\"\n      PROTOCOL: \"https\"\n      PORT: \"3000\"\n\n      ENCRYPTION_KEY: \"6oR5Nm2Gl9o9P6Dm4CLWX5g+lnMF2JNVlmGXy3qPmDvTtu0U\" # run openssl rand -base64 36 yourself\n      WEBHOOK_SECRET_KEY: \"hGvW35qQaC48ffJ+j1M09YMR/zWWTgB41+gibAgmrb2Ypvmq\" # run openssl rand -base64 36 yourself\n      APP_SECRET_KEY: \"$RANDOM_STRING\"\n      \n      POSTGRES_HOST: \"$DB_main_HOST\"\n      POSTGRES_PORT: \"$DB_main_PORT\"\n      POSTGRES_DATABASE: \"postgres\"\n      POSTGRES_USERNAME: \"$DB_main_USER\"\n      POSTGRES_PASSWORD: \"$DB_main_PASSWORD\"\n\n      REDIS_HOST: \"$DB_base_HOST\"\n      REDIS_PORT: \"$DB_base_PORT\"\n      REDIS_PASSWORD: \"$DB_base_PASSWORD\"\n\n    \ndatabases:\n  - type: postgres\n    id: main\n    version: '15.18'\n    bundlePlanID: standard\n    planID: small-g2\n  - type: redis\n    id: base\n    version: 7.2.3\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "code server": {
+  "about": "نرم‌افزار محبوب VSCode را روی Cloud اجرا کنید و به صورت تیمی، به توسعه برنامه‌های خود بپردازید.",
+  "categories": [
+   "Software Development"
+  ],
+  "installs": 727,
+  "github": "coder/code-server",
+  "spec": "apps:\n  - id: code-server\n    name: Code Server\n    image: registry.c2.liara.ir/one-click-apps/code-server:4.95.3\n    bundlePlanID: standard\n    planID: small-g2\n    port: 8443\n    disks:\n      - name: config\n        mountTo: /config\n    envs:\n      HOME: \"/tmp\"\n      PUID: \"1000\"\n      PGID: \"1000\"\n      TZ: \"Etc/UTC\"\n      PASSWORD: \"$RANDOM_STRING\"\n      SUDO_PASSWORD: \"$RANDOM_STRING\"\n      PROXY_DOMAIN: \"$APP_NAME.liara.run\"\n      DEFAULT_WORKSPACE: \"/config/workspace\""
+ },
+ "nocodb": {
+  "about": "NocoDB یک پایگاه داده بدون کد است و تمامی امکانات یک پایگاه داده واقعی را به شما ارائه می‌کند.",
+  "categories": [
+   "No-Code",
+   "Database"
+  ],
+  "installs": 139,
+  "github": "nocodb/nocodb",
+  "spec": "apps:\n  - id: \"nocodb\"\n    name: \"NocoDB\"\n    image: registry.c2.liara.ir/one-click-apps/nocodb:0.301.5\n    availableImageTags:\n      - 0.301.5\n      - 0.205.1\n\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    port: 8080\n    disks:\n      - name: \"data\"\n        mountTo: \"/usr/app/data\"\n"
+ },
+ "nocobase": {
+  "about": "اپلیکیشن‌های خود را بدون نیاز به کدنویسی، با NocoBase، به‌سادگی طراحی و پیاده‌سازی کنید.",
+  "categories": [
+   "Internal Tools",
+   "Software Development",
+   "No-Code"
+  ],
+  "installs": 163,
+  "github": "nocobase/nocobase",
+  "spec": "apps:\n  - id: nocobase\n    name: nocobase\n    image: registry.c2.liara.ir/one-click-apps/nocobase:1.3.42-beta\n    bundlePlanID: standard\n    planID: standard-base-g2\n    port: 13000\n\n    disks:\n      - name: storage\n        mountTo: /app/nocobase/storage\n        size: 50\n        maxSize: 5\n\n    envs:\n      APP_KEY: \"$RANDOM_STRING\"\n      DB_DIALECT: \"mariadb\"\n      DB_HOST: \"$DB_main_HOST\"\n      DB_DATABASE: \"$DB_main_NAME\"\n      DB_USER: \"$DB_main_USER\"\n      DB_PORT: \"$DB_main_PORT\"\n      DB_PASSWORD: \"$DB_main_PASSWORD\"\n      DB_UNDERSCORED: \"true\"\n      TZ: \"Asia/Shanghai\"\n      APP_ENV: \"production\"\n      APP_PORT: \"13000\"\n      DB_LOGGING: \"on\"\n      INIT_APP_LANG: \"en\"\n      INIT_ROOT_EMAIL: \"admin@example.com\"\n      INIT_ROOT_PASSWORD: \"$RANDOM_STRING\"\n\ndatabases:\n  - type: mariadb\n    id: main\n    version: 11.2.3\n    bundlePlanID: standard\n    planID: small-g2"
+ },
+ "teable": {
+  "about": "با Teable، داده‌های خود را به‌سادگی مدیریت کنید و در قالب جداول و داشبوردهای سفارشی نمایش دهید.",
+  "categories": [
+   "No-Code",
+   "Database"
+  ],
+  "installs": 33,
+  "github": "teableio/teable",
+  "spec": "apps:\n\n  - id: db-migrate\n    name: teable-db-migrate\n    image: registry.c2.liara.ir/one-click-apps/teable-db-migrate:1.5.1-alpha-build.671-amd64\n    bundlePlanID: standard\n    planID: small-g2\n    port: 3000\n\n    envs:\n\n      TZ: \"UTC\"\n      PRISMA_DATABASE_URL: \"postgresql://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/postgres\"\n\n  - id: teable\n    name: teable\n    image: ghcr.io/teableio/teable:sha-501f35cd4429effa433bff3886aef0450ae5c8bc\n    bundlePlanID: standard\n    planID: small-g2\n    port: 3000\n    \n    disks:\n      - name: data\n        mountTo: /app/.assets\n        size: 10\n        maxSize: 0.5\n\n    envs:\n\n      TZ: \"UTC\"\n      NEXT_ENV_IMAGES_ALL_REMOTE: \"true\"\n      POSTGRES_HOST: \"$DB_main_HOST\"\n      POSTGRES_PORT: \"$DB_main_PORT\"\n      POSTGRES_DB: \"postgres\"\n      POSTGRES_USER: \"$DB_main_USER\"\n      POSTGRES_PASSWORD: \"$DB_main_PASSWORD\"\n      PUBLIC_ORIGIN: \"httpS://$APP_NAME.liara.run\"\n      PRISMA_DATABASE_URL: \"postgresql://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/postgres\"\n\ndatabases:\n  - type: postgres\n    id: main\n    version: '15.18'\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "jupyter notebook": {
+  "about": "با Jupyter Notebook، علم داده و توسعه نرم‌افزار را در محیطی تعاملی و قدرتمند تجربه کنید.",
+  "categories": [
+   "Software Development",
+   "AI"
+  ],
+  "installs": 197,
+  "github": "jupyter/notebook",
+  "spec": "apps:\n  - id: \"jupyter-notebook\"\n    name: \"Jupyter Notebook\"\n    image: \"registry.c2.liara.ir/one-click-apps/datascience-notebook:python-3.12.8\"\n\n    availableImageTags:\n      - \"python-3.12.8\"\n      - \"2024-05-27\"    \n\n    bundlePlanID: \"standard\"\n    planID: \"medium-g2\"\n    port: 8888\n    disks:\n      - name: \"data\"\n        mountTo: \"/home/jovyan/work\"\n"
+ },
+ "maybe": {
+  "about": "با Maybe، تصمیمات خرید خود را هوشمندانه‌تر و با اطمینان بیشتر اتخاذ کنید.",
+  "categories": [
+   "Financial Service"
+  ],
+  "installs": 25,
+  "github": "maybe-finance/maybe",
+  "spec": "apps:\n  - id: maybe\n    name: Maybe\n    image: registry.c2.liara.ir/one-click-apps/maybe:0.1.0-alpha.17\n    bundlePlanID: standard\n    planID: small-g2  \n    disks:\n      - name: storage\n        mountTo: /rails/storage\n        size: 10\n        maxSize: 5\n    port: 3000\n    envs:\n      SELF_HOSTING_ENABLED: \"true\"\n      RAILS_FORCE_SSL: \"false\"\n      RAILS_ASSUME_SSL: \"false\"\n      GOOD_JOB_EXECUTION_MODE: async\n      SECRET_KEY_BASE: $RANDOM_STRING\n      DB_HOST: $DB_main_HOST\n      DB_PORT: $DB_main_PORT\n      POSTGRES_DB: postgres\n      POSTGRES_USER: $DB_main_USER\n      POSTGRES_PASSWORD: $DB_main_PASSWORD\ndatabases:\n  - type: postgres\n    id: main\n    version: '15.18'\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "kutt": {
+  "about": "با Kutt، لینک‌های خود را با دامنه سفارشی‌تان کوتاه و مختصر کنید.",
+  "categories": [
+   "Internal Tools"
+  ],
+  "installs": 60,
+  "github": "thedevs-network/kutt",
+  "spec": "apps:\n  - id: kutt\n    name: kutt\n    image: registry.c2.liara.ir/one-click-apps/kutt:v3.2.3\n    availableImageTags:\n      - v3.2.3\n      - v2.7.4\n\n    bundlePlanID: standard\n    planID: small-g2\n    port: 3000\n\n    disks:\n    - name: custom\n      mountTo: /kutt/custom\n      size: 10\n      maxSize: 0.5\n    - name: database\n      mountTo: /kutt/db\n      size: 10\n      maxSize: 0.5\n\n    envs:\n      JWT_SECRET: \"$RANDOM_STRING\" # run openssl rand -base64 32\n      PORT: \"3000\"\n\n      SITE_NAME: \"Kutt\"\n      DEFAULT_DOMAIN: \"$APP_NAME.liara.run\"\n      CUSTOM_DOMAIN_USE_HTTPS: \"true\"\n\n      LINK_LENGTH: \"5\"\n      DISALLOW_ANONYMOUS_LINKS: \"true\"\n      DISALLOW_REGISTRATION: \"false\"\n\n      DB_CLIENT: \"better-sqlite3\"\n      DB_FILENAME: \"db/data\"\n\n      CONTACT_EMAIL: \"admin@example.com\"\n      REPORT_EMAIL: \"admin@example.com\"\n\n      MAIL_ENABLED: \"false\"\n      MAIL_HOST: \"smtp.c1.liara.email\"\n      MAIL_PORT: \"587\"\n      MAIL_SECURE: \"false\"\n      MAIL_USER: \"\"\n      MAIL_FROM: \"\"\n      MAIL_PASSWORD: \"\"\n"
+ },
+ "docmost": {
+  "about": "با Docmost، مستندات خود را به‌صورت مشترک و کارآمد مدیریت کنید و به اشتراک بگذارید.",
+  "categories": [
+   "Notetaking",
+   "Communications"
+  ],
+  "installs": 97,
+  "github": "docmost/docmost",
+  "spec": "apps:\n  - id: docmost\n    name: Docmost\n    image: registry.c2.liara.ir/one-click-apps/docmost:0.5.0\n    bundlePlanID: standard\n    planID: small-g2\n    port: 3000\n    envs:\n      APP_URL: \"https://$APP_NAME.liara.run\"\n      DATABASE_URL: \"postgres://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/postgres\"\n      APP_SECRET: \"$RANDOM_STRING\"\n      REDIS_URL: \"redis://:$DB_base_PASSWORD@$DB_base_HOST:$DB_base_PORT/0\"\n\n    disks:\n      - name: storage\n        mountTo: \"/app/data/storage\"\n        size: 60\n        maxSize: 6\n\ndatabases:\n  - type: postgres\n    id: main\n    version: '16.14'\n    bundlePlanID: standard\n    planID: small-g2\n\n  - type: redis\n    id: base\n    version: 7.2.3\n    bundlePlanID: standard\n    planID: small-g2"
+ },
+ "harness": {
+  "about": "با Harness، فرآیندهای CI/CD خود را به‌صورت هوشمند و خودکار مدیریت کنید.",
+  "categories": [
+   "Software Development"
+  ],
+  "installs": 9,
+  "github": "harness/harness",
+  "spec": "apps:\n  - id: harness\n    name: Harness\n    image: registry.c2.liara.ir/one-click-apps/harness:3.1.1\n    bundlePlanID: standard\n    planID: medium-g2\n    \n    disks:\n      - name: tmp\n        mountTo: /data\n        size: 40\n        maxSize: 4\n\n      - name: git\n        mountTo: /git\n        size: 60\n        maxSize: 6\n\n    port: 3000\n    envs:\n      GITNESS_URL_BASE: \"https://$APP_NAME.liara.run\"\n      GITNESS_DATABASE_DRIVER: \"postgres\"\n      GITNESS_DATABASE_DATASOURCE: \"host=$DB_main_HOST port=$DB_main_PORT sslmode=disable dbname=postgres user=$DB_main_USER password=$DB_main_PASSWORD\"\n      GITNESS_PRINCIPAL_ADMIN_EMAIL: \"mail@example.com\"\n      GITNESS_PRINCIPAL_ADMIN_PASSWORD: \"$RANDOM_STRING\"\n      GITNESS_USER_SIGNUP_ENABLED: \"false\"\n      GITNESS_DEBUG: \"true\" \n      GITNESS_ENCRYPTER_SECRET: \"5778be8b2387a0e491e76f34d0635063\" # run openssl rand -hex 16 yourself\n      GITNESS_HTTP_PORT: \"3000\"\n    \ndatabases:\n  - type: postgres\n    id: main\n    version: '15.18'\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "chatwoot": {
+  "about": "با Chatwoot، مشتریان را به‌صورت یکپارچه و در چندین کانال پشتیبانی کنید.",
+  "categories": [
+   "CRM"
+  ],
+  "installs": 122,
+  "github": "chatwoot/chatwoot",
+  "spec": "apps:\n\n  - id: pgvector\n    name: pgvector\n    image: pgvector/pgvector:pg16\n    bundlePlanID: standard\n    planID: small-g2\n\n    disks:\n      - name: \"data\"\n        mountTo: /var/lib/postgresql/data\n        size: 50\n        maxSize: 2\n\n    port: 5432\n\n    envs:\n      POSTGRES_DB: \"chatwoot\"\n      POSTGRES_USER: \"postgres\"\n      POSTGRES_PASSWORD: \"postgres\"\n\n\n  - id: chatwoot\n    name: chatwoot\n    image: registry.c2.liara.ir/one-click-apps/chatwoot:v4.0.1\n    bundlePlanID: standard\n    planID: small-g2\n    args:\n\n      - \"bundle\"\n      - \"exec\"\n      - \"rails\"\n      - \"s\"\n      - '-p'\n      - '3000'\n      - '-b'\n      - '0.0.0.0'\n\n    disks:\n      - name: \"storage\"\n        mountTo: /app/storage/\n        size: 50\n        maxSize: 2\n\n    port: 3000\n\n    envs:\n      NODE_ENV: \"production\"\n      RAILS_ENV: \"production\"\n      INSTALLATION_ENV: \"docker\"\n\n      SECRET_KEY_BASE: \"replace_with_lengthy_secure_hex\"\n      FRONTEND_URL: \"https://$APP_NAME.liara.run\"\n      FORCE_SSL: \"false\"\n      ENABLE_ACCOUNT_SIGNUP: \"false\"\n\n      REDIS_URL: \"redis://:$DB_base_PASSWORD@$DB_base_HOST:$DB_base_PORT/1\"\n      LOG_LEVEL: \"debug\"\n      POSTGRES_HOST: \"$APP_pgvector_NAME\"\n      POSTGRES_PORT: \"5432\"\n      POSTGRES_DATABASE: \"chatwoot\"\n      POSTGRES_USERNAME: \"postgres\"\n      POSTGRES_PASSWORD: \"postgres\"\n\n      RAILS_MAX_THREADS: \"5\"\n      SMTP_DOMAIN: \"chatwoot.com\"\n      SMTP_ADDRESS: \"smtp.c1.liara.email\"\n      SMTP_PORT: \"587\"\n      SMTP_USERNAME: \"\"\n      SMTP_PASSWORD: \"\"\n      SMTP_ENABLE_STARTTLS_AUTO: \"true\"\n      # SMTP_TLS=\n      # SMTP_SSL=\n\n  - id: sidekiq\n    name: sidekiq\n    image: registry.c2.liara.ir/one-click-apps/chatwoot:v4.0.1\n    bundlePlanID: standard\n    planID: small-g2\n    args:\n\n      - \"bundle\"\n      - \"exec\"\n      - \"sidekiq\"\n      - '-C'\n      - 'config/sidekiq.yml'\n\n    disks:\n      - name: \"storage\"\n        mountTo: /app/storage\n        size: 50\n        maxSize: 2\n\n    port: 3000\n\n    envs:\n      NODE_ENV: \"production\"\n      RAILS_ENV: \"production\"\n      INSTALLATION_ENV: \"docker\"\n\n      SECRET_KEY_BASE: \"replace_with_lengthy_secure_hex\"\n      FRONTEND_URL: \"https://$APP_chatwoot_NAME.liara.run\"\n      FORCE_SSL: \"false\"\n      ENABLE_ACCOUNT_SIGNUP: \"false\"\n\n      REDIS_URL: \"redis://:$DB_base_PASSWORD@$DB_base_HOST:$DB_base_PORT/1\"\n      \n      POSTGRES_HOST: \"$APP_pgvector_NAME\"\n      POSTGRES_PORT: \"5432\"\n      POSTGRES_DATABASE: \"chatwoot\"\n      POSTGRES_USERNAME: \"postgres\"\n      POSTGRES_PASSWORD: \"postgres\"\n\n      RAILS_MAX_THREADS: \"5\"\n      SMTP_DOMAIN: \"chatwoot.com\"\n      SMTP_ADDRESS: \"smtp.c1.liara.email\"\n      SMTP_PORT: \"587\"\n      SMTP_USERNAME: \"\"\n      SMTP_PASSWORD: \"\"\n      SMTP_ENABLE_STARTTLS_AUTO: \"true\"\n      # SMTP_TLS=\n      # SMTP_SSL=\n\n\ndatabases:\n \n  - type: redis\n    id: base\n    version: 7.2.3\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "postiz": {
+  "about": "با Postiz، محتوای شبکه‌های اجتماعی را به‌صورت هوشمند، برای انتشار، زمان‌بندی کنید.",
+  "categories": [
+   "Workflow Automation"
+  ],
+  "installs": 16,
+  "github": "gitroomhq/postiz-app",
+  "spec": "apps:\n  - id: \"postiz\"\n    name: \"postiz\"\n    image: \"registry.c2.liara.ir/one-click-apps/postiz-app:v1.33.2-amd64\"\n    bundlePlanID: \"standard\"\n    planID: \"medium-g2\"\n    port: 5000\n\n    disks:\n      - name: \"config\"\n        mountTo: \"/config\"\n        size: 10\n        maxSize: 1\n      - name: \"uploads\"\n        mountTo: \"/uploads\"\n        size: 50\n        maxSize: 5\n\n    envs:\n      MAIN_URL: \"https://$APP_NAME.liara.run\"\n      FRONTEND_URL: \"https://$APP_NAME.liara.run\"\n      NEXT_PUBLIC_BACKEND_URL: \"https://$APP_NAME.liara.run/api\"\n      JWT_SECRET: \"$RANDOM_STRING\"\n\n      DATABASE_URL: \"postgresql://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/postgres\"\n      REDIS_URL: \"redis://:$DB_base_PASSWORD@$DB_base_HOST:$DB_base_PORT\"\n\n      BACKEND_INTERNAL_URL: \"http://$APP_NAME:3000\"\n      IS_GENERAL: \"true\"\n      STORAGE_PROVIDER: \"local\"\n      UPLOAD_DIRECTORY: \"/uploads\"\n      NEXT_PUBLIC_UPLOAD_DIRECTORY: \"/uploads\"\n\n      # X_API_KEY: \"\"\n      # X_API_SECRET: \"\"\n      # X_CLIENT: \"\"\n      # X_SECRET: \"\"\n      # LINKEDIN_CLIENT_ID: \"\"\n      # LINKEDIN_CLIENT_SECRET: \"\"\n      # REDDIT_CLIENT_ID: \"\"\n      # REDDIT_CLIENT_SECRET: \"\"\n      # GITHUB_CLIENT_ID: \"\"\n      # GITHUB_CLIENT_SECRET: \"\"\n      # BEEHIIVE_API_KEY: \"\"\n      # BEEHIIVE_PUBLICATION_ID: \"\"\n      # THREADS_APP_ID: \"\"\n      # THREADS_APP_SECRET: \"\"\n      # FACEBOOK_APP_ID: \"\"\n      # FACEBOOK_APP_SECRET: \"\"\n      # YOUTUBE_CLIENT_ID: \"\"\n      # YOUTUBE_CLIENT_SECRET: \"\"\n      # TIKTOK_CLIENT_ID: \"\"\n      # TIKTOK_CLIENT_SECRET: \"\"\n      # PINTEREST_CLIENT_ID: \"\"\n      # PINTEREST_CLIENT_SECRET: \"\"\n      # DRIBBBLE_CLIENT_ID: \"\"\n      # DRIBBBLE_CLIENT_SECRET: \"\"\n      # DISCORD_CLIENT_ID: \"\"\n      # DISCORD_CLIENT_SECRET: \"\"\n      # DISCORD_BOT_TOKEN_ID: \"\"\n      # SLACK_ID: \"\"\n      # SLACK_SECRET: \"\"\n      # SLACK_SIGNING_SECRET: \"\"\n      # MASTODON_CLIENT_ID: \"\"\n      # MASTODON_CLIENT_SECRET: \"\"\n\ndatabases:\n  - type: postgres\n    id: main\n    version: '15.18'\n    bundlePlanID: standard\n    planID: small-g2\n  - type: redis\n    id: base\n    version: 7.2.3\n    bundlePlanID: standard\n    planID: small-g2"
+ },
+ "kimai": {
+  "about": "ساعت‌های کاری خود را با kimai، به‌صورت دقیق، مدیریت و ردیابی کنید.",
+  "categories": [
+   "CMS"
+  ],
+  "installs": 20,
+  "github": "kimai/kimai",
+  "spec": "apps:\n  - id: kimai\n    name: kimai\n    image: registry.c2.liara.ir/one-click-apps/kimai2:apache-2.31.0\n    bundlePlanID: standard\n    planID: small-g2\n    port: 8001\n\n    disks:\n      - name: \"data\"\n        mountTo: \"/opt/kimai/var\"\n        size: 50\n        maxSize: 5\n\n    envs:\n      ADMINMAIL: \"admin@kimai.local\"\n      ADMINPASS: \"$RANDOM_STRING\"\n      DATABASE_URL: mysql://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/$DB_main_NAME?charset=utf8mb4&serverVersion=8.0.30\"\n\ndatabases:\n  - type: \"mysql\"\n    id: \"main\"\n    version: \"8.0.30\"\n    bundlePlanID: \"standard\"\n    planID: \"medium-g2\"\n"
+ },
+ "wordpress-openlitespeed-new": {
+  "about": "وب‌سایتی سریع، ایمن و بهینه را با قدرت وردپرس و سرور LiteSpeed راه‌اندازی کنید.",
+  "categories": [
+   "CMS"
+  ],
+  "installs": 7850,
+  "github": "litespeedtech/openlitespeed",
+  "spec": "apps:\n  - id: \"wordpress-openlitespeed\"\n    name: \"WordPress-OpenLiteSpeed\"\n    image: \"registry.c2.liara.ir/one-click-apps/wordpress-openlitespeed:1.8.1-lsphp81-wp6\"\n    availableImageTags:\n      - \"1.8.1-lsphp74-wp6\"\n      - \"1.8.1-lsphp83-wp6\"\n      - \"1.8.1-lsphp82-wp6\"\n      - \"1.8.1-lsphp81-wp6\"\n      - \"1.8.1-lsphp80-wp6\"\n\n    bundlePlanID: \"standard\"\n    planID: \"medium-g2\"\n    disks:\n\n      - name: \"tmp\"\n        mountTo: \"/tmp\"\n        size: 10\n        maxSize: 0.5\n\n      - name: \"data\"\n        mountTo: \"/var/www/site/html\"\n\n    port: 8088\n\n    envs:\n      WORDPRESS_DB_HOST: \"$DB_main_HOST:$DB_main_PORT\"\n      WORDPRESS_DB_USER: \"$DB_main_USER\"\n      WORDPRESS_DB_PASSWORD: \"$DB_main_PASSWORD\"\n      WORDPRESS_DB_NAME: \"$DB_main_NAME\"\n      PHP_INI_CONFIG: |\n        file_uploads = On\n        memory_limit = 256M\n        upload_max_filesize = 64M\n        post_max_size = 128M\n        max_execution_time = 600\n      \n      PHP_LSAPI_CHILDREN: \"50\" # Number of PHP processes to handle requests\n\ndatabases:\n  - type: \"mariadb\"\n    id: \"main\"\n    version: \"10.6.8\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n"
+ },
+ "openwebui": {
+  "about": "با OpenWebUI، تجربه‌ای متمایز از برقراری ارتباط با مدل هوش مصنوعی خود، به دست آورید. ",
+  "categories": [
+   "AI"
+  ],
+  "installs": 1039,
+  "github": "open-webui/open-webui",
+  "spec": "apps:\n  \n  - id: open-webui\n    name: OpenWebUI\n    image: registry.c2.liara.ir/one-click-apps/open-webui:git-3660bc0\n    adavailableImageTags:\n      - git-8da08ad          \n      - git-3660bc0                                                      \n      - git-ed0659a                                                                  \n    bundlePlanID: standard\n    planID: standard-base-g2\n    port: 8080\n\n    disks:\n      - name: data\n        mountTo: /app/backend/data\n        size: 90\n        maxSize: 10\n\n    envs:\n      ENV: \"prod\"\n      WEBUI_URL: \"https://$APP_NAME.liara.run\"\n      PORT: \"8080\"\n      DATA_DIR: \"/app/backend/data\"\n      WEBUI_NAME: \"Awesome ChatBot\"\n      CORS_ALLOW_ORIGIN: \"*\"\n      \n      ENABLE_OPENAI_API: \"True\"\n      OPENAI_API_BASE_URL: \"replace_with_your_openai_api_base_url\"\n      OPENAI_API_KEY: \"replace_with_your_liara_api_key\"\n"
+ },
+ "checkcle": {
+  "about": "با CheckCle، برنامه‌ها و زیرساخت‌های خود را به شکلی جامع، دقیق و بلادرنگ، نظارت و بررسی کنید.",
+  "categories": [
+   "Monitoring",
+   "Observability"
+  ],
+  "installs": 47,
+  "github": "operacle/checkcle",
+  "spec": "apps:\n  - id: checkcle\n    name: checkcle\n    image: registry.c2.liara.ir/one-click-apps/checkcle:v1.6.0\n    availableImageTags:\n      - v1.6.0\n      - v1.4.0\n\n    bundlePlanID: standard\n    planID: medium-g2\n    port: 8090\n    disks:\n      - name: \"data\"\n        mountTo: \"/mnt/pb_data\"\n        size: 50\n        maxSize: 5"
+ },
+ "registry": {
+  "about": "با Registry Docker، یک رجیستری خصوصی برای مدیریت و میزبانی ایمن ایمیج‌های داکر خود راه‌اندازی کنید.",
+  "categories": [
+   "API Platform"
+  ],
+  "installs": 146,
+  "github": "distribution/distribution",
+  "spec": "apps:\n  - id: registry\n    name: registry\n    image: registry.c2.liara.ir/one-click-apps/registry:2\n    bundlePlanID: standard\n    planID: medium-g2\n    disks:\n      - name: data\n        mountTo: /var/lib/registry\n    port: 5000\n    envs:\n      REGISTRY_HTTP_ADDR: '0.0.0.0:5000'\n      REGISTRY_HTTP_SECRET: 'my_secret'\n      REGISTRY_AUTH_HTPASSWD_REALM: 'Registry Realm'\n      REGISTRY_AUTH_HTPASSWD_PATH: '/auth/htpasswd'\n      REGISTRY_STORAGE_DELETE_ENABLED: 'true'  \n      USERNAME: 'admin'\n      PASSWORD: 'password'\n      AUTH_MODE: 'private'"
+ },
+ "synapse": {
+  "about": "با Synapse، سرور Matrix خود را به‌شکلی مقیاس‌پذیر، بالا بیاورید.",
+  "categories": [
+   "Communications",
+   "Communities"
+  ],
+  "installs": 15,
+  "github": "element-hq/synapse",
+  "spec": "apps:\n  - id: synapse\n    name: synapse\n    image: registry.c2.liara.ir/one-click-apps/synapse:v1.132.0\n    bundlePlanID: standard\n    planID: small-g2\n    port: 8448\n    disks:\n      - name: \"data\"\n        mountTo: \"/data\"\n        size: 50\n        maxSize: 5\n\n    envs:\n      SYNAPSE_CONFIG_PATH: \"/data/homeserver.yaml\"\n      SYNAPSE_LOG_LEVEL: \"DEBUG\"\n      # SYNAPSE_SERVER_NAME: \"\"\n      # SYNAPSE_HTTP_PORT: 8008\n\n\n   "
+ },
+ "lobechat": {
+  "about": "با Lobe-Chat، اپلیکیشن گفت‌وگوی هوشمند خود را به‌سادگی راه‌اندازی کنید.",
+  "categories": [
+   "AI"
+  ],
+  "installs": 137,
+  "github": "lobehub/lobe-chat",
+  "spec": "apps:\n  - id: \"lobechat\"\n    name: \"lobechat\"\n    image: \"registry.c2.liara.ir/one-click-apps/lobe-chat:1.120.7\"\n    bundlePlanID: \"standard\"\n    planID: \"medium-g2\"\n    port: 3210\n    disks:\n      - name: \"data\"\n        mountTo: \"/app\"\n\n    envs:\n      OPENAI_API_KEY: \"REPLACE-ME-WITH-LIARA-API-TOKEN\"\n      OPENAI_PROXY_URL: \"REPLACE-ME-WITH-LIARA-BASE-URL\"\n      ACCESS_CODE: \"$RANDOM_STRING\"\n      OPENAI_MODEL_LIST: \"openai/gpt-4o-mini\"\n"
+ },
+ "memos": {
+  "about": "با Memos، یادداشت‌های خود را به‌صورت خصوصی مدیریت کنید",
+  "categories": [
+   "Notetaking"
+  ],
+  "installs": 19,
+  "github": "usememos/memos",
+  "spec": "apps:\n  - id: memos\n    name: memos\n    image: registry.c2.liara.ir/one-click-apps/memos:0.25\n    bundlePlanID: standard\n    planID: small-g2\n    port: 5230\n    \n    disks:\n      - name: \"memos\"\n        mountTo: \"/var/opt/memos\"\n        size: 50\n        maxSize: 5\n    envs:\n  \n      MEMOS_MODE: \"prod\"\n      MEMOS_PORT: \"5230\"\n      MEMOS_DATA: \"/var/opt/memos\"\n      MEMOS_DRIVER: \"sqlite\" # it can be \"postgres\" or \"sqlite\""
+ },
+ "heyform": {
+  "about": "با HeyForm، فرم‌های آنلاین زیبا و تعاملی بسازید و پاسخ‌ها را به‌صورت یکپارچه مدیریت کنید.",
+  "categories": [
+   "Communities",
+   "Website Analytics"
+  ],
+  "installs": 12,
+  "github": "heyform/heyform",
+  "spec": "apps:\n  - id: \"heyform\"\n    name: \"HeyForm\"\n    image: \"registry.c2.liara.ir/one-click-apps/heyform:v0.1.0\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    disks:\n      - name: \"assets\"\n        mountTo: \"/app/static/upload\"\n\n    port: 8000\n    envs:\n\n      APP_HOMEPAGE_URL: \"https://$APP_NAME.liara.run\"\n      SESSION_KEY: \"jiOfmTJxRJsqEPBLEjE+ycz3SjnfDYVQ2mXq8PHoge8=\" #  openssl rand -base64 32\n      FORM_ENCRYPTION_KEY: \"ydJr7T8m/oDwgqP69Go2umBIx6O/mmsia0EkqClH4T0=\" #  openssl rand -base64 32\n      \n      MONGO_URI: \"mongodb://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/heyform?authSource=admin\"\n \n      REDIS_HOST: \"$DB_base_HOST\"\n      REDIS_PORT:  \"$DB_base_PORT\"\n      REDIS_PASSWORD: \"$DB_base_PASSWORD\"\n\n      OPENAI_BASE_URL: \"\" \n      OPENAI_API_KEY: \"\"\n      OPENAI_GPT_MODEL: \"openai/gpt-4o-mini\"\n\n      VERIFY_USER_EMAIL: \"false\"\n      SMTP_FROM: \"\"\n      SMTP_HOST: \"smtp.c1.liara.email\"\n      SMTP_PORT: \"465\"\n      SMTP_USER: \"\" \n      SMTP_PASSWORD: \"\"\n\ndatabases:\n  - type: \"mongodb\"\n    id: \"main\"\n    version: \"7.0.5\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n\n  - type: redis\n    id: base\n    version: 7.2.3\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "appwrite": {
+  "about": "Appwrite یک پلتفرم متن‌باز Backend-as-a-Service است که ساخت و مدیریت بک‌اند را ساده می‌کند.",
+  "categories": [
+   "VM",
+   "IaaS"
+  ],
+  "installs": 0,
+  "github": "appwrite/appwrite",
+  "spec": ""
+ },
+ "supabase": {
+  "about": "Supabase یک پلتفرم متن‌باز Backend-as-a-Service با PostgreSQL است که ساخت بک‌اند را ساده می‌کند.",
+  "categories": [
+   "IaaS",
+   "VM"
+  ],
+  "installs": 0,
+  "github": "supabase/supabase",
+  "spec": ""
+ },
+ "gitlabce": {
+  "about": "GitLab یک پلتفرم وب DevOps برای مدیریت کد، CI/CD و پروژه‌ها است.",
+  "categories": [
+   "VM",
+   "IaaS"
+  ],
+  "installs": 0,
+  "github": "gitlab/gitlabhq",
+  "spec": ""
+ },
+ "docker": {
+  "about": "Docker یک پلتفرم متن‌باز برای اجرای برنامه‌ها در کانتینرهای ایزوله است.",
+  "categories": [
+   "VM",
+   "IaaS"
+  ],
+  "installs": 0,
+  "github": "docker/moby",
+  "spec": ""
+ },
+ "sentry": {
+  "about": "Sentry یک پلتفرم متن‌باز برای ردیابی و رفع خطاهای برنامه‌ها است.",
+  "categories": [
+   "VM",
+   "IaaS"
+  ],
+  "installs": 0,
+  "github": "getsentry/sentry",
+  "spec": ""
+ },
+ "qdrant": {
+  "about": "با Qdrant، دیتابیس برداری خود را برای پروژه‌های بزرگ، راه‌اندازی کنید.",
+  "categories": [
+   "Database",
+   "AI"
+  ],
+  "installs": 49,
+  "github": "qdrant/qdrant",
+  "spec": "apps:\n  - id: qdrant\n    name: qdrant\n    image: registry.c2.liara.ir/one-click-apps/qdrant:v1.16.3\n    bundlePlanID: standard\n    planID: small-g2\n    port: 6333\n    disks:\n      - name: \"storage\"\n        mountTo: \"/qdrant/storage\"\n        size: 80\n        maxSize: 8\n      - name: \"config\"\n        mountTo: \"/qdrant/config\"\n        size: 20\n        maxSize: 0.5\n        \n    envs:\n      QDRANT__SERVICE__API_KEY: \"$RANDOM_STRING\"\n      QDRANT__LOG_LEVEL: \"INFO\"\n"
+ },
+ "penpot": {
+  "about": "با Penpot، جایگزین متن‌باز figma، رابط کاربری و پوستر برنامه‌های خود را طراحی کنید.",
+  "categories": [
+   "No-Code",
+   "Internal Tools"
+  ],
+  "installs": 127,
+  "github": "penpot/penpot",
+  "spec": "apps:\n\n  - id: penpot-frontend\n    name: penpot-frontend\n    image: registry.c2.liara.ir/one-click-apps/penpotapp-frontend:2.13.0\n    bundlePlanID: standard\n    planID: small-g2\n    port: 8080\n\n    envs:\n      PENPOT_FLAGS: \"enable-registration enable-login-with-password disable-email-verification enable-backend-api-doc\"\n\n      PENPOT_HTTP_SERVER_MAX_BODY_SIZE: \"31457280\"\n      PENPOT_HTTP_SERVER_MAX_MULTIPART_BODY_SIZE: \"367001600\"\n\n      PENPOT_EXPORTER_URI: \"http://replace-me-with-exporter-app-name:6061\"\n      PENPOT_BACKEND_URI: \"http://replace-me-with-backend-app-name:6060\"\n\n  - id: penpot-backend\n    name: penpot-backend\n    image: registry.c2.liara.ir/one-click-apps/penpotapp-backend:2.13.0\n    bundlePlanID: standard\n    planID: standard-base-g2\n    port: 6060\n    \n    envs:\n      PENPOT_FLAGS: \"enable-registration enable-login-with-password disable-email-verification enable-backend-api-doc\"\n      \n      PENPOT_PUBLIC_URI: \"https://$APP_penpot-frontend_NAME.liara.run\"\n\n      PENPOT_HTTP_SERVER_MAX_BODY_SIZE: \"31457280\"\n      PENPOT_HTTP_SERVER_MAX_MULTIPART_BODY_SIZE: \"367001600\"\n\n      PENPOT_SECRET_KEY: \"change-this-insecure-key\"\n\n      PENPOT_DATABASE_URI: \"postgresql://$DB_main_HOST:$DB_main_PORT/postgres\"\n      PENPOT_DATABASE_USERNAME: \"$DB_main_USER\"\n      PENPOT_DATABASE_PASSWORD: \"$DB_main_PASSWORD\"\n\n      PENPOT_REDIS_URI: \"redis://:$DB_base_PASSWORD@$DB_base_HOST:$DB_base_PORT/0\"\n\n      PENPOT_TELEMETRY_ENABLED: \"false\"\n\n      PENPOT_SMTP_DEFAULT_FROM: \"no-reply@example.com\"\n      PENPOT_SMTP_DEFAULT_REPLY_TO: \"no-reply@example.com\"\n      PENPOT_SMTP_HOST: \"smtp.c1.liara.email\"\n      PENPOT_SMTP_PORT: \"465\"\n      PENPOT_SMTP_USERNAME: \"\"\n      PENPOT_SMTP_PASSWORD: \"\"\n      PENPOT_SMTP_TLS: \"true\"\n      PENPOT_SMTP_SSL: \"false\"\n\n      AWS_ACCESS_KEY_ID: \"replace-me-with-access-key-id\"\n      AWS_SECRET_ACCESS_KEY: \"replace-me-with-secret-access-key\"\n      PENPOT_OBJECTS_STORAGE_BACKEND: \"s3\"\n      PENPOT_OBJECTS_STORAGE_S3_REGION: \"us-east-1\"\n      PENPOT_OBJECTS_STORAGE_S3_BUCKET: \"replace-me-with-bucket-name\"\n      PENPOT_OBJECTS_STORAGE_S3_ENDPOINT: \"https://<replace-me-with-s3-endpoint>\"\n\n  - id: penpot-exporter\n    name: penpot-exporter\n    image: registry.c2.liara.ir/one-click-apps/penpotapp-exporter:2.13.0\n    bundlePlanID: standard\n    planID: small-g2\n    port: 6061\n    envs:\n      PENPOT_SECRET_KEY: \"change-this-insecure-key\"\n      PENPOT_PUBLIC_URI: \"https://$APP_penpot-frontend_NAME.liara.run\"\n      PENPOT_REDIS_URI: \"redis://:$DB_base_PASSWORD@$DB_base_HOST:$DB_base_PORT/0\"\n      \ndatabases:\n  - type: postgres\n    id: main\n    version: '18.4'\n    bundlePlanID: standard\n    planID: small-g2\n    \n  - type: redis\n    id: base\n    version: 7.2.3\n    bundlePlanID: standard\n    planID: small-g2\n"
+ },
+ "devdocs": {
+  "about": "با DevDocs، مستندات فنی بیش از صدها زبان و فریم‌ورک را در یک رابط سریع، آفلاین و یکپارچه داشته باشید.",
+  "categories": [
+   "Software Development"
+  ],
+  "installs": 81,
+  "github": "freecodecamp/devdocs",
+  "spec": "apps:\n  - id: devdocs\n    name: devdocs\n    image: registry.c2.liara.ir/one-click-apps/devdocs:20251201\n    bundlePlanID: standard\n    planID: small-g2\n    port: 9292"
+ },
+ "cap": {
+  "about": "Cap یک جایگزین مدرن و سبک برای reCAPTCHA است.",
+  "categories": [
+   "API Platform"
+  ],
+  "installs": 3,
+  "github": "tiagozip/cap",
+  "spec": "apps:\n  - id: cap\n    name: Cap\n    image: registry.c2.liara.ir/one-click-apps/tiago2-cap:3.0.7\n    bundlePlanID: standard\n    planID: small-g2\n    port: 3000\n    envs:\n      ADMIN_KEY: \"$RANDOM_STRING\"\n      REDIS_URL: \"redis://:$DB_base_PASSWORD@$DB_base_HOST:$DB_base_PORT\"\n      SHOW_ERRORS: \"true\"\n      \n    disks:\n      - name: data\n        mountTo: \"/usr/src/app/data\"\n        size: 60\n        maxSize: 6\n\ndatabases:\n\n  - type: redis\n    id: base\n    version: 7.2.3\n    bundlePlanID: standard\n    planID: small-g2"
+ },
+ "matrix-cinny": {
+  "about": "پیام‌رسان شخصی خود را در بستر پروتکل ماتریکس، با cinny، بسازید.",
+  "categories": [
+   "Communications"
+  ],
+  "installs": 47,
+  "github": "matrix-construct/tuwunel",
+  "spec": "apps:\n  - id: tuwunel\n    name: Tuwunel\n    image: registry.c2.liara.ir/one-click-apps/tuwunel:v1.6.2\n    bundlePlanID: standard\n    planID: \"small-g2\"\n    port: 6167\n\n    disks:\n      - name: database\n        mountTo: /var/lib/tuwunel\n        size: 50\n        maxSize: 40\n\n    envs: \n      TUWUNEL_SERVER_NAME: \"$APP_NAME.liara.run\"\n      TUWUNEL_DATABASE_PATH: \"/var/lib/tuwunel\"\n      TUWUNEL_PORT: \"6167\"\n      TUWUNEL_MAX_REQUEST_SIZE: \"20000000\"\n      TUWUNEL_ALLOW_REGISTRATION: \"true\"\n      TUWUNEL_REGISTRATION_TOKEN: \"$RANDOM_STRING\"\n      TUWUNEL_ALLOW_FEDERATION: \"false\"\n      TUWUNEL_TRUSTED_SERVERS: \"[]\"\n      TUWUNEL_ADDRESS: \"0.0.0.0\"\n\n  - id: cinny\n    name: Cinny\n    image: registry.c2.liara.ir/one-click-apps/cinny:v4.11.1\n    bundlePlanID: standard\n    planID: small-g2\n    port: 80\n"
+ },
+ "hitkeep": {
+  "about": "با hitkeep، یک جایگزین google analytics برای پایش آمار سایت خود، بسازید. ",
+  "categories": [
+   "Observability"
+  ],
+  "installs": 0,
+  "github": "pascalebeier/hitkeep",
+  "spec": "apps:\n  - id: \"hitkeep\"\n    name: \"HitKeep\"\n    image: \"pascalebeier/hitkeep:latest\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    port: 8080\n\n    disks:\n      - name: data\n        mountTo: /var/lib/hitkeep/data\n        size: 50\n        maxSize: 5\n        \n    envs:\n      HITKEEP_JWT_SECRET: \"$RANDOM_STRING\"\n      HITKEEP_PUBLIC_URL: \"https://$APP_NAME.liara.run\"\n      HITKEEP_AUTH_REMEMBER_ME_DAYS: \"30\"\n      HITKEEP_DB_PATH: \"hitkeep.db\"\n      HITKEEP_LOG_LEVEL: \"info\"\n\n      HITKEEP_GOOGLE_SEARCH_CONSOLE_CLIENT_ID: \"\"\n      HITKEEP_GOOGLE_SEARCH_CONSOLE_CLIENT_SECRET: \"\"\n      HITKEEP_GOOGLE_SEARCH_CONSOLE_REDIRECT_URL: \"\"\n\n      HITKEEP_MAIL_DRIVER: \"smtp\"\n      HITKEEP_MAIL_HOST: \"\"\n      HITKEEP_MAIL_PORT: \"587\"\n      HITKEEP_MAIL_USERNAME: \"\"\n      HITKEEP_MAIL_PASSWORD: \"\"\n      HITKEEP_MAIL_ENCRYPTION: \"tls\"\n      HITKEEP_MAIL_FROM_ADDRESS: \"\"\n      HITKEEP_MAIL_FROM_NAME: \"HitKeep\"\n\n      HITKEEP_TRUSTED_PROXIES: \"*\""
+ },
+ "pluton": {
+  "about": "با pluton، بکاپ‌های خود را به سادگی مدیریت کنید. ",
+  "categories": [
+   "Internal Tools"
+  ],
+  "installs": 7,
+  "github": "plutonhq/pluton",
+  "spec": "apps:\n  - id: \"pluton\"\n    name: \"Pluton\"\n    image: \"registry.c2.liara.ir/one-click-apps/plutonhq-pluton:0.16.1\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    disks:\n      - name: data\n        mountTo: /data\n        size: 50\n        maxSize: 5\n\n    port: 5173\n\n    envs:\n      ENCRYPTION_KEY: \"$RANDOM_STRING\"\n      USER_NAME: \"admin\"\n      USER_PASSWORD: \"$RANDOM_STRING\"\n\n      APP_TITLE: \"Pluton\"\n      APP_URL: \"https://$APP_NAME.liara.run\"\n      SERVER_PORT: \"5173\"\n      MAX_CONCURRENT_BACKUPS: \"2\"\n      SESSION_DURATION: \"7\"\n\n      ALLOW_CUSTOM_RESTORE_PATH: \"true\"\n      ALLOW_FILE_BROWSER: \"true\"\n      DISABLE_EVENT_SCRIPTS: \"false\"\n      \n      NODE_ENV: \"production\"\n      IS_DOCKER: \"true\"\n"
+ },
+ "peekaping": {
+  "about": "سیستم مانیتورینگ خود را با peekaping بسازید.",
+  "categories": [
+   "Monitoring"
+  ],
+  "installs": 3,
+  "github": "0xfurai/peekaping",
+  "spec": "apps:\n  - id: \"peekaping\"\n    name: \"Peekaping\"\n    image: \"registry.c2.liara.ir/one-click-apps/peekaping-bundle-sqlite:0.0.46\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    disks:\n      - name: sqlite\n        mountTo: /app/data\n        size: 50\n        maxSize: 5\n\n    port: 8383\n\n    envs:\n      DB_NAME: \"/app/data/peekaping.db\"\n      DB_TYPE: \"sqlite\"     \n"
+ },
+ "readeck": {
+  "about": "با readeck، صفحات را برای مطالعه در وقتی دیگر، در جایی مطمئن، ذخیره کنید. ",
+  "categories": [
+   "Knowledge Management"
+  ],
+  "installs": 3,
+  "github": "readeck/readeck",
+  "spec": "apps:\n  - id: \"Readeck\"\n    name: \"readeck\"\n    image: \"registry.c2.liara.ir/one-click-apps/readeck:0.22.3\"\n    bundlePlanID: \"standard\"\n    planID: \"small-g2\"\n    disks:\n      - name: data\n        mountTo: /readeck\n        size: 50\n        maxSize: 5\n\n    port: 8000\n\n    envs:\n      READECK_LOG_LEVEL: \"info\"\n      READECK_SERVER_HOST: \"0.0.0.0\"\n      READECK_SERVER_PORT: \"8000\"\n      READECK_LOG_FORMAT: \"text\"\n      "
+ },
+ "jitsi": {
+  "about": "Jitsi یک پلتفرم متن‌باز برای برگزاری جلسات ویدئویی و صوتی آنلاین و مدیریت آن است.",
+  "categories": [
+   "VM",
+   "IaaS",
+   "Communications"
+  ],
+  "installs": 0,
+  "github": "jitsi/jitsi-meet",
+  "spec": ""
+ },
+ "opennotebook": {
+  "about": "Open Notebook یک پلتفرم متن‌باز برای مدیریت، تحلیل و تعامل هوشمند با اطلاعات و منابع مختلف است.",
+  "categories": [
+   "AI",
+   "VM",
+   "IaaS"
+  ],
+  "installs": 0,
+  "github": "open-notebook/open-notebook",
+  "spec": ""
+ },
+ "bigbluebutton draft": {
+  "about": "با استفاده از BigBlueButton، جلسات آنلاین برگزار کنید و امکاناتی مانند ویدئوکنفرانس، اشتراک‌گذاری صفحه، چت، تخته تعاملی و ضبط جلسات را در اختیار کاربران قرار دهید.",
+  "categories": [
+   "VM",
+   "IaaS",
+   "Communications"
+  ],
+  "installs": 0,
+  "github": "bigbluebutton/bigbluebutton",
+  "spec": ""
+ },
+ "supermemory": {
+  "about": "Supermemory ابزاری برای ایجاد حافظه بلندمدت در اپلیکیشن‌های هوش مصنوعی است.",
+  "categories": [
+   "AI"
+  ],
+  "installs": 0,
+  "github": "supermemoryai/ supermemory",
+  "spec": "apps:\n  - id: supermemory\n    name: supermemory\n    image: registry.c2.liara.ir/one-click-apps/supermemory:0.0.9\n    bundlePlanID: standard\n    planID: standard-base-g2\n    port: 6767\n\n    disks:\n      - name: data\n        mountTo: /data\n        size: 50\n        maxSize: 5\n\n    envs:\n      \n      SUPERMEMORY_HOST: \"0.0.0.0\"\n      OPENAI_BASE_URL: \"\"\n      OPENAI_API_KEY: \"\"\n      OPENAI_MODEL: \"openai/gpt-6-luna\"\n\n\n"
+ },
+ "openmuse": {
+  "about": "OpenMuse یک ایجنت هوش مصنوعی متن‌باز برای خودکارسازی وظایف، مدیریت اطلاعات و اجرای کارهای روزمره است.",
+  "categories": [
+   "AI"
+  ],
+  "installs": 0,
+  "github": "copilotkit/openmuse",
+  "spec": "apps:\n  - id: openmuse\n    name: openmuse\n    image: registry.c2.liara.ir/one-click-apps/openmuse:1-liara\n    bundlePlanID: standard\n    planID: standard-base-g2\n    port: 8787\n\n    disks:\n      - name: data\n        mountTo: /data\n        size: 50\n        maxSize: 5\n\n    envs:\n      \n      PUBLIC_API_URL: \"https://$APP_NAME.liara.run\"\n      OPENMUSE_ACCESS_KEY: \"\"\n      DATABASE_URL: \"postgres://$DB_main_USER:$DB_main_PASSWORD@$DB_main_HOST:$DB_main_PORT/postgres\"\n\n      MODEL: \"openai/gpt-6-luna\"\n      OPENAI_API_KEY: \"\"\n      OPENAI_BASE_URL: \"\"\n      OPENAI_CHAT_COMPLETIONS: \"true\"\n\n      TRUST_PROXY: \"false\"\n\ndatabases:\n  - type: postgres\n    id: main\n    version: '16.14'\n    bundlePlanID: standard\n    planID: small-g2\n\n"
+ }
+}

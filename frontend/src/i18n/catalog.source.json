@@ -1,0 +1,1100 @@
+{
+ "_about": "Extracted from the Message catalog board of the final design (rows: type, code, params, en, fa, src, plus level/kind/fkind/group/ten/tfa). src is \"sample\" when the wording comes from a real sample, \"inferred\" when it was written from the code name and params only, so a native speaker should confirm it.",
+ "rows": [
+  {
+   "type": "note",
+   "code": "service_privileged",
+   "params": "service",
+   "en": "{service} needs privileged mode, which Liara does not allow. This blocks the deploy.",
+   "fa": "سرویس {service} به حالت privileged نیاز دارد که لیارا اجازه نمی‌دهد. این مورد جلوی استقرار را می‌گیرد.",
+   "src": "inferred",
+   "level": "blocker"
+  },
+  {
+   "type": "note",
+   "code": "service_host_network",
+   "params": "service",
+   "en": "{service} uses host networking, which Liara does not support. This blocks the deploy.",
+   "fa": "سرویس {service} از شبکه‌ی میزبان (host network) استفاده می‌کند که لیارا پشتیبانی نمی‌کند. این مورد جلوی استقرار را می‌گیرد.",
+   "src": "inferred",
+   "level": "blocker"
+  },
+  {
+   "type": "note",
+   "code": "name_taken",
+   "params": "kind, name",
+   "en": "A {kind} named {name} already exists on your Liara account. Nothing is created. Rename the project and run again.",
+   "fa": "در حساب لیارای شما از قبل یک {kind} به نام {name} وجود دارد. چیزی ساخته نمی‌شود. نام پروژه را عوض کنید و دوباره اجرا کنید.",
+   "src": "inferred",
+   "level": "blocker"
+  },
+  {
+   "type": "note",
+   "code": "compose_profile",
+   "params": "service",
+   "en": "{service} is in a compose profile, so I left it out.",
+   "fa": "سرویس {service} در یک پروفایل compose است، پس آن را کنار گذاشتم.",
+   "src": "inferred",
+   "level": "info"
+  },
+  {
+   "type": "note",
+   "code": "credentials_wired",
+   "params": "service, key",
+   "en": "{service}.{key} now uses the generated credentials of its database (the compose file's hardcoded ones are not used on Liara).",
+   "fa": "در سرویس {service}، مقدار {key} حالا از اطلاعات ورودی ساخته می‌شود که لیارا برای خودِ پایگاه‌داده می‌سازد؛ رمز و نام کاربری ثابتِ فایل compose روی لیارا استفاده نمی‌شود.",
+   "src": "sample",
+   "level": "info"
+  },
+  {
+   "type": "note",
+   "code": "credentials_unmapped",
+   "params": "service, key",
+   "en": "{service}.{key} holds database credentials I could not match to a Liara database. Check it before you rely on it.",
+   "fa": "در سرویس {service}، مقدار {key} اطلاعات ورود به پایگاه‌داده دارد که نتوانستم به یک پایگاه‌داده‌ی لیارا وصلش کنم. پیش از اتکا به آن بررسی‌اش کنید.",
+   "src": "inferred",
+   "level": "warning"
+  },
+  {
+   "type": "note",
+   "code": "host_path_not_mountable",
+   "params": "service, source, target",
+   "en": "{service}: host path {source} cannot be mounted. If it holds data, use a Liara disk at {target}.",
+   "fa": "سرویس {service}: مسیر {source} روی میزبان قابل mount نیست. اگر داده دارد، از یک دیسک لیارا در {target} استفاده کنید.",
+   "src": "sample",
+   "level": "warning"
+  },
+  {
+   "type": "note",
+   "code": "db_version_substituted",
+   "params": "kind, wanted, used",
+   "en": "{kind} {wanted} is not available on Liara, so I used {used}.",
+   "fa": "نسخه‌ی {wanted} از {kind} در لیارا موجود نیست، پس از {used} استفاده کردم.",
+   "src": "inferred",
+   "level": "warning"
+  },
+  {
+   "type": "note",
+   "code": "db_init_scripts",
+   "params": "service",
+   "en": "{service} runs init scripts on first start. Liara databases start empty, so import them manually or with a migration.",
+   "fa": "سرویس {service} هنگام اولین اجرا اسکریپت‌های init را اجرا می‌کند، ولی پایگاه‌داده‌های لیارا خالی شروع می‌شوند. آن‌ها را دستی یا با migration وارد کنید.",
+   "src": "sample",
+   "level": "warning"
+  },
+  {
+   "type": "note",
+   "code": "db_experimental",
+   "params": "kind",
+   "en": "{kind} is experimental on Liara. Use it with care.",
+   "fa": "{kind} در لیارا هنوز آزمایشی است. با احتیاط از آن استفاده کنید.",
+   "src": "inferred",
+   "level": "warning"
+  },
+  {
+   "type": "note",
+   "code": "proxy_dropped",
+   "params": "service, image",
+   "en": "{service} ({image}) is a reverse proxy. Liara provides routing and TLS, so it is dropped.",
+   "fa": "{service} ({image}) یک reverse proxy است. لیارا خودش مسیریابی و TLS را فراهم می‌کند، پس حذفش کردم.",
+   "src": "sample",
+   "level": "info"
+  },
+  {
+   "type": "note",
+   "code": "question_answered",
+   "params": "question_code (nullable), question, answer (option id)",
+   "en": "You answered \"{question}\" with: {answer}",
+   "fa": "به پرسش «{question}» این پاسخ را دادید: {answer}",
+   "src": "sample",
+   "level": "info"
+  },
+  {
+   "type": "question",
+   "code": "worker_without_port",
+   "params": "service",
+   "en": "{service} has no port. Is it a background worker? Liara apps still need a port setting, usually any value.",
+   "fa": "سرویس {service} پورت ندارد. آیا یک کارگر پس‌زمینه است؟ برنامه‌های لیارا باید یک مقدار پورت داشته باشند، معمولاً هر عددی.",
+   "src": "sample"
+  },
+  {
+   "type": "option",
+   "code": "worker_without_port.worker",
+   "params": "",
+   "en": "Yes, it is a background worker",
+   "fa": "بله، یک کارگر پس‌زمینه است",
+   "src": "sample"
+  },
+  {
+   "type": "option",
+   "code": "worker_without_port.needs_port",
+   "params": "",
+   "en": "No, it listens on a port",
+   "fa": "نه، روی یک پورت گوش می‌دهد",
+   "src": "inferred"
+  },
+  {
+   "type": "question",
+   "code": "multiple_ports",
+   "params": "service, ports, chosen",
+   "en": "{service} exposes several ports ({ports}). Which one should receive web traffic? I suggest {chosen}.",
+   "fa": "سرویس {service} چند پورت دارد ({ports}). کدام یک باید ترافیک وب را بگیرد؟ پیشنهاد من {chosen} است.",
+   "src": "inferred"
+  },
+  {
+   "type": "confirm",
+   "code": "create_resources",
+   "params": "apps, databases, hourly, monthly",
+   "en": "Create {apps} app(s) and {databases} database(s) on your Liara account? About {hourly} toman/hour ({monthly}/month) including VAT.",
+   "fa": "{apps} برنامه و {databases} پایگاه‌داده در حساب لیارای شما ساخته شود؟ حدود {hourly} تومان در ساعت ({monthly} در ماه) با مالیات.",
+   "src": "sample",
+   "kind": "plan"
+  },
+  {
+   "type": "confirm",
+   "code": "resize_tier",
+   "params": "app, tier_label, from_tier_label, build_minutes, from_build_minutes",
+   "en": "Move {app} to the {tier_label} tier? Builds may run {build_minutes} minutes instead of {from_build_minutes}.",
+   "fa": "ارتقای {app} به بسته‌ی {tier_label}؟ زمان ساخت از {from_build_minutes} به {build_minutes} دقیقه می‌رسد.",
+   "src": "sample",
+   "kind": "fix"
+  },
+  {
+   "type": "confirm",
+   "code": "resize_plan",
+   "params": "app, plan, from_plan, ram_gb, from_ram_gb",
+   "en": "Give {app} more memory, from {from_ram_gb} GB to {ram_gb} GB ({plan})?",
+   "fa": "به {app} حافظه‌ی بیشتری بدهم؟ از {from_ram_gb} به {ram_gb} گیگابایت ({plan})",
+   "src": "inferred",
+   "kind": "fix"
+  },
+  {
+   "type": "confirm",
+   "code": "set_port",
+   "params": "port, from_port",
+   "en": "Change the port from {from_port} to {port}?",
+   "fa": "پورت از {from_port} به {port} تغییر کند؟",
+   "src": "inferred",
+   "kind": "fix"
+  },
+  {
+   "type": "confirm",
+   "code": "patch_add_dependency",
+   "params": "file, append",
+   "en": "Add {append} to {file} in a copy of your project? Your own files are not changed.",
+   "fa": "در یک کپی از پروژه‌ی شما، {append} به {file} اضافه شود؟ فایل‌های خودتان تغییر نمی‌کنند.",
+   "src": "inferred",
+   "kind": "patch"
+  },
+  {
+   "type": "warning",
+   "code": "unresolved_db_vars",
+   "params": "names",
+   "en": "These variables point at a database I could not match: {names}.",
+   "fa": "این متغیرها به پایگاه‌داده‌ای اشاره می‌کنند که نتوانستم پیدایش کنم: {names}.",
+   "src": "inferred"
+  },
+  {
+   "type": "warning",
+   "code": "secret_file_not_uploaded",
+   "params": "file",
+   "en": "{file} looks like a secret file, so it was not uploaded.",
+   "fa": "{file} شبیه یک فایل محرمانه است، پس بارگذاری نشد.",
+   "src": "inferred"
+  },
+  {
+   "type": "warning",
+   "code": "missing_env_values",
+   "params": "names",
+   "en": "There is no value yet for: {names}. The app may not start without them.",
+   "fa": "برای این متغیرها هنوز مقداری نیست: {names}. شاید برنامه بدون آن‌ها بالا نیاید.",
+   "src": "inferred"
+  },
+  {
+   "type": "diagnosis",
+   "code": "build_timeout",
+   "params": "tier_label, limit_minutes",
+   "en": "The build ran past the {limit_minutes}-minute limit of the {tier_label} tier. This is a plan limit, not a bug in your code.",
+   "fa": "ساخت پروژه از محدودیت {limit_minutes} دقیقه‌ای بسته‌ی {tier_label} بیشتر طول کشید. این مشکل از بسته است، نه از کد شما.",
+   "src": "sample",
+   "ten": "Your build ran out of time",
+   "tfa": "ساخت پروژه زمانش تمام شد"
+  },
+  {
+   "type": "diagnosis",
+   "code": "out_of_memory",
+   "params": "ram_gb",
+   "en": "The app used more than the {ram_gb} GB it has. This is a size limit, not necessarily a bug.",
+   "fa": "برنامه بیشتر از {ram_gb} گیگابایت حافظه‌ای که دارد مصرف کرد. این محدودیت اندازه است، نه الزاماً خطای کد.",
+   "src": "inferred",
+   "ten": "The app ran out of memory",
+   "tfa": "حافظه‌ی برنامه تمام شد"
+  },
+  {
+   "type": "diagnosis",
+   "code": "missing_python_module",
+   "params": "module",
+   "en": "The app imports {module}, but it is not installed. It is probably missing from your requirements file.",
+   "fa": "برنامه {module} را import می‌کند، اما نصب نیست. احتمالاً در فایل requirements نیامده است.",
+   "src": "inferred",
+   "ten": "A Python package is missing",
+   "tfa": "یک بسته‌ی پایتون کم است"
+  },
+  {
+   "type": "diagnosis",
+   "code": "missing_node_module",
+   "params": "module",
+   "en": "The app requires {module}, but it is not installed. It is probably missing from package.json.",
+   "fa": "برنامه {module} را require می‌کند، اما نصب نیست. احتمالاً در package.json نیامده است.",
+   "src": "inferred",
+   "ten": "A Node package is missing",
+   "tfa": "یک بسته‌ی Node کم است"
+  },
+  {
+   "type": "diagnosis",
+   "code": "missing_env",
+   "params": "names",
+   "en": "These environment variables are missing: {names}.",
+   "fa": "این متغیرهای محیطی کم هستند: {names}.",
+   "src": "inferred",
+   "ten": "The app needs settings it does not have",
+   "tfa": "برنامه تنظیماتی را می‌خواهد که ندارد"
+  },
+  {
+   "type": "diagnosis",
+   "code": "db_auth_failed",
+   "params": "",
+   "en": "The credentials the app uses do not match the database on Liara.",
+   "fa": "اطلاعات ورودی که برنامه استفاده می‌کند با پایگاه‌داده‌ی روی لیارا نمی‌خواند.",
+   "src": "inferred",
+   "ten": "The database rejected the login",
+   "tfa": "پایگاه‌داده ورود را رد کرد"
+  },
+  {
+   "type": "diagnosis",
+   "code": "db_localhost",
+   "params": "kind",
+   "en": "On Liara the {kind} database lives on its own host, not on the same machine as the app.",
+   "fa": "در لیارا پایگاه‌داده‌ی {kind} روی میزبان جداگانه‌ای است، نه روی همان ماشینِ برنامه.",
+   "src": "inferred",
+   "ten": "The app looks for its database on localhost",
+   "tfa": "برنامه پایگاه‌داده را روی localhost می‌جوید"
+  },
+  {
+   "type": "diagnosis",
+   "code": "outbound_blocked",
+   "params": "hosts",
+   "en": "Your app can't reach {hosts} from Liara's network. Redeploying won't fix this.",
+   "fa": "برنامه شما از شبکه لیارا به {hosts} دسترسی ندارد. استقرار دوباره مشکل را حل نمی‌کند.",
+   "src": "sample",
+   "ten": "Liara's network cannot reach a service your app calls",
+   "tfa": "شبکه‌ی لیارا به سرویسی که برنامه صدا می‌زند دسترسی ندارد"
+  },
+  {
+   "type": "diagnosis",
+   "code": "wrong_port",
+   "params": "actual, expected",
+   "en": "The app listens on {actual}, but the plan says {expected}.",
+   "fa": "برنامه روی {actual} گوش می‌دهد، ولی طرح {expected} را گفته است.",
+   "src": "inferred",
+   "ten": "The app listens on the wrong port",
+   "tfa": "برنامه روی پورت اشتباه گوش می‌دهد"
+  },
+  {
+   "type": "diagnosis",
+   "code": "bound_to_localhost",
+   "params": "",
+   "en": "It listens on 127.0.0.1, so nothing from outside can reach it. It should listen on 0.0.0.0.",
+   "fa": "روی 127.0.0.1 گوش می‌دهد، پس هیچ چیزِ بیرونی به آن نمی‌رسد. باید روی 0.0.0.0 گوش بدهد.",
+   "src": "inferred",
+   "ten": "The app only listens inside its own container",
+   "tfa": "برنامه فقط داخل کانتینر خودش گوش می‌دهد"
+  },
+  {
+   "type": "diagnosis",
+   "code": "no_dockerfile",
+   "params": "",
+   "en": "This app needs a Dockerfile to be built, and I did not find one.",
+   "fa": "این برنامه برای ساخته‌شدن به یک Dockerfile نیاز دارد و من پیدایش نکردم.",
+   "src": "inferred",
+   "ten": "There is no Dockerfile",
+   "tfa": "Dockerfile پیدا نشد"
+  },
+  {
+   "type": "diagnosis",
+   "code": "not_serving",
+   "params": "http",
+   "en": "It answered with HTTP {http}.",
+   "fa": "با وضعیت HTTP {http} پاسخ داد.",
+   "src": "inferred",
+   "ten": "The app started but does not answer properly",
+   "tfa": "برنامه بالا آمد ولی درست پاسخ نمی‌دهد"
+  },
+  {
+   "type": "diagnosis",
+   "code": "unknown",
+   "params": "state, reason",
+   "en": "Liara reports the state {state}: {reason}. Here is what I know, so you can decide.",
+   "fa": "لیارا وضعیت {state} را گزارش می‌کند: {reason}. این چیزی است که می‌دانم تا شما تصمیم بگیرید.",
+   "src": "inferred",
+   "ten": "Something went wrong and I am not sure what",
+   "tfa": "مشکلی پیش آمد و مطمئن نیستم چیست"
+  },
+  {
+   "type": "fix",
+   "code": "resize_tier",
+   "params": "app, tier_label, from_tier_label, build_minutes, from_build_minutes",
+   "en": "Move {app} from {from_tier_label} to {tier_label}",
+   "fa": "ارتقای {app} از {from_tier_label} به {tier_label}",
+   "src": "sample",
+   "fkind": "paid",
+   "ten": "Builds may run {build_minutes} minutes instead of {from_build_minutes}. You see the price and approve first.",
+   "tfa": "زمان ساخت از {from_build_minutes} به {build_minutes} دقیقه می‌رسد. اول قیمت را می‌بینید و تأیید می‌کنید."
+  },
+  {
+   "type": "fix",
+   "code": "resize_plan",
+   "params": "app, plan, from_plan, ram_gb, from_ram_gb",
+   "en": "Give {app} more memory ({from_ram_gb} GB to {ram_gb} GB)",
+   "fa": "حافظه‌ی بیشتر برای {app} (از {from_ram_gb} به {ram_gb} گیگابایت)",
+   "src": "inferred",
+   "fkind": "paid",
+   "ten": "This costs more, so you approve it first.",
+   "tfa": "این کار هزینه‌ی بیشتری دارد، پس اول شما تأیید می‌کنید."
+  },
+  {
+   "type": "fix",
+   "code": "set_port",
+   "params": "port, from_port",
+   "en": "Change the port from {from_port} to {port}",
+   "fa": "تغییر پورت از {from_port} به {port}",
+   "src": "inferred",
+   "fkind": "free",
+   "ten": "",
+   "tfa": ""
+  },
+  {
+   "type": "fix",
+   "code": "set_env",
+   "params": "names",
+   "en": "Set the missing environment variables",
+   "fa": "تنظیم متغیرهای محیطی کم‌شده",
+   "src": "inferred",
+   "fkind": "free",
+   "ten": "I will ask you for any secret values.",
+   "tfa": "اگر مقدار محرمانه‌ای لازم باشد از شما می‌پرسم."
+  },
+  {
+   "type": "fix",
+   "code": "patch_add_dependency",
+   "params": "file, append",
+   "en": "Add {append} to {file} (in a copy of your project)",
+   "fa": "افزودن {append} به {file} (در کپی پروژه)",
+   "src": "inferred",
+   "fkind": "patch",
+   "ten": "You can download the patch.",
+   "tfa": "می‌توانید patch را دانلود کنید."
+  },
+  {
+   "type": "fix",
+   "code": "refresh_db_credentials",
+   "params": "",
+   "en": "Refresh the database credentials",
+   "fa": "تازه‌سازی اطلاعات ورود پایگاه‌داده",
+   "src": "inferred",
+   "fkind": "auto",
+   "ten": "Free, so I do it without asking.",
+   "tfa": "رایگان است، پس بدون پرسیدن انجام می‌دهم."
+  },
+  {
+   "type": "fix",
+   "code": "shorten_build",
+   "params": "",
+   "en": "Shorten the build",
+   "fa": "ساخت را کوتاه‌تر کنید",
+   "src": "sample",
+   "fkind": "manual",
+   "ten": "Add a .dockerignore or .gitignore, avoid reinstalling dependencies, use a lighter base image.",
+   "tfa": "یک .dockerignore یا .gitignore اضافه کنید، نصب دوباره‌ی وابستگی‌ها را حذف کنید، از base image سبک‌تر استفاده کنید."
+  },
+  {
+   "type": "fix",
+   "code": "reduce_memory",
+   "params": "",
+   "en": "Reduce memory use",
+   "fa": "مصرف حافظه را کم کنید",
+   "src": "inferred",
+   "fkind": "manual",
+   "ten": "Keep less data in memory at once, or choose a bigger plan.",
+   "tfa": "داده‌ی کمتری را هم‌زمان در حافظه نگه دارید، یا بسته‌ی بزرگ‌تری بردارید."
+  },
+  {
+   "type": "fix",
+   "code": "declare_dependency",
+   "params": "module",
+   "en": "Declare the missing package",
+   "fa": "بسته‌ی کم‌شده را اعلام کنید",
+   "src": "inferred",
+   "fkind": "manual",
+   "ten": "Add {module} to your dependency file.",
+   "tfa": "{module} را به فایل وابستگی‌ها اضافه کنید."
+  },
+  {
+   "type": "fix",
+   "code": "npm_install",
+   "params": "module",
+   "en": "Install the missing package",
+   "fa": "بسته‌ی کم‌شده را نصب کنید",
+   "src": "inferred",
+   "fkind": "manual",
+   "ten": "Run npm install --save {module}.",
+   "tfa": "دستور npm install --save {module} را اجرا کنید."
+  },
+  {
+   "type": "fix",
+   "code": "outbound_options",
+   "params": "hosts",
+   "en": "Your options",
+   "fa": "گزینه‌های شما",
+   "src": "inferred",
+   "fkind": "manual",
+   "ten": "Use a service Liara can reach, route through a proxy you run elsewhere, or host this part outside Liara.",
+   "tfa": "سرویسی را بردارید که لیارا به آن دسترسی دارد، از یک proxy بیرون از لیارا استفاده کنید، یا این بخش را بیرون از لیارا اجرا کنید."
+  },
+  {
+   "type": "fix",
+   "code": "db_point_host",
+   "params": "",
+   "en": "Point the app at the database host",
+   "fa": "برنامه را به میزبان پایگاه‌داده وصل کنید",
+   "src": "inferred",
+   "fkind": "manual",
+   "ten": "Read the host from an environment variable, not from localhost.",
+   "tfa": "آدرس میزبان را از یک متغیر محیطی بخوانید، نه از localhost."
+  },
+  {
+   "type": "fix",
+   "code": "db_create",
+   "params": "kind",
+   "en": "Create the missing database",
+   "fa": "پایگاه‌داده‌ی لازم را بسازید",
+   "src": "inferred",
+   "fkind": "manual",
+   "ten": "",
+   "tfa": ""
+  },
+  {
+   "type": "fix",
+   "code": "bind_all_interfaces",
+   "params": "",
+   "en": "Make the app listen on 0.0.0.0",
+   "fa": "برنامه را روی 0.0.0.0 گوش بدهید",
+   "src": "inferred",
+   "fkind": "manual",
+   "ten": "",
+   "tfa": ""
+  },
+  {
+   "type": "fix",
+   "code": "add_dockerfile",
+   "params": "",
+   "en": "Add a Dockerfile",
+   "fa": "یک Dockerfile به پروژه اضافه کنید",
+   "src": "inferred",
+   "fkind": "manual",
+   "ten": "",
+   "tfa": ""
+  },
+  {
+   "type": "fix",
+   "code": "check_port_and_bind",
+   "params": "",
+   "en": "Check the port and the address",
+   "fa": "پورت و آدرس را بررسی کنید",
+   "src": "inferred",
+   "fkind": "manual",
+   "ten": "Make sure the app listens on the port in the plan, on 0.0.0.0.",
+   "tfa": "مطمئن شوید برنامه روی پورتِ طرح و روی 0.0.0.0 گوش می‌دهد."
+  },
+  {
+   "type": "fix",
+   "code": "read_logs",
+   "params": "",
+   "en": "Read the app logs",
+   "fa": "لاگ‌های برنامه را بخوانید",
+   "src": "inferred",
+   "fkind": "manual",
+   "ten": "They show the exact error.",
+   "tfa": "خطای دقیق در آن‌ها هست."
+  },
+  {
+   "type": "outcome",
+   "code": "no_plan",
+   "params": "",
+   "en": "I could not make a plan for this project.",
+   "fa": "نتوانستم برای این پروژه طرحی بسازم.",
+   "src": "inferred"
+  },
+  {
+   "type": "outcome",
+   "code": "agent_unavailable",
+   "params": "",
+   "en": "The AI agent is not available right now. Nothing was created.",
+   "fa": "عامل هوشمند الان در دسترس نیست. چیزی ساخته نشد.",
+   "src": "inferred"
+  },
+  {
+   "type": "outcome",
+   "code": "blocked",
+   "params": "",
+   "en": "Something blocks this project from running on Liara. Nothing was created.",
+   "fa": "مانعی جلوی اجرای این پروژه روی لیارا را می‌گیرد. چیزی ساخته نشد.",
+   "src": "inferred"
+  },
+  {
+   "type": "outcome",
+   "code": "not_approved",
+   "params": "",
+   "en": "You did not approve, so nothing was created.",
+   "fa": "تأیید نکردید، پس چیزی ساخته نشد.",
+   "src": "inferred"
+  },
+  {
+   "type": "outcome",
+   "code": "deploy_failed",
+   "params": "",
+   "en": "The deploy failed.",
+   "fa": "استقرار ناموفق بود.",
+   "src": "inferred"
+  },
+  {
+   "type": "outcome",
+   "code": "liara_token_invalid",
+   "params": "",
+   "en": "Liara did not accept your API token (HTTP {status}). Check it in Settings.",
+   "fa": "لیارا توکن API شما را نپذیرفت (HTTP {status}). آن را در تنظیمات بررسی کنید.",
+   "src": "inferred"
+  },
+  {
+   "type": "outcome",
+   "code": "insufficient_balance",
+   "params": "",
+   "en": "Your Liara balance is too low to create this. Top up your account, then run again.",
+   "fa": "موجودی حساب لیارای شما برای ساختن این منابع کافی نیست. حساب را شارژ کنید و دوباره اجرا کنید.",
+   "src": "inferred"
+  },
+  {
+   "type": "outcome",
+   "code": "liara_forbidden",
+   "params": "",
+   "en": "Liara says this token is not allowed to do that. Check the token's permissions and the team.",
+   "fa": "لیارا می‌گوید این توکن اجازه‌ی این کار را ندارد. دسترسی‌های توکن و تیم را بررسی کنید.",
+   "src": "inferred"
+  },
+  {
+   "type": "outcome",
+   "code": "name_taken",
+   "params": "",
+   "en": "You already have an app named {name} on Liara. I did not touch it. Choose another project name.",
+   "fa": "شما از قبل برنامه‌ای به نام {name} در لیارا دارید. به آن دست نزدم. نام دیگری برای پروژه انتخاب کنید.",
+   "src": "inferred"
+  },
+  {
+   "type": "outcome",
+   "code": "liara_rate_limited",
+   "params": "",
+   "en": "Liara is limiting requests right now. Wait a minute, then run again.",
+   "fa": "لیارا الان تعداد درخواست‌ها را محدود کرده است. یک دقیقه صبر کنید و دوباره اجرا کنید.",
+   "src": "inferred"
+  },
+  {
+   "type": "outcome",
+   "code": "liara_rejected",
+   "params": "",
+   "en": "Liara rejected a request (HTTP {status}).",
+   "fa": "لیارا یکی از درخواست‌ها را رد کرد (HTTP {status}).",
+   "src": "inferred"
+  },
+  {
+   "type": "outcome",
+   "code": "database_not_ready",
+   "params": "",
+   "en": "The database {id} never reported working credentials, so I stopped before deploying the app.",
+   "fa": "پایگاه‌داده‌ی {id} هیچ‌وقت اطلاعات ورود کارآمد نداد، پس پیش از استقرار برنامه متوقف شدم.",
+   "src": "inferred"
+  },
+  {
+   "type": "outcome",
+   "code": "team_required",
+   "params": "",
+   "en": "Your Liara account belongs to a team. Choose the team in Settings, then run again.",
+   "fa": "حساب لیارای شما عضو یک تیم است. تیم را در تنظیمات انتخاب کنید و دوباره اجرا کنید.",
+   "src": "inferred"
+  },
+  {
+   "type": "outcome",
+   "code": "network_required",
+   "params": "",
+   "en": "You have several private networks ({networks}). Choose one, then run again.",
+   "fa": "شما چند شبکه‌ی خصوصی دارید ({networks}). یکی را انتخاب کنید و دوباره اجرا کنید.",
+   "src": "inferred"
+  },
+  {
+   "type": "outcome",
+   "code": "internal_error",
+   "params": "",
+   "en": "Something broke on our side. Nothing more was created. Try again, and tell us if it repeats.",
+   "fa": "مشکلی از سمت ما پیش آمد. چیز دیگری ساخته نشد. دوباره امتحان کنید و اگر تکرار شد به ما خبر بدهید.",
+   "src": "inferred"
+  },
+  {
+   "type": "readiness",
+   "code": "env_file_present",
+   "params": "count",
+   "en": "A .env file with {count} values was found. It is not uploaded; add the values you need when the plan asks.",
+   "fa": "یک فایل .env با {count} مقدار پیدا شد. بارگذاری نمی‌شود؛ مقدارهای لازم را هنگام درخواست طرح وارد کنید.",
+   "src": "inferred",
+   "level": "warning"
+  },
+  {
+   "type": "readiness",
+   "code": "hardcoded_secret",
+   "params": "kind",
+   "en": "A secret is written in the code ({kind}). Move it to an environment variable and replace it, because it may already be exposed.",
+   "fa": "یک راز در خود کد نوشته شده است ({kind}). آن را به یک متغیر محیطی ببرید و عوض کنید، چون ممکن است قبلاً فاش شده باشد.",
+   "src": "inferred",
+   "level": "warning"
+  },
+  {
+   "type": "readiness",
+   "code": "debug_enabled",
+   "params": "",
+   "en": "Debug mode is on. Turn it off before real users reach the app.",
+   "fa": "حالت debug روشن است. پیش از رسیدن کاربران واقعی آن را خاموش کنید.",
+   "src": "inferred",
+   "level": "warning"
+  },
+  {
+   "type": "readiness",
+   "code": "allowed_hosts_wildcard",
+   "params": "",
+   "en": "ALLOWED_HOSTS accepts any host. Fine for a first test; narrow it once you have your own domain.",
+   "fa": "ALLOWED_HOSTS هر میزبانی را می‌پذیرد. برای اولین آزمایش اشکالی ندارد؛ وقتی دامنه‌ی خودتان را داشتید محدودش کنید.",
+   "src": "inferred",
+   "level": "info"
+  },
+  {
+   "type": "readiness",
+   "code": "sqlite_data_loss",
+   "params": "",
+   "en": "Data stored in SQLite on the app's own disk is lost on every redeploy, unless you use a Liara disk or a database.",
+   "fa": "داده‌ای که در SQLite روی دیسک خودِ برنامه ذخیره می‌شود با هر استقرار دوباره از بین می‌رود، مگر اینکه از دیسک یا پایگاه‌داده‌ی لیارا استفاده کنید.",
+   "src": "inferred",
+   "level": "warning"
+  },
+  {
+   "type": "readiness",
+   "code": "binds_localhost",
+   "params": "",
+   "en": "The code listens on 127.0.0.1, so nothing from outside can reach it. It should listen on 0.0.0.0.",
+   "fa": "کد روی 127.0.0.1 گوش می‌دهد، پس هیچ چیز از بیرون به آن نمی‌رسد. باید روی 0.0.0.0 گوش بدهد.",
+   "src": "inferred",
+   "level": "warning"
+  },
+  {
+   "type": "readiness",
+   "code": "writes_local_files",
+   "params": "",
+   "en": "The app writes files to its own disk. Consider a Liara disk so they survive a redeploy.",
+   "fa": "برنامه روی دیسک خودش فایل می‌نویسد. یک دیسک لیارا بگیرید تا بعد از استقرار دوباره باقی بمانند.",
+   "src": "inferred",
+   "level": "info"
+  },
+  {
+   "type": "readiness",
+   "code": "foreign_service_dependency",
+   "params": "service",
+   "en": "The app talks to {service}, which may be unreachable from Liara's network.",
+   "fa": "برنامه با {service} ارتباط می‌گیرد که شاید از شبکه‌ی لیارا در دسترس نباشد.",
+   "src": "inferred",
+   "level": "warning"
+  },
+  {
+   "type": "kindlabel",
+   "code": "hardcoded_secret.aws_access_key",
+   "params": "",
+   "en": "an AWS access key",
+   "fa": "یک کلید دسترسی AWS",
+   "src": "inferred"
+  },
+  {
+   "type": "kindlabel",
+   "code": "hardcoded_secret.private_key",
+   "params": "",
+   "en": "a private key",
+   "fa": "یک کلید خصوصی",
+   "src": "inferred"
+  },
+  {
+   "type": "kindlabel",
+   "code": "hardcoded_secret.api_key",
+   "params": "",
+   "en": "an API key",
+   "fa": "یک کلید API",
+   "src": "inferred"
+  },
+  {
+   "type": "kindlabel",
+   "code": "hardcoded_secret.assigned_secret",
+   "params": "",
+   "en": "a password or token assigned in code",
+   "fa": "یک گذرواژه یا توکن که در کد مقداردهی شده",
+   "src": "inferred"
+  },
+  {
+   "type": "apierror",
+   "code": "not_logged_in",
+   "params": "",
+   "en": "Please log in.",
+   "fa": "لطفاً وارد شوید.",
+   "src": "inferred",
+   "group": "401"
+  },
+  {
+   "type": "apierror",
+   "code": "bad_credentials",
+   "params": "",
+   "en": "The username or password is wrong.",
+   "fa": "نام کاربری یا گذرواژه درست نیست.",
+   "src": "inferred",
+   "group": "401"
+  },
+  {
+   "type": "apierror",
+   "code": "csrf",
+   "params": "",
+   "en": "This request came from an unexpected site, so it was blocked. Reload the page.",
+   "fa": "این درخواست از یک سایت ناشناخته آمده بود و مسدود شد. صفحه را دوباره بارگذاری کنید.",
+   "src": "inferred",
+   "group": "403"
+  },
+  {
+   "type": "apierror",
+   "code": "not_found",
+   "params": "",
+   "en": "We could not find that.",
+   "fa": "پیدایش نکردیم.",
+   "src": "inferred",
+   "group": "404"
+  },
+  {
+   "type": "apierror",
+   "code": "no_such_request",
+   "params": "",
+   "en": "That question or approval is no longer waiting. It may have expired, and a timeout counts as no.",
+   "fa": "این پرسش یا تأیید دیگر منتظر پاسخ نیست. شاید منقضی شده باشد، و انقضا یعنی «نه».",
+   "src": "inferred",
+   "group": "404"
+  },
+  {
+   "type": "apierror",
+   "code": "username_taken",
+   "params": "",
+   "en": "That username is taken.",
+   "fa": "این نام کاربری گرفته شده است.",
+   "src": "inferred",
+   "group": "409"
+  },
+  {
+   "type": "apierror",
+   "code": "run_active",
+   "params": "",
+   "en": "This project already has a run in progress.",
+   "fa": "این پروژه الان یک اجرای در حال انجام دارد.",
+   "src": "inferred",
+   "group": "409"
+  },
+  {
+   "type": "apierror",
+   "code": "bad_username",
+   "params": "",
+   "en": "Use 3 to 32 characters: lowercase letters, digits, underscore, dot or hyphen.",
+   "fa": "بین ۳ تا ۳۲ نویسه استفاده کنید: حروف کوچک انگلیسی، رقم، زیرخط، نقطه یا خط تیره.",
+   "src": "inferred",
+   "group": "422 account"
+  },
+  {
+   "type": "apierror",
+   "code": "weak_password",
+   "params": "",
+   "en": "Use at least 8 characters.",
+   "fa": "دست‌کم ۸ نویسه استفاده کنید.",
+   "src": "inferred",
+   "group": "422 account"
+  },
+  {
+   "type": "apierror",
+   "code": "bad_language",
+   "params": "",
+   "en": "Choose English or Persian.",
+   "fa": "انگلیسی یا فارسی را انتخاب کنید.",
+   "src": "inferred",
+   "group": "422 account"
+  },
+  {
+   "type": "apierror",
+   "code": "bad_mode",
+   "params": "",
+   "en": "Unknown run mode.",
+   "fa": "حالت اجرا ناشناخته است.",
+   "src": "inferred",
+   "group": "422 account"
+  },
+  {
+   "type": "apierror",
+   "code": "confirm_mismatch",
+   "params": "",
+   "en": "What you typed does not match the project name.",
+   "fa": "آنچه نوشتید با نام پروژه یکی نیست.",
+   "src": "inferred",
+   "group": "422 account"
+  },
+  {
+   "type": "apierror",
+   "code": "bad_option",
+   "params": "",
+   "en": "Choose one of the offered answers.",
+   "fa": "یکی از پاسخ‌های پیشنهادی را انتخاب کنید.",
+   "src": "inferred",
+   "group": "422 account"
+  },
+  {
+   "type": "apierror",
+   "code": "source_required",
+   "params": "",
+   "en": "Upload a .zip file or paste a Git address.",
+   "fa": "یک فایل .zip بارگذاری کنید یا نشانی Git را بچسبانید.",
+   "src": "inferred",
+   "group": "422 source"
+  },
+  {
+   "type": "apierror",
+   "code": "upload_too_large",
+   "params": "",
+   "en": "The file is larger than {limit_mb} MB.",
+   "fa": "اندازه‌ی فایل از {limit_mb} مگابایت بیشتر است.",
+   "src": "inferred",
+   "group": "422 source"
+  },
+  {
+   "type": "apierror",
+   "code": "bad_zip",
+   "params": "",
+   "en": "This is not a valid .zip file.",
+   "fa": "این یک فایل .zip معتبر نیست.",
+   "src": "inferred",
+   "group": "422 source"
+  },
+  {
+   "type": "apierror",
+   "code": "too_many_files",
+   "params": "",
+   "en": "The project has more than {limit} files.",
+   "fa": "پروژه بیش از {limit} فایل دارد.",
+   "src": "inferred",
+   "group": "422 source"
+  },
+  {
+   "type": "apierror",
+   "code": "too_large",
+   "params": "",
+   "en": "The project is larger than {limit_mb} MB once unpacked.",
+   "fa": "پروژه بعد از باز شدن بیش از {limit_mb} مگابایت است.",
+   "src": "inferred",
+   "group": "422 source"
+  },
+  {
+   "type": "apierror",
+   "code": "path_traversal",
+   "params": "",
+   "en": "The zip has a file path that points outside the project, so I rejected it.",
+   "fa": "در فایل zip مسیری هست که به بیرون از پروژه اشاره می‌کند، پس ردش کردم.",
+   "src": "inferred",
+   "group": "422 source"
+  },
+  {
+   "type": "apierror",
+   "code": "symlink",
+   "params": "",
+   "en": "The zip contains symbolic links, which are not allowed.",
+   "fa": "فایل zip شامل symbolic link است که مجاز نیست.",
+   "src": "inferred",
+   "group": "422 source"
+  },
+  {
+   "type": "apierror",
+   "code": "empty",
+   "params": "",
+   "en": "The project is empty.",
+   "fa": "پروژه خالی است.",
+   "src": "inferred",
+   "group": "422 source"
+  },
+  {
+   "type": "apierror",
+   "code": "git_scheme",
+   "params": "",
+   "en": "Use an address that starts with https://.",
+   "fa": "نشانی‌ای بدهید که با https:// شروع شود.",
+   "src": "inferred",
+   "group": "422 source"
+  },
+  {
+   "type": "apierror",
+   "code": "git_credentials",
+   "params": "",
+   "en": "Remove the username and password from the address. Only public repositories work.",
+   "fa": "نام کاربری و گذرواژه را از نشانی حذف کنید. فقط مخزن‌های عمومی کار می‌کنند.",
+   "src": "inferred",
+   "group": "422 source"
+  },
+  {
+   "type": "apierror",
+   "code": "git_host",
+   "params": "",
+   "en": "{host} is not allowed. Use one of: {allowed}.",
+   "fa": "{host} مجاز نیست. یکی از اینها را استفاده کنید: {allowed}.",
+   "src": "inferred",
+   "group": "422 source"
+  },
+  {
+   "type": "apierror",
+   "code": "git_path",
+   "params": "",
+   "en": "The address should look like https://github.com/owner/repo.",
+   "fa": "نشانی باید شبیه https://github.com/owner/repo باشد.",
+   "src": "inferred",
+   "group": "422 source"
+  },
+  {
+   "type": "apierror",
+   "code": "git_failed",
+   "params": "",
+   "en": "I could not download this repository. Check that it exists and is public.",
+   "fa": "نتوانستم این مخزن را دانلود کنم. بررسی کنید وجود داشته باشد و عمومی باشد.",
+   "src": "inferred",
+   "group": "422 source"
+  },
+  {
+   "type": "apierror",
+   "code": "git_timeout",
+   "params": "",
+   "en": "Downloading took too long. Try again, or upload a .zip.",
+   "fa": "دانلود بیش از حد طول کشید. دوباره امتحان کنید یا یک فایل .zip بارگذاری کنید.",
+   "src": "inferred",
+   "group": "422 source"
+  },
+  {
+   "type": "apierror",
+   "code": "git_missing",
+   "params": "",
+   "en": "Git is not available on the server. Upload a .zip instead.",
+   "fa": "Git روی سرور در دسترس نیست. به‌جایش یک فایل .zip بارگذاری کنید.",
+   "src": "inferred",
+   "group": "422 source"
+  },
+  {
+   "type": "apierror",
+   "code": "rate_limited",
+   "params": "",
+   "en": "Too many attempts. Wait a few minutes and try again.",
+   "fa": "تلاش‌ها زیاد بود. چند دقیقه صبر کنید و دوباره امتحان کنید.",
+   "src": "inferred",
+   "group": "429"
+  },
+  {
+   "type": "apierror",
+   "code": "too_many_runs",
+   "params": "",
+   "en": "You already have 2 runs in progress. Wait for one to finish.",
+   "fa": "همین الان ۲ اجرای در حال انجام دارید. صبر کنید یکی تمام شود.",
+   "src": "inferred",
+   "group": "429"
+  },
+  {
+   "type": "apierror",
+   "code": "no_liara_token",
+   "params": "",
+   "en": "Connect your Liara account first.",
+   "fa": "ابتدا حساب لیارای خود را وصل کنید.",
+   "src": "inferred",
+   "group": "400"
+  },
+  {
+   "type": "apierror",
+   "code": "liara_unreachable",
+   "params": "",
+   "en": "I could not reach Liara. Nothing changed. Try again in a moment.",
+   "fa": "به لیارا دسترسی پیدا نکردم. چیزی تغییر نکرد. کمی بعد دوباره امتحان کنید.",
+   "src": "inferred",
+   "group": "502"
+  },
+  {
+   "type": "apierror",
+   "code": "cleanup_failed",
+   "params": "",
+   "en": "Some resources could not be deleted. Check them in the Liara console.",
+   "fa": "بعضی منابع پاک نشدند. آن‌ها را در کنسول لیارا بررسی کنید.",
+   "src": "inferred",
+   "group": "502"
+  },
+  {
+   "type": "status",
+   "code": "running",
+   "params": "",
+   "en": "Running",
+   "fa": "در حال اجرا",
+   "src": "inferred"
+  },
+  {
+   "type": "status",
+   "code": "waiting",
+   "params": "",
+   "en": "Waiting for you",
+   "fa": "منتظر شما",
+   "src": "inferred"
+  },
+  {
+   "type": "status",
+   "code": "succeeded",
+   "params": "",
+   "en": "Live",
+   "fa": "موفق",
+   "src": "inferred"
+  },
+  {
+   "type": "status",
+   "code": "failed",
+   "params": "",
+   "en": "Failed",
+   "fa": "ناموفق",
+   "src": "inferred"
+  },
+  {
+   "type": "status",
+   "code": "cancelled",
+   "params": "",
+   "en": "Cancelled",
+   "fa": "لغو شد",
+   "src": "inferred"
+  },
+  {
+   "type": "status",
+   "code": "interrupted",
+   "params": "",
+   "en": "Interrupted",
+   "fa": "قطع شد",
+   "src": "inferred"
+  }
+ ]
+}

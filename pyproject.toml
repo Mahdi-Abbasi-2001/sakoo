@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "liara-agent"
+version = "0.1.0"
+description = "AI agent that analyzes a finished project and deploys it on Liara"
+requires-python = ">=3.11"
+dependencies = [
+  "openai>=1.40",
+  "pydantic>=2.7",
+  "pydantic-settings>=2.3",
+  "typer>=0.12",
+  "rich>=13.7",
+  "pyyaml>=6.0",
+  "httpx>=0.27",
+  "pathspec>=0.12",
+  "fastapi>=0.115",
+  "uvicorn>=0.30",
+  "python-multipart>=0.0.9",
+  "argon2-cffi>=23.1",
+  "cryptography>=42",
+  "dnspython>=2.6",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.23"]
+
+[project.scripts]
+liara-agent = "liara_agent.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+liara_agent = ["liara/*.json", "liara/*.yaml", "liara/*.jsonl.gz"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["eval: accuracy evals against evals/repos (may call the real LLM)"]

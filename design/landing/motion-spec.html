@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Motion spec</title>
+<link rel="icon" href="data:,">
+</head>
+<body>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Vazirmatn:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.lp{container-type:inline-size;container-name:lp;position:relative;isolation:isolate;background:var(--bg);color:var(--tx);font-family:'Sora','Vazirmatn',system-ui,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:clip}
+.lp[lang=fa]{font-family:'Vazirmatn','Sora',system-ui,sans-serif;line-height:1.75}
+.lp *,.lp *::before,.lp *::after{box-sizing:border-box}
+.lp h1,.lp h2,.lp h3,.lp p,.lp ul,.lp ol,.lp li,.lp dl,.lp dd,.lp figure{margin:0;padding:0}
+.lp ul,.lp ol{list-style:none}
+.lp a{color:inherit}
+.lp .mono{font-family:'JetBrains Mono','Vazirmatn',ui-monospace,monospace;font-feature-settings:"zero" 0}
+.lp .ltr{direction:ltr;unicode-bidi:isolate}
+.lp .wrap{max-width:1440px;margin:0 auto;padding:0 48px}
+.lp .tag{font-family:'JetBrains Mono','Vazirmatn',monospace;font-size:12px;letter-spacing:.06em;color:var(--tx3);text-transform:uppercase}
+.lp[lang=fa] .tag{letter-spacing:0;text-transform:none;font-size:12.5px}
+.lp .ph{color:var(--warn);font-family:'JetBrains Mono',monospace;font-size:.82em;white-space:nowrap}
+
+/* ---------- top bar ---------- */
+.lp .bar{position:relative;z-index:3;display:flex;align-items:center;gap:28px;height:72px;border-bottom:1px solid var(--line)}
+.lp .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:-.01em;text-decoration:none}
+.lp .brand svg{display:block}
+.lp .brand .sub{font-family:'JetBrains Mono','Vazirmatn',monospace;font-weight:400;font-size:12px;color:var(--tx3);border:1px solid var(--line2);border-radius:6px;padding:1px 7px}
+.lp .nav{display:flex;gap:24px;margin-inline-start:12px}
+.lp .nav a{font-size:14px;color:var(--tx2);text-decoration:none;padding:12px 2px}
+.lp .nav a:hover{color:var(--tx)}
+.lp .bar .sp{flex:1}
+.lp .acct{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tx2)}
+.lp .acct svg{flex:none}
+.lp .lang{display:inline-flex;border:1px solid var(--line2);border-radius:10px;overflow:hidden}
+.lp .lang a,.lp .lang span{padding:0 12px;min-height:44px;display:inline-flex;align-items:center;font-size:13px;text-decoration:none;color:var(--tx2)}
+.lp .lang .cur{background:var(--raised);color:var(--tx);font-weight:600}
+
+/* ---------- hero ---------- */
+.lp .hero{position:relative;padding:56px 0 40px;overflow:hidden;isolation:isolate}
+.lp .hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity .4s ease;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),var(--spot),transparent 70%);}
+.lp .hero.spot::after{opacity:1}
+.lp .hero-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px;align-items:start}
+.lp .eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.lp .eyebrow i{display:block;width:28px;height:1px;background:var(--ac)}
+.lp h1{font-weight:800;font-size:clamp(44px,5.2vw,76px);line-height:1.02;letter-spacing:-.035em}
+.lp[lang=fa] h1{font-weight:900;letter-spacing:0;line-height:1.25;font-size:clamp(40px,4.8vw,68px)}
+.lp .lead{margin-top:22px;font-size:17px;line-height:1.65;color:var(--tx2);max-width:34em}
+.lp .tool{margin-top:32px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.lp .tool:hover,.lp .tool:focus-within{transform:translateY(-2px);box-shadow:0 14px 40px -18px var(--shadow);border-color:var(--line2)}
+.lp .drop{position:relative;display:flex;flex-direction:column;gap:6px;align-items:flex-start;justify-content:center;min-height:116px;padding:18px 20px;border:1.5px dashed var(--line2);border-radius:10px;background:var(--sunken);cursor:pointer;transition:border-color .2s ease,background .2s ease}
+.lp .drop:hover,.lp .drop:focus-within{border-color:var(--ac)}
+.lp .drop input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.lp .drop b{font-weight:600;font-size:15px}
+.lp .drop span{font-size:13px;color:var(--tx2)}
+.lp .drop .ck{position:absolute;width:10px;height:10px;border:2px solid var(--ac)}
+.lp .drop .ck.a{top:-2px;inset-inline-start:-2px;border-width:2px 0 0 2px;border-start-start-radius:4px}
+.lp .drop .ck.b{bottom:-2px;inset-inline-end:-2px;border-width:0 2px 2px 0;border-end-end-radius:4px}
+.lp[dir=rtl] .drop .ck.a{border-width:2px 2px 0 0}
+.lp[dir=rtl] .drop .ck.b{border-width:0 0 2px 2px}
+.lp .or{display:flex;align-items:center;gap:12px;margin:14px 0;color:var(--tx3)}
+.lp .or::before,.lp .or::after{content:"";flex:1;height:1px;background:var(--line)}
+.lp .fld label{display:block;font-size:13px;color:var(--tx2);margin-bottom:6px}
+.lp .fld input{width:100%;min-height:48px;padding:0 14px;border-radius:10px;border:1px solid var(--line2);background:var(--sunken);color:var(--tx);font-family:'JetBrains Mono',monospace;font-size:14px;direction:ltr;text-align:left}
+.lp .fld input::placeholder{color:var(--tx3)}
+.lp .fld input:focus{outline:2px solid var(--ac);outline-offset:1px}
+.lp .cta{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:52px;padding:0 18px;border:0;border-radius:10px;background:linear-gradient(100deg,var(--ac),var(--ac2));color:var(--acink);font:inherit;font-weight:700;font-size:15px;text-decoration:none;cursor:pointer;transition:transform .15s ease,box-shadow .2s ease}
+.lp .cta:hover{transform:translateY(-1px);box-shadow:0 10px 26px -10px var(--ac)}
+.lp .cta:focus-visible,.lp .btn:focus-visible,.lp .chip:focus-visible,.lp a:focus-visible{outline:2px solid var(--tx);outline-offset:2px}
+.lp[dir=rtl] .cta svg{transform:scaleX(-1)}
+.lp .toolnote{margin-top:12px;font-size:13px;color:var(--tx2);display:flex;gap:8px;align-items:flex-start}
+.lp .toolnote svg{flex:none;margin-top:3px}
+
+/* ---------- sheet (the blueprint) ---------- */
+.lp .sheet{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.lp .sheet-h{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 18px;border-bottom:1px solid var(--line)}
+.lp .state-pill .state-word{min-width:13ch;text-align:end}
+.lp .state-pill{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--tx);min-height:28px}
+.lp .state-ico{width:14px;height:14px;flex:none}
+.lp .readout{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;padding:16px 18px 6px}
+.lp .readout .big{font-family:'JetBrains Mono','Vazirmatn',monospace;font-weight:600;font-size:clamp(38px,4.4vw,64px);line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;direction:ltr;min-width:5.2ch;text-align:start}
+.lp[lang=fa] .readout .big{font-family:'Vazirmatn','JetBrains Mono',monospace;font-weight:700;letter-spacing:0}
+.lp .readout .unit{font-size:13px;color:var(--tx2);margin-top:6px}
+.lp .readout .m{text-align:end;font-size:13px;color:var(--tx2)}
+.lp .readout .m b{display:block;min-width:9ch;font-family:'JetBrains Mono','Vazirmatn',monospace;font-weight:500;font-size:20px;color:var(--tx);font-variant-numeric:tabular-nums;direction:ltr}
+.lp[lang=fa] .readout .m b{font-family:'Vazirmatn',monospace}
+.lp .stage{position:relative;padding:0 8px}
+.lp svg.scene{display:block;width:100%;height:auto;direction:ltr}
+.lp svg.scene.tall{display:none}
+.lp .ctl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px 12px;border-top:1px solid var(--line)}
+.lp .chip{min-height:44px;padding:0 12px;border-radius:8px;border:1px solid var(--line2);background:transparent;color:var(--tx2);font:inherit;font-size:13px;cursor:pointer;transition:background .15s ease,color .15s ease,border-color .15s ease}
+.lp .chip:hover{background:var(--raised);color:var(--tx)}
+.lp .chip.on{background:var(--raised);color:var(--tx);border-color:var(--ac)}
+.lp .chip.pause{margin-inline-end:auto;min-width:88px}
+.lp .clock{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--tx3);min-width:7ch;direction:ltr;text-align:end}
+.lp .prog{height:2px;background:var(--line);position:relative}
+.lp .prog-bar{position:absolute;inset:0;background:var(--ac);transform:scaleX(0);transform-origin:left center}
+.lp[dir=rtl] .prog-bar{transform-origin:right center}
+.lp .appr{position:relative;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:96px;margin:0 14px 14px;padding:14px 16px;border-radius:12px;border:1px solid var(--line2);background:var(--raised)}
+.lp .appr-txt{font-size:14px;line-height:1.55;color:var(--tx2);max-width:36em;align-self:stretch;display:flex;align-items:center}
+.lp .appr .acts{display:flex;gap:10px;flex:none;visibility:hidden}
+.lp .appr[data-state=waiting]{border-color:var(--wait);background:var(--raised)}
+.lp .appr[data-state=waiting] .appr-txt{color:var(--tx)}
+.lp .appr[data-state=waiting] .acts{visibility:visible}
+.lp .appr::after{content:"";position:absolute;inset:-1px;border-radius:12px;border:2px solid var(--wait);opacity:0;pointer-events:none}
+.lp .appr[data-state=waiting]::after{animation:ring 1.5s ease-out infinite}
+.lp .btn{min-height:48px;padding:0 20px;border-radius:10px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;border:1px solid transparent;min-width:96px}
+.lp .btn-p{background:var(--ac);color:var(--acink)}
+.lp .btn-s{background:transparent;color:var(--tx);border-color:var(--line2)}
+.lp .btn-p:hover{background:var(--ac2)}
+.lp .btn-s:hover{background:var(--surface)}
+.lp .states{display:flex;gap:0;margin-top:20px;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.lp .states li{flex:1;display:flex;align-items:center;gap:10px;padding:10px 14px;border-inline-end:1px solid var(--line);min-width:0;color:var(--tx3);transition:color .2s ease,background .2s ease}
+.lp .states li:last-child{border-inline-end:0}
+.lp .states li.on{background:var(--raised);color:var(--tx)}
+.lp .states li span{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lp .states svg{flex:none}
+.lp .src{margin-top:10px;font-size:12px;color:var(--tx3);font-family:'JetBrains Mono','Vazirmatn',monospace}
+
+/* ---------- scene svg ---------- */
+.lp .scene text{font-family:'JetBrains Mono','Vazirmatn',monospace;fill:var(--tx2)}
+.lp .scene .grid line{stroke:var(--grid2);stroke-width:1}
+.lp .scene .gc{fill:var(--ac);fill-opacity:.07;stroke:var(--ac);stroke-opacity:.22;stroke-width:1;opacity:0}
+.lp .scene .nm{font-size:13px;font-weight:600;fill:var(--tx);font-family:'JetBrains Mono',monospace}
+.lp .scene .kd{font-size:11.5px;fill:var(--tx2)}
+.lp .scene .ev{font-size:11.5px;fill:var(--tx3)}
+.lp .scene .base{fill:var(--sunken)}
+.lp .scene .pr{fill:none;stroke:var(--tx3);stroke-width:1.2;stroke-dasharray:5 4;opacity:0}
+.lp .scene .pl{fill:none;stroke:var(--tx);stroke-width:1.2;stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
+.lp .scene .sl{fill:none;stroke:var(--ac);stroke-width:1.6;opacity:0}
+.lp .scene .sl.cre{stroke:var(--run)}
+.lp .scene .fl{fill:var(--ac);fill-opacity:.12}
+.lp .scene .tick{stroke:var(--tx3);stroke-width:1;fill:none}
+.lp .scene .dl{fill:none;stroke:var(--tx2);stroke-width:1;stroke-dasharray:1;stroke-dashoffset:1}
+.lp .scene .dim{opacity:0}
+.lp .scene .pv,.lp .scene .pu{font-size:12px;fill:var(--tx);font-variant-numeric:tabular-nums}
+.lp .scene .pu{fill:var(--tx2)}
+.lp .scene .ed{fill:none;stroke:var(--line2);stroke-width:1.3;stroke-dasharray:4 5;opacity:0}
+.lp .scene .ed.on{stroke:var(--ac);stroke-width:1.6;animation:flow 1s linear infinite}
+.lp .scene .file rect{fill:var(--raised);stroke:var(--line2);stroke-width:1}
+.lp .scene .file text{font-size:11px;fill:var(--tx);text-anchor:middle}
+.lp .scene .file{opacity:0}
+.lp .scene .st-p,.lp .scene .st-c,.lp .scene .st-l{display:none}
+.lp .scene .stw{font-size:11px;fill:var(--tx2)}
+.lp .scene .st-l .stw{fill:var(--ok)}
+.lp .scene .st-c .stw{fill:var(--run)}
+.lp .scene .ok-s{stroke:var(--ok);fill:none;stroke-width:1.8}
+.lp .scene .run-s{fill:var(--run)}
+.lp .scene .tv-h,.lp .scene .tv-m,.lp .scene .tvl,.lp .scene .tb-ev,.lp .scene .tb-t,.lp .scene .tb-k{font-size:12px;fill:var(--tx)}
+.lp .scene .tvl,.lp .scene .tb-k{fill:var(--tx2)}
+.lp .scene .tb{fill:none;stroke:var(--line2);stroke-width:1}
+.lp .scene .q-ask,.lp .scene .q-ans{opacity:0}
+.lp .scene .q-ask text,.lp .scene .q-ans text{font-size:11.5px;fill:var(--tx)}
+.lp .scene .q-ask .qm{fill:var(--wait)}
+.lp .scene .q-ans .qm{fill:var(--ok)}
+.lp .scene .lead-l{stroke:var(--tx3);stroke-width:1;stroke-dasharray:2 3;fill:none}
+.lp .scene .url-tag{opacity:0}
+.lp .scene .url-tag rect{fill:var(--raised);stroke:var(--ok);stroke-width:1.2}
+.lp .scene .url-tag text{font-size:12px;fill:var(--tx)}
+.lp .scene .url-tag .v{fill:var(--ok)}
+
+/* ---------- agent orb ---------- */
+.orb .o-halo{fill:var(--oc);opacity:.10}
+.orb .o-ring{fill:none;stroke:var(--oc);stroke-width:1;stroke-dasharray:3 6;opacity:.7;transform-box:fill-box;transform-origin:center}
+.orb .o-arcs{fill:none;stroke:var(--oc);stroke-width:2;stroke-linecap:round;transform-box:fill-box;transform-origin:center}
+.orb .o-core{fill:var(--sunken);stroke:var(--oc);stroke-width:1.8;stroke-linejoin:round;transform-box:fill-box;transform-origin:center}
+.orb .gl{display:none;fill:none;stroke:var(--oc);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.orb .gl-fill{fill:var(--oc);stroke:none}
+.orb .o-part{fill:var(--oc);opacity:0;transform-box:fill-box;transform-origin:center}
+.orb .o-burst{fill:none;stroke:var(--oc);stroke-width:2;opacity:0;transform-box:fill-box;transform-origin:center}
+.orb .o-frag{display:none;fill:none;stroke:var(--bg);stroke-width:5}
+.orb{--oc:var(--ac)}
+.orb[data-state=reading]{--oc:var(--ac)}.orb[data-state=thinking]{--oc:var(--ac2)}.orb[data-state=waiting]{--oc:var(--wait)}
+.orb[data-state=working]{--oc:var(--run)}.orb[data-state=done]{--oc:var(--ok)}.orb[data-state=failed]{--oc:var(--fail)}
+.orb[data-state=reading] .g-reading,.orb[data-state=thinking] .g-thinking,.orb[data-state=waiting] .g-waiting,.orb[data-state=working] .g-working,.orb[data-state=done] .g-done,.orb[data-state=failed] .g-failed{display:inline}
+.orb[data-state=reading] .o-ring{animation:spin 18s linear infinite}
+.orb[data-state=reading] .o-part{animation:draw 1.7s cubic-bezier(.2,.7,.2,1) infinite}
+.orb[data-state=thinking] .o-arcs{animation:spin 2.4s linear infinite}
+.orb[data-state=thinking] .o-ring{animation:spinr 7s linear infinite}
+.orb[data-state=thinking] .o-core{animation:wob 2.2s ease-in-out infinite}
+.orb[data-state=waiting] .o-core,.orb[data-state=waiting] .o-halo{animation:breathe 3.2s ease-in-out infinite}
+.orb[data-state=waiting] .o-ring{opacity:.5}
+.orb[data-state=working] .o-arcs{animation:spin .9s linear infinite}
+.orb[data-state=working] .o-ring{animation:spin 3s linear infinite}
+.orb[data-state=done] .o-burst{animation:burst 1s cubic-bezier(.2,.7,.2,1) 1 forwards}
+.orb[data-state=done] .o-ring{opacity:.3}
+.orb[data-state=failed] .o-core{animation:jolt .5s ease-in-out 2}
+.orb[data-state=failed] .o-ring{stroke-dasharray:14 9 3 9}
+.orb .o-halo,.orb .o-core{transform-box:fill-box;transform-origin:center}
+.orb[data-state=failed] .o-frag{display:inline}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinr{to{transform:rotate(-360deg)}}
+@keyframes flow{to{stroke-dashoffset:-18}}
+@keyframes ring{0%{opacity:.95;transform:scale(1)}70%,100%{opacity:0;transform:scale(1.035,1.14)}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+@keyframes wob{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.04) rotate(6deg)}}
+@keyframes draw{0%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1)}15%{opacity:1}100%{opacity:0;transform:translate(0,0) scale(.3)}}
+@keyframes burst{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(3.4)}}
+@keyframes jolt{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+@keyframes shimmer{to{background-position:-200% 0}}
+
+/* ---------- sections ---------- */
+.lp section.sec{position:relative;padding:88px 0;border-top:1px solid var(--line)}
+.lp .sec-grid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,9fr);gap:56px}
+.lp h2{font-weight:700;font-size:clamp(26px,2.6vw,36px);line-height:1.15;letter-spacing:-.02em}
+.lp[lang=fa] h2{font-weight:800;letter-spacing:0;line-height:1.4}
+.lp .sec-grid>div:first-child .tag{display:block;margin-bottom:14px}
+.lp .sec-grid>div:first-child p{margin-top:14px;color:var(--tx2);font-size:15px}
+.lp table.led{width:100%;border-collapse:collapse;font-size:14px}
+.lp table.led th{font-weight:500;text-align:start;color:var(--tx3);font-size:12px;padding:0 12px 10px;border-bottom:1px solid var(--line2);font-family:'JetBrains Mono','Vazirmatn',monospace}
+.lp table.led td{padding:14px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.lp table.led td.n{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;text-align:end;direction:ltr;white-space:nowrap}
+.lp table.led th.n{text-align:end}
+.lp table.led tr:hover td{background:var(--sunken)}
+.lp table.led td:first-child{font-family:'JetBrains Mono',monospace;color:var(--tx)}
+.lp table.led tfoot td{border-bottom:0;border-top:1px solid var(--line2);font-weight:600}
+.lp .note{margin-top:20px;font-size:14px;color:var(--tx2);max-width:46em}
+.lp .rows li{display:grid;grid-template-columns:150px minmax(0,1fr);gap:20px;padding:16px 0;border-bottom:1px solid var(--line);transition:background .2s ease}
+.lp .rows li:first-child{border-top:1px solid var(--line2)}
+.lp .rows .k{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ac);direction:ltr;text-align:start}
+.lp .rows .k.lv{display:flex;align-items:flex-start;gap:8px;color:var(--tx2)}
+.lp .rows .k.lv svg{flex:none;margin-top:2px}
+.lp .rows p{font-size:15px;color:var(--tx2)}
+.lp .rows p b{color:var(--tx);font-weight:600}
+.lp .facts li{display:grid;grid-template-columns:56px minmax(0,1fr);gap:16px;padding:20px 0;border-bottom:1px solid var(--line)}
+.lp .facts li:first-child{border-top:1px solid var(--line2)}
+.lp .facts .i{font-family:'JetBrains Mono',monospace;font-size:28px;line-height:1.1;color:var(--ac);font-weight:500;direction:ltr;text-align:start}
+.lp .facts p{font-size:16px;color:var(--tx2);max-width:40em}
+.lp .facts p b{color:var(--tx);font-weight:600}
+.lp .twocol{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px}
+.lp .plat{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.lp .plat span{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--tx2);border:1px solid var(--line2);border-radius:6px;padding:2px 9px;direction:ltr}
+
+/* story (scroll-linked) */
+.lp .story-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:56px;align-items:start}
+.lp .story .sheet-wrap{position:sticky;top:24px}
+.lp .steps li{min-height:76vh;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:24px 0 24px 22px;border-inline-start:2px solid var(--line);transition:border-color .25s ease}
+.lp .steps li{padding-inline:22px 0;padding-block:24px}
+.lp .steps li.on{border-inline-start-color:var(--ac)}
+.lp .steps h3{font-size:22px;font-weight:700;letter-spacing:-.01em}
+.lp[lang=fa] .steps h3{font-weight:800;letter-spacing:0}
+.lp .steps p{color:var(--tx2);font-size:15.5px;max-width:30em}
+.lp .steps .ex{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--tx);background:var(--sunken);border:1px solid var(--line);border-radius:8px;padding:8px 12px;direction:ltr;text-align:start;max-width:max-content}
+.lp .steps h3{color:var(--tx2);transition:color .25s ease}.lp .steps p{color:var(--tx3);transition:color .25s ease}
+.lp .steps li.on h3{color:var(--tx)}.lp .steps li.on p{color:var(--tx2)}
+
+/* footer */
+.lp footer.ft{border-top:1px solid var(--line);padding:36px 0 56px}
+.lp .ft-row{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:13px;color:var(--tx2)}
+.lp .ft-links{display:flex;gap:22px;flex-wrap:wrap}
+
+/* skeleton */
+.lp .sk{background:linear-gradient(90deg,var(--sunken) 25%,var(--raised) 50%,var(--sunken) 75%);background-size:200% 100%;animation:shimmer 1.6s linear infinite;border-radius:6px}
+
+/* paused while the tab is hidden or the sheet is off screen */
+.lp.hid *,.lp .sheet.off *{animation-play-state:paused!important}
+
+/* ---------- reduced motion: a still that still tells the story ---------- */
+.lp.rm *,.lp.rm *::before,.lp.rm *::after{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){.lp *,.lp *::before,.lp *::after{animation:none!important;transition:none!important}}
+.lp.rm .appr::after{display:none}
+.lp.rm .appr[data-state=waiting]{border-width:2px}
+.lp.rm .scene .ed.on{stroke-dasharray:none}
+@media (prefers-reduced-motion:reduce){.lp .scene .ed.on{stroke-dasharray:none}.lp .appr::after{display:none}}
+
+/* ---------- tablet / phone, by container width ---------- */
+@container lp (max-width:1100px){
+  .lp .wrap{padding:0 32px}
+  .lp .hero-grid{grid-template-columns:minmax(0,1fr);gap:40px}
+  .lp .story-grid{grid-template-columns:minmax(0,1fr);gap:24px}
+  .lp .story .sheet-wrap{position:static}
+  .lp .steps li{min-height:0;padding-block:16px}
+  .lp .sec-grid{grid-template-columns:minmax(0,1fr);gap:28px}
+  .lp .twocol{grid-template-columns:minmax(0,1fr)}
+  .lp .nav{display:none}
+  .lp .hero{padding-top:36px}
+}
+@container lp (max-width:600px){
+  .lp .wrap{padding:0 20px}
+  .lp .bar{gap:12px;height:64px}
+  .lp .brand .sub{display:none}
+  .lp .acct .at{display:none}
+  .lp svg.scene.wide{display:none}
+  .lp svg.scene.tall{display:block}
+  .lp .stage{padding:0 4px}
+  .lp .appr{flex-direction:column;align-items:stretch;min-height:236px}
+  .lp .appr-txt{flex:1}
+  .lp .appr .acts{width:100%}
+  .lp .appr .btn{flex:1}
+  .lp .states{flex-wrap:wrap}
+  .lp .states li{flex:1 1 33%;border-bottom:1px solid var(--line)}
+  .lp .states li:nth-child(3){border-inline-end:0}
+  .lp .readout{flex-direction:column;align-items:flex-start;gap:6px}
+  .lp .readout .m{text-align:start}
+  .lp .rows li{grid-template-columns:minmax(0,1fr);gap:4px}
+  .lp .facts li{grid-template-columns:44px minmax(0,1fr)}
+  .lp table.led{font-size:13px}
+  .lp table.led th,.lp table.led td{padding-inline:6px}
+  .lp section.sec{padding:56px 0}
+  .lp .ctl{gap:8px}
+  .lp .chip{padding:0 10px}
+  .lp .hero-grid{gap:32px}
+  .lp .lang a,.lp .lang span{padding:0 10px}
+}
+
+/* ---------- page background: graphite, directional light, grain, vignette ---------- */
+.lp .lpbg{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,var(--gr1),var(--gr2))}
+.lp .lpbg i{position:absolute;inset:0;display:block}
+.lp .lpbg .g1{background:radial-gradient(ellipse 900px 560px at 82% -80px,color-mix(in srgb,var(--accent) var(--glw),transparent),transparent 72%),radial-gradient(ellipse 560px 380px at 60% 560px,color-mix(in srgb,var(--accent-2) calc(var(--glw) * .35),transparent),transparent 70%)}
+.lp .lpbg .g2{background:radial-gradient(ellipse 640px 420px at 8% 40px,color-mix(in srgb,var(--warn) var(--wrm),transparent),transparent 70%);opacity:0}
+.lp .lpbg .vg{background:linear-gradient(90deg,rgba(0,0,0,var(--vga)) 0,transparent 24%,transparent 76%,rgba(0,0,0,var(--vga)) 100%),linear-gradient(180deg,rgba(0,0,0,calc(var(--vga) * .5)) 0,transparent 6%,transparent 90%,rgba(0,0,0,var(--vga)) 100%)}
+.lp .lpbg .gn{opacity:var(--gop);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 -.35'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");background-size:180px 180px}
+.lp .lpbg .gm{opacity:var(--gop2);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -.35'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");background-size:180px 180px}
+
+.lp .hero{isolation:auto}
+/* ---------- private network drawing ---------- */
+.lp .netwrap{margin-bottom:28px}
+.lp .netwrap svg.scene.tall{display:none}
+.lp .scene .netbox{fill:var(--surface);stroke:var(--line2);stroke-width:1.2;stroke-dasharray:6 5}
+.lp .scene .netlbl{font-size:12px;fill:var(--tx2)}
+.lp .scene .bus-bg{stroke:var(--line2);stroke-width:2;stroke-dasharray:2 5;fill:none}
+.lp .scene .bus{stroke:var(--ac);stroke-width:2.4;fill:none;stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
+.lp .scene .stub{stroke:var(--line2);stroke-width:1.5;stroke-dasharray:3 4;fill:none}
+.lp .scene .stub.on{stroke:var(--ac);stroke-width:2;animation:flow 1s linear infinite}
+.lp .scene.net .pr{opacity:1}
+.lp table.led .rs{display:inline-flex;vertical-align:-2px;margin-inline-end:8px}
+.lp table.led tr.lit td{background:color-mix(in srgb,var(--ac) 7%,transparent)}
+.lp table.led tr td{transition:background .3s ease}
+.lp.rm table.led tr td{transition:none}
+@container lp (max-width:600px){
+  .lp .netwrap svg.scene.wide{display:none}
+  .lp .netwrap svg.scene.tall{display:block}
+}
+
+.lp .scene text{paint-order:stroke fill;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
+.lp .scene .node text,.lp .scene .file text,.lp .scene .url-tag text{stroke:none}
+.lp table.led td:first-child{white-space:nowrap}
+
+
+.lp.ms .wrap{max-width:1344px}
+.ms h1{font-size:56px;line-height:1.05}
+.ms .rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 48px;margin-top:28px}
+.ms .rules li{padding:12px 0;border-bottom:1px solid var(--line);font-size:15px;color:var(--tx2)}
+.ms .rules b{color:var(--tx)}
+.ms table.sp{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
+.ms table.sp th{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:11.5px;color:var(--tx3);text-align:start;padding:0 12px 10px;border-bottom:1px solid var(--line2);text-transform:uppercase;letter-spacing:.05em}
+.ms table.sp td{padding:13px 12px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--tx2);line-height:1.5}
+.ms table.sp td:first-child{color:var(--tx);font-weight:600;width:190px}
+.ms table.sp td.m{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--tx)}
+.ms table.sp tr.grp td{background:var(--sunken);color:var(--ac);font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:10px 12px;font-weight:500}
+.ms .demo{width:110px;height:56px;display:flex;align-items:center;justify-content:center}
+.ms .orbs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden;margin-top:20px}
+.ms .orbs>div{padding:18px 16px 20px;border-inline-end:1px solid var(--line)}
+.ms .orbs>div:last-child{border:0}
+.ms .orbs h3{font-size:15px;margin:6px 0 4px}
+.ms .orbs p{font-size:12.5px;color:var(--tx2);line-height:1.5}
+.ms .orbs .wrapsvg{display:flex;justify-content:center}
+.ms .tok{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:48px}
+.ms .tl{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-top:20px}
+.ms .tl svg{display:block;width:100%;height:auto}
+.ms .tl text{font-family:'JetBrains Mono',monospace;font-size:11px;fill:var(--tx2)}
+.ms .tl .seg{fill:var(--raised);stroke:var(--line2)}
+.ms .tl .real{fill:var(--ac);fill-opacity:.25;stroke:var(--ac)}
+.ms .tl .lbl{fill:var(--tx)}
+.ms .sub{font-size:13px;color:var(--tx2);max-width:60em;margin-top:10px}
+.ms .pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11.5px;border:1px solid var(--line2);border-radius:6px;padding:1px 7px;color:var(--tx);margin:0 4px 4px 0}
+/* demos */
+@property --n{syntax:'<integer>';initial-value:0;inherits:false}
+@keyframes cnt{from{--n:0}to{--n:1146}}
+.ms .tick{font-family:'JetBrains Mono',monospace;font-size:20px;color:var(--tx);animation:cnt 2.4s cubic-bezier(.2,.7,.2,1) infinite;counter-reset:n var(--n);font-variant-numeric:tabular-nums}
+.ms .tick::after{content:counter(n)}
+.ms .flowd path{fill:none;stroke:var(--ac);stroke-width:2;stroke-dasharray:4 5;animation:flow 1s linear infinite}
+.ms .hov{width:76px;height:40px;border-radius:10px;border:1px solid var(--line2);background:var(--raised);transition:transform .2s ease,box-shadow .2s ease}
+.ms .hov:hover{transform:translateY(-3px);box-shadow:0 12px 24px -12px var(--shadow)}
+.ms .sk2{width:96px;height:34px;border-radius:8px}
+@keyframes pg{0%,10%{opacity:0;transform:translateY(8px)}30%,80%{opacity:1;transform:none}95%,100%{opacity:0}}
+.ms .pgd{width:86px;height:40px;border-radius:8px;border:1px solid var(--line2);background:var(--raised);animation:pg 3.6s cubic-bezier(.2,.7,.2,1) infinite}
+@keyframes ringd{0%{opacity:.95;transform:scale(1)}70%,100%{opacity:0;transform:scale(1.06,1.28)}}
+.ms .apd{position:relative;width:86px;height:38px;border:1px solid var(--wait);border-radius:10px;background:var(--raised)}
+.ms .apd::after{content:"";position:absolute;inset:-1px;border:2px solid var(--wait);border-radius:10px;animation:ringd 1.5s ease-out infinite}
+.ms .ok{position:relative;width:64px;height:56px}
+.ms .ok svg{position:absolute;inset:0;margin:auto}
+.ms .ok:hover .orb .o-burst{animation:burst 1s cubic-bezier(.2,.7,.2,1) 1 forwards}
+.ms .spot{width:96px;height:44px;border-radius:10px;border:1px solid var(--line);background:radial-gradient(40px circle at 30% 50%,var(--spot),transparent 70%),var(--sunken);animation:sp 4s ease-in-out infinite alternate}
+@keyframes sp{to{background-position:60px 0,0 0}}
+
+</style>
+
+<div class="lp ms" lang="en" dir="ltr" style="--bg:#04070A;--surface:#0D151A;--raised:#142029;--sunken:#080F13;--line:#1F2D35;--line2:#364955;--tx:#EAF6F4;--tx2:#B6CBC9;--tx3:#9BB3B1;--ac:#13E2D0;--ac2:#3DE6A6;--acink:#03130F;--run:#62C6FF;--wait:#9B92F8;--ok:#D7F13B;--warn:#FF9B2E;--fail:#FF5A5F;--grid:rgba(54,73,85,.28);--grid2:rgba(54,73,85,.42);--spot:rgba(19,226,208,.10);--spotline:#000;--shadow:rgba(0,0,0,.6);--gr1:#0B1316;--gr2:#070C0F;--glw:24%;--wrm:13%;--vga:.5;--gop:.06;--gop2:0;--bkc:#fff;--bk:24%;--bpi:28%;--apprs:linear-gradient(180deg,#171B3D,#0A0F22)">
+<div class="wrap" style="padding-top:56px;padding-bottom:80px">
+<span class="tag">Motion spec</span>
+<h1 style="margin-top:12px">The blueprint builds itself</h1>
+<p class="lead" style="max-width:52em">What moves, what it says, when it starts, how long, how it eases, and what a person with reduced motion gets instead. Demos in the table are live.</p>
+<ol class="rules"><li><b>Every animation communicates state.</b> If removing it loses no information, it is not in the spec.</li><li><b>Apply and Decline never move or resize.</b> The approval ring is an outline on a separate layer. Measured: one rectangle across a full 30 s loop.</li><li><b>No layout shift.</b> Numbers are tabular and fixed width. The approval box has a fixed height in every state. Only transform, opacity and stroke-dashoffset animate.</li><li><b>Log text is never animated.</b> Lines append instantly.</li><li><b>CSS, SVG and the Web Animations API only.</b> No library. The sheet is one script of about 300 lines.</li><li><b>Reduced motion gets a still that tells the whole story</b>: the Live frame plus five frame buttons, and a Pause button when motion is on.</li><li><b>The tab hidden or the sheet off screen pauses everything</b>: the clock stops and CSS animations are paused.</li><li><b>Contrast stays at 4.5 to 1 or more in every frame.</b> Text never fades; it appears at full opacity. Measured every 0.2 s over the loop.</li><li><b>RTL is mirrored, not flipped:</b> the scene geometry, the sweep origin, the flow direction and the chevrons mirror. Code, paths, URLs and identifiers stay left to right.</li><li><b>Real data only.</b> The replay is built from docs/samples. A step shorter than 100 ms in a sample gets a visible floor, listed below.</li></ol>
+
+<h2 style="margin-top:72px">Orb: six states</h2>
+<div class="orbs"><div><div class="wrapsvg"><svg width="96" height="96" viewBox="-34 -34 68 68" aria-hidden="true"><g class="orb" data-state="reading"><circle class="o-halo" cx="0" cy="0" r="24.7"/><circle class="o-ring" cx="0" cy="0" r="21.1"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:39.7px;--dy:7.0px;animation-delay:0.00s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:23.1px;--dy:33.0px;animation-delay:0.21s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-7.0px;--dy:39.7px;animation-delay:0.42s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-33.0px;--dy:23.1px;animation-delay:0.63s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-39.7px;--dy:-7.0px;animation-delay:0.84s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-23.1px;--dy:-33.0px;animation-delay:1.05s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:7.0px;--dy:-39.7px;animation-delay:1.26s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:33.0px;--dy:-23.1px;animation-delay:1.47s"/><circle class="o-arcs" cx="0" cy="0" r="16.9" stroke-dasharray="21.2 14.1"/><polygon class="o-core" points="0.0,-13.0 11.3,-6.5 11.3,6.5 0.0,13.0 -11.3,6.5 -11.3,-6.5"/><g class="g-reading"><path class="gl" d="M-4.42 -3.536 h8.84 M-4.42 0 h8.84 M-4.42 3.536 h5.746"/></g><g class="g-thinking"><circle class="gl gl-fill" cx="-4.42" cy="0" r="1.3"/><circle class="gl gl-fill" cx="0" cy="0" r="1.3"/><circle class="gl gl-fill" cx="4.42" cy="0" r="1.3"/></g><g class="g-waiting"><path class="gl" d="M0 -4.862 L3.978 0 L0 4.862 L-3.978 0 Z"/></g><g class="g-working"><path class="gl" d="M-4.42 -3.536 l3.536 3.536 l-3.536 3.536 M0.442 -3.536 l3.536 3.536 l-3.536 3.536"/></g><g class="g-done"><path class="gl" d="M-4.42 0.442 l3.094 3.536 l6.188 -7.072"/></g><g class="g-failed"><path class="gl" d="M-3.536 -3.536 l7.072 7.072 M3.536 -3.536 l-7.072 7.072"/></g><circle class="o-burst" cx="0" cy="0" r="14.3"/></g></svg></div><h3>Reading</h3><p>Particles are drawn in toward the core (8 particles, 1.7 s, staggered), ring turns slowly (18 s). Glyph: lines.</p><p class="tag" style="margin-top:8px">run_started, phase analyze</p></div><div><div class="wrapsvg"><svg width="96" height="96" viewBox="-34 -34 68 68" aria-hidden="true"><g class="orb" data-state="thinking"><circle class="o-halo" cx="0" cy="0" r="24.7"/><circle class="o-ring" cx="0" cy="0" r="21.1"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:39.7px;--dy:7.0px;animation-delay:0.00s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:23.1px;--dy:33.0px;animation-delay:0.21s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-7.0px;--dy:39.7px;animation-delay:0.42s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-33.0px;--dy:23.1px;animation-delay:0.63s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-39.7px;--dy:-7.0px;animation-delay:0.84s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-23.1px;--dy:-33.0px;animation-delay:1.05s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:7.0px;--dy:-39.7px;animation-delay:1.26s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:33.0px;--dy:-23.1px;animation-delay:1.47s"/><circle class="o-arcs" cx="0" cy="0" r="16.9" stroke-dasharray="21.2 14.1"/><polygon class="o-core" points="0.0,-13.0 11.3,-6.5 11.3,6.5 0.0,13.0 -11.3,6.5 -11.3,-6.5"/><g class="g-reading"><path class="gl" d="M-4.42 -3.536 h8.84 M-4.42 0 h8.84 M-4.42 3.536 h5.746"/></g><g class="g-thinking"><circle class="gl gl-fill" cx="-4.42" cy="0" r="1.3"/><circle class="gl gl-fill" cx="0" cy="0" r="1.3"/><circle class="gl gl-fill" cx="4.42" cy="0" r="1.3"/></g><g class="g-waiting"><path class="gl" d="M0 -4.862 L3.978 0 L0 4.862 L-3.978 0 Z"/></g><g class="g-working"><path class="gl" d="M-4.42 -3.536 l3.536 3.536 l-3.536 3.536 M0.442 -3.536 l3.536 3.536 l-3.536 3.536"/></g><g class="g-done"><path class="gl" d="M-4.42 0.442 l3.094 3.536 l6.188 -7.072"/></g><g class="g-failed"><path class="gl" d="M-3.536 -3.536 l7.072 7.072 M3.536 -3.536 l-7.072 7.072"/></g><circle class="o-burst" cx="0" cy="0" r="14.3"/></g></svg></div><h3>Thinking</h3><p>Two arcs turn one way (2.4 s), ring turns the other (7 s), core wobbles (2.2 s). Glyph: three dots.</p><p class="tag" style="margin-top:8px">phase plan, tool_call</p></div><div><div class="wrapsvg"><svg width="96" height="96" viewBox="-34 -34 68 68" aria-hidden="true"><g class="orb" data-state="waiting"><circle class="o-halo" cx="0" cy="0" r="24.7"/><circle class="o-ring" cx="0" cy="0" r="21.1"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:39.7px;--dy:7.0px;animation-delay:0.00s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:23.1px;--dy:33.0px;animation-delay:0.21s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-7.0px;--dy:39.7px;animation-delay:0.42s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-33.0px;--dy:23.1px;animation-delay:0.63s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-39.7px;--dy:-7.0px;animation-delay:0.84s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-23.1px;--dy:-33.0px;animation-delay:1.05s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:7.0px;--dy:-39.7px;animation-delay:1.26s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:33.0px;--dy:-23.1px;animation-delay:1.47s"/><circle class="o-arcs" cx="0" cy="0" r="16.9" stroke-dasharray="21.2 14.1"/><polygon class="o-core" points="0.0,-13.0 11.3,-6.5 11.3,6.5 0.0,13.0 -11.3,6.5 -11.3,-6.5"/><g class="g-reading"><path class="gl" d="M-4.42 -3.536 h8.84 M-4.42 0 h8.84 M-4.42 3.536 h5.746"/></g><g class="g-thinking"><circle class="gl gl-fill" cx="-4.42" cy="0" r="1.3"/><circle class="gl gl-fill" cx="0" cy="0" r="1.3"/><circle class="gl gl-fill" cx="4.42" cy="0" r="1.3"/></g><g class="g-waiting"><path class="gl" d="M0 -4.862 L3.978 0 L0 4.862 L-3.978 0 Z"/></g><g class="g-working"><path class="gl" d="M-4.42 -3.536 l3.536 3.536 l-3.536 3.536 M0.442 -3.536 l3.536 3.536 l-3.536 3.536"/></g><g class="g-done"><path class="gl" d="M-4.42 0.442 l3.094 3.536 l6.188 -7.072"/></g><g class="g-failed"><path class="gl" d="M-3.536 -3.536 l7.072 7.072 M3.536 -3.536 l-7.072 7.072"/></g><circle class="o-burst" cx="0" cy="0" r="14.3"/></g></svg></div><h3>Waiting for you</h3><p>Slow breathing, scale 1 to 1.09 in 3.2 s. Glyph: diamond. Violet.</p><p class="tag" style="margin-top:8px">confirm_request, question</p></div><div><div class="wrapsvg"><svg width="96" height="96" viewBox="-34 -34 68 68" aria-hidden="true"><g class="orb" data-state="working"><circle class="o-halo" cx="0" cy="0" r="24.7"/><circle class="o-ring" cx="0" cy="0" r="21.1"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:39.7px;--dy:7.0px;animation-delay:0.00s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:23.1px;--dy:33.0px;animation-delay:0.21s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-7.0px;--dy:39.7px;animation-delay:0.42s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-33.0px;--dy:23.1px;animation-delay:0.63s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-39.7px;--dy:-7.0px;animation-delay:0.84s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-23.1px;--dy:-33.0px;animation-delay:1.05s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:7.0px;--dy:-39.7px;animation-delay:1.26s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:33.0px;--dy:-23.1px;animation-delay:1.47s"/><circle class="o-arcs" cx="0" cy="0" r="16.9" stroke-dasharray="21.2 14.1"/><polygon class="o-core" points="0.0,-13.0 11.3,-6.5 11.3,6.5 0.0,13.0 -11.3,6.5 -11.3,-6.5"/><g class="g-reading"><path class="gl" d="M-4.42 -3.536 h8.84 M-4.42 0 h8.84 M-4.42 3.536 h5.746"/></g><g class="g-thinking"><circle class="gl gl-fill" cx="-4.42" cy="0" r="1.3"/><circle class="gl gl-fill" cx="0" cy="0" r="1.3"/><circle class="gl gl-fill" cx="4.42" cy="0" r="1.3"/></g><g class="g-waiting"><path class="gl" d="M0 -4.862 L3.978 0 L0 4.862 L-3.978 0 Z"/></g><g class="g-working"><path class="gl" d="M-4.42 -3.536 l3.536 3.536 l-3.536 3.536 M0.442 -3.536 l3.536 3.536 l-3.536 3.536"/></g><g class="g-done"><path class="gl" d="M-4.42 0.442 l3.094 3.536 l6.188 -7.072"/></g><g class="g-failed"><path class="gl" d="M-3.536 -3.536 l7.072 7.072 M3.536 -3.536 l-7.072 7.072"/></g><circle class="o-burst" cx="0" cy="0" r="14.3"/></g></svg></div><h3>Working</h3><p>Fast arc (0.9 s) and ring (3 s). Glyph: chevrons, mirrored in RTL. Sky blue.</p><p class="tag" style="margin-top:8px">phase deploy, step_started</p></div><div><div class="wrapsvg"><svg width="96" height="96" viewBox="-34 -34 68 68" aria-hidden="true"><g class="orb" data-state="done"><circle class="o-halo" cx="0" cy="0" r="24.7"/><circle class="o-ring" cx="0" cy="0" r="21.1"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:39.7px;--dy:7.0px;animation-delay:0.00s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:23.1px;--dy:33.0px;animation-delay:0.21s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-7.0px;--dy:39.7px;animation-delay:0.42s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-33.0px;--dy:23.1px;animation-delay:0.63s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-39.7px;--dy:-7.0px;animation-delay:0.84s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-23.1px;--dy:-33.0px;animation-delay:1.05s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:7.0px;--dy:-39.7px;animation-delay:1.26s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:33.0px;--dy:-23.1px;animation-delay:1.47s"/><circle class="o-arcs" cx="0" cy="0" r="16.9" stroke-dasharray="21.2 14.1"/><polygon class="o-core" points="0.0,-13.0 11.3,-6.5 11.3,6.5 0.0,13.0 -11.3,6.5 -11.3,-6.5"/><g class="g-reading"><path class="gl" d="M-4.42 -3.536 h8.84 M-4.42 0 h8.84 M-4.42 3.536 h5.746"/></g><g class="g-thinking"><circle class="gl gl-fill" cx="-4.42" cy="0" r="1.3"/><circle class="gl gl-fill" cx="0" cy="0" r="1.3"/><circle class="gl gl-fill" cx="4.42" cy="0" r="1.3"/></g><g class="g-waiting"><path class="gl" d="M0 -4.862 L3.978 0 L0 4.862 L-3.978 0 Z"/></g><g class="g-working"><path class="gl" d="M-4.42 -3.536 l3.536 3.536 l-3.536 3.536 M0.442 -3.536 l3.536 3.536 l-3.536 3.536"/></g><g class="g-done"><path class="gl" d="M-4.42 0.442 l3.094 3.536 l6.188 -7.072"/></g><g class="g-failed"><path class="gl" d="M-3.536 -3.536 l7.072 7.072 M3.536 -3.536 l-7.072 7.072"/></g><circle class="o-burst" cx="0" cy="0" r="14.3"/></g></svg></div><h3>Done</h3><p>One burst ring, once, 1 s. Then still. Glyph: check. Lime.</p><p class="tag" style="margin-top:8px">run_finished ok</p></div><div><div class="wrapsvg"><svg width="96" height="96" viewBox="-34 -34 68 68" aria-hidden="true"><g class="orb" data-state="failed"><circle class="o-halo" cx="0" cy="0" r="24.7"/><circle class="o-ring" cx="0" cy="0" r="21.1"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:39.7px;--dy:7.0px;animation-delay:0.00s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:23.1px;--dy:33.0px;animation-delay:0.21s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-7.0px;--dy:39.7px;animation-delay:0.42s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-33.0px;--dy:23.1px;animation-delay:0.63s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-39.7px;--dy:-7.0px;animation-delay:0.84s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-23.1px;--dy:-33.0px;animation-delay:1.05s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:7.0px;--dy:-39.7px;animation-delay:1.26s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:33.0px;--dy:-23.1px;animation-delay:1.47s"/><circle class="o-arcs" cx="0" cy="0" r="16.9" stroke-dasharray="21.2 14.1"/><polygon class="o-core" points="0.0,-13.0 11.3,-6.5 11.3,6.5 0.0,13.0 -11.3,6.5 -11.3,-6.5"/><g class="g-reading"><path class="gl" d="M-4.42 -3.536 h8.84 M-4.42 0 h8.84 M-4.42 3.536 h5.746"/></g><g class="g-thinking"><circle class="gl gl-fill" cx="-4.42" cy="0" r="1.3"/><circle class="gl gl-fill" cx="0" cy="0" r="1.3"/><circle class="gl gl-fill" cx="4.42" cy="0" r="1.3"/></g><g class="g-waiting"><path class="gl" d="M0 -4.862 L3.978 0 L0 4.862 L-3.978 0 Z"/></g><g class="g-working"><path class="gl" d="M-4.42 -3.536 l3.536 3.536 l-3.536 3.536 M0.442 -3.536 l3.536 3.536 l-3.536 3.536"/></g><g class="g-done"><path class="gl" d="M-4.42 0.442 l3.094 3.536 l6.188 -7.072"/></g><g class="g-failed"><path class="gl" d="M-3.536 -3.536 l7.072 7.072 M3.536 -3.536 l-7.072 7.072"/></g><circle class="o-burst" cx="0" cy="0" r="14.3"/></g></svg></div><h3>Failed</h3><p>Two short jolts, 3 px, 0.5 s each, then still. Ring breaks into dashes. Glyph: X. Red.</p><p class="tag" style="margin-top:8px">run_finished not ok, step_failed</p></div></div>
+
+<h2 style="margin-top:72px">Replay clock and the samples</h2>
+<div class="tl"><svg viewBox="0 0 1320 112" role="img" aria-label="Replay timeline, 0 to 30 seconds"><rect class="seg" x="0.0" y="30" width="136.7" height="40" rx="4" transform="translate(10 0)"/><text class="lbl" x="0.0" y="54" transform="translate(16 0)">read</text><rect class="seg" x="138.7" y="30" width="232.0" height="40" rx="4" transform="translate(10 0)"/><text class="lbl" x="138.7" y="54" transform="translate(16 0)">plan</text><rect class="seg" x="372.7" y="30" width="232.0" height="40" rx="4" transform="translate(10 0)"/><text class="lbl" x="372.7" y="54" transform="translate(16 0)">wait for you</text><rect class="real" x="606.7" y="30" width="214.7" height="40" rx="4" transform="translate(10 0)"/><text class="lbl" x="606.7" y="54" transform="translate(16 0)">blog-db 5.0 s real</text><rect class="seg" x="823.3" y="30" width="58.7" height="40" rx="4" transform="translate(10 0)"/><text class="lbl" x="823.3" y="54" transform="translate(16 0)">cache</text><rect class="seg" x="884.0" y="30" width="93.3" height="40" rx="4" transform="translate(10 0)"/><text class="lbl" x="884.0" y="54" transform="translate(16 0)">web</text><rect class="seg" x="979.3" y="30" width="76.0" height="40" rx="4" transform="translate(10 0)"/><text class="lbl" x="979.3" y="54" transform="translate(16 0)">worker</text><rect class="seg" x="1057.3" y="30" width="89.0" height="40" rx="4" transform="translate(10 0)"/><text class="lbl" x="1057.3" y="54" transform="translate(16 0)">url</text><rect class="seg" x="1148.3" y="30" width="149.7" height="40" rx="4" transform="translate(10 0)"/><text class="lbl" x="1148.3" y="54" transform="translate(16 0)">hold</text><text x="0.0" y="96" text-anchor="middle" transform="translate(10 0)">0 s</text><path d="M0.0 74v6" stroke="var(--tx3)" transform="translate(10 0)"/><text x="216.7" y="96" text-anchor="middle" transform="translate(10 0)">5 s</text><path d="M216.7 74v6" stroke="var(--tx3)" transform="translate(10 0)"/><text x="433.3" y="96" text-anchor="middle" transform="translate(10 0)">10 s</text><path d="M433.3 74v6" stroke="var(--tx3)" transform="translate(10 0)"/><text x="650.0" y="96" text-anchor="middle" transform="translate(10 0)">15 s</text><path d="M650.0 74v6" stroke="var(--tx3)" transform="translate(10 0)"/><text x="866.7" y="96" text-anchor="middle" transform="translate(10 0)">20 s</text><path d="M866.7 74v6" stroke="var(--tx3)" transform="translate(10 0)"/><text x="1083.3" y="96" text-anchor="middle" transform="translate(10 0)">25 s</text><path d="M1083.3 74v6" stroke="var(--tx3)" transform="translate(10 0)"/><text x="1300.0" y="96" text-anchor="middle" transform="translate(10 0)">30 s</text><path d="M1300.0 74v6" stroke="var(--tx3)" transform="translate(10 0)"/><text x="10" y="16" >teal = a duration that is real in the samples; grey = the sample took under 100 ms, so a floor is used so a person can see it</text></svg></div>
+<p class="sub">Only the database step has a real duration in the samples. The others ran in under 100 ms (stubbed), so a visible floor is used. When the live event feed is wired, the same clock takes the real timestamps and the floors drop away.</p>
+<table class="sp" style="margin-top:16px"><thead><tr><th>Phase</th><th>Sample says</th><th>Replay</th><th>Basis</th></tr></thead><tbody><tr><td>Analyze (read the files)</td><td>run_started to phase_finished analyze: 1 ms (waiting sample)</td><td class="m">0 to 3.2 s</td><td>floor</td></tr><tr><td>Plan, question, answer</td><td>question +5 ms, answered +48 ms, plan_ready +70 ms</td><td class="m">3.2 to 8.6 s (question 4.6, answer 5.4, plan 6.2)</td><td>floor</td></tr><tr><td>Waiting for approval</td><td>confirm_request +71 ms, the sample ends here (a person decides)</td><td class="m">8.6 to 14.0 s</td><td>held 5.4 s; the Apply button also advances it</td></tr><tr><td>Create blog-db</td><td>step_started to step_finished: 5.004 s (build-timeout sample)</td><td class="m">14.0 to 19.0 s</td><td>real</td></tr><tr><td>Create blog-cache, blog-web, blog-worker</td><td>1 to 5 ms each (dry-run sample)</td><td class="m">1.4 s, 2.2 s, 1.8 s</td><td>floor</td></tr><tr><td>run_finished and http_200</td><td>run_finished and test_result within 1 ms (build-timeout sample)</td><td class="m">24.4 and 24.8 s</td><td>floor</td></tr></tbody></table>
+
+<h2 style="margin-top:72px">What moves</h2>
+<table class="sp"><thead><tr><th>Item</th><th>What it says</th><th>Trigger</th><th>Duration</th><th>Easing</th><th>Reduced motion</th><th>Demo</th></tr></thead><tbody><tr class="grp"><td colspan="7">Landing sheet: one clock</td></tr><tr><td>Replay clock</td><td>Every element on the sheet is a pure function of one number, the replay time t. Same idea as the product: the UI is a function of the event log.</td><td>Sheet is on screen and the tab is visible</td><td class="m">30 s loop: 0 to 24.8 s story, then a held frame until 30 s, then a hard cut to 0</td><td class="m">linear</td><td>No clock. One still frame at t = 26.4 s (Live) plus five frame buttons: Read, Plan, Approve, Deploy, Live.</td><td><div class="demo"><span class="tag">no demo</span></div></td></tr><tr><td>Files stream in</td><td>The agent is reading these files</td><td>t 0 to 3.2 s</td><td class="m">6 files, 1.7 s each, 0.3 s apart</td><td class="m">ease-out cubic</td><td>Not shown. The frame already has the files consumed.</td><td><div class="demo"><span class="tag">no demo</span></div></td></tr><tr><td>Blueprint plots</td><td>The project resolved into resources, drawn thin-line</td><td>t 3.6 to 6.2 s, five outlines staggered 0.4 s</td><td class="m">1.2 s each (stroke-dashoffset 1 to 0)</td><td class="m">ease-out cubic</td><td>Final frame shows every outline. Dashed = proposed, solid = live. Status word plus shape on every node.</td><td><div class="demo"><span class="tag">no demo</span></div></td></tr><tr><td>Dimension marks and price tickers</td><td>What each resource costs. Prices are the dimensions of the drawing.</td><td>Plan is ready, t 6.2 s</td><td class="m">Mark draws 0.5 s, then number counts 0 to 1,145.83 in 1.4 s, staggered 0.25 s. Totals 4,583 and 3,300,000 count in 2.2 s.</td><td class="m">ease-out cubic</td><td>Final numbers. Tabular figures and fixed width, so nothing shifts while ticking.</td><td><div class="demo"><span class="tick"></span></div></td></tr><tr><td>Question callout</td><td>The agent asked, you or the files answered</td><td>t 4.6 s asks, 5.4 s answered</td><td class="m">Instant swap, no fade (keeps contrast)</td><td class="m">none</td><td>Answered state shown.</td><td><div class="demo"><span class="tag">no demo</span></div></td></tr><tr><td>Approval pulse</td><td>The only element that pulses hard: it is waiting for you</td><td>State = waiting (t 8.6 to 14 s). Real product: while confirm_request is open.</td><td class="m">1.5 s ring, repeats</td><td class="m">ease-out. Outline scales and fades; the button box never changes.</td><td>Static 2 px violet border. No ring.</td><td><div class="demo"><div class="apd"></div></div></td></tr><tr><td>Create sweep</td><td>This resource is being created</td><td>Per resource, from step_started to step_finished</td><td class="m">blog-db 5.0 s (real, from the build sample). Others 1.4, 2.2, 1.8 s (floors).</td><td class="m">linear, from the start edge (right edge in RTL)</td><td>Not shown. Final frame is live.</td><td><div class="demo"><span class="tag">no demo</span></div></td></tr><tr><td>Edges flow</td><td>Both ends are live and connected</td><td>When both resources are live</td><td class="m">Dash marches, 1 s loop, direction follows the path source to target (mirrored in RTL)</td><td class="m">linear</td><td>Solid line, no dash movement.</td><td><div class="demo flowd"><svg width="96" height="20" viewBox="0 0 96 20" aria-hidden="true"><path d="M2 10H94"/></svg></div></td></tr><tr><td>Private-network cells</td><td>The grid is the Liara private network: a cell lights when its resource exists</td><td>t of resource_created</td><td class="m">0.5 s ramp to full, 1.6 s decay to 50 percent resting glow</td><td class="m">linear</td><td>Resting glow in the final frame.</td><td><div class="demo"><span class="tag">no demo</span></div></td></tr><tr><td>URL and verify</td><td>run_finished, then the URL answered http_200</td><td>t 24.8 s</td><td class="m">Instant appear, no fade</td><td class="m">none</td><td>Shown in the final frame.</td><td><div class="demo"><span class="tag">no demo</span></div></td></tr><tr><td>Pause, play, frame buttons</td><td>Visitor is in control (WCAG 2.2.2)</td><td>Click. Any frame click pauses.</td><td class="m">Instant seek</td><td class="m">none</td><td>Same buttons are the way to read the story.</td><td><div class="demo"><span class="tag">no demo</span></div></td></tr><tr class="grp"><td colspan="7">Landing page: scroll and pointer</td></tr><tr><td>Scroll-linked run</td><td>The same run advances as you scroll the steps</td><td>Progress p of the steps region maps to t = 0 to 27 s. Sheet is sticky beside the steps.</td><td class="m">Follower eases to the target, 0.16 per frame</td><td class="m">exponential follow (no overshoot)</td><td>Snaps to the Read, Plan, Approve and Live frames at p = 0.22, 0.5, 0.75. No interpolation.</td><td><div class="demo"><span class="tag">no demo</span></div></td></tr><tr><td>Where scroll cannot drive it</td><td>Fallback</td><td>Steps region shorter than 1.3 viewports (embedded board, print, tall window)</td><td class="m">Plays by time like the hero</td><td class="m">linear</td><td>Static frames.</td><td><div class="demo"><span class="tag">no demo</span></div></td></tr><tr><td>Cursor spotlight</td><td>Quiet depth over the grid</td><td>Fine pointer inside the hero</td><td class="m">260 px radial, fades 0.4 s, positions on rAF</td><td class="m">ease</td><td>Off.</td><td><div class="demo"><div class="spot"></div></div></td></tr><tr><td>Hover depth</td><td>This is interactive</td><td>Hover or focus on the tool panel and on cards. Not on Apply, Decline or the sticky bar.</td><td class="m">translateY -2 px and shadow, 0.2 s</td><td class="m">ease</td><td>No transform, no transition. Colour change only.</td><td><div class="demo"><div class="hov"></div></div></td></tr><tr class="grp"><td colspan="7">Agent orb: one distinct animation per state</td></tr><tr><td>Orb states</td><td>See the six cells below. State change restarts the animation. Glyph and word always differ, colour never carries it alone.</td><td>Event kind to state (see below)</td><td class="m">see cells</td><td class="m">see cells</td><td>All six freeze. Glyph shape and the state word still tell them apart.</td><td><div class="demo"><span class="tag">no demo</span></div></td></tr><tr class="grp"><td colspan="7">Product pages</td></tr><tr><td>Page transition</td><td>You moved to another view; the shell stays</td><td>Route change inside the app. Built into every run, dashboard and account board (plays on load).</td><td class="m">In: 8 px rise, 220 ms. No fade, so text keeps full contrast. Top bar, sticky bar and the open approval card do not move.</td><td class="m">ease-out</td><td>Instant swap.</td><td><div class="demo"><div class="pgd"></div></div></td></tr><tr><td>Pipeline edges</td><td>Run page pipeline: which step is working</td><td>Step state = running. Built into every run board (pipeline, architecture diagram, connectors).</td><td class="m">Same flowing dash as the sheet, 1 s</td><td class="m">linear</td><td>Solid line, step icon and word carry the state.</td><td><div class="demo flowd"><svg width="96" height="20" viewBox="0 0 96 20" aria-hidden="true"><path d="M2 10H94"/></svg></div></td></tr><tr><td>Number tickers</td><td>Cost, usage and totals changed</td><td>plan_ready, resource_created, resource_updated. Built into the run tiles, totals and price chips, and the dashboard and project cost figures; starts when the number scrolls into view.</td><td class="m">600 ms, width locked so nothing shifts</td><td class="m">ease-out cubic</td><td>Final number at once. Never used in logs.</td><td><div class="demo"><span class="tick"></span></div></td></tr><tr><td>Success moment</td><td>The deploy is live</td><td>run_finished ok. Built into every Live board (desktop, tablet, phone, English and Persian).</td><td class="m">Orb burst once, 1 s. URL row rises 8 px, 300 ms. Hover the orb here to see the burst.</td><td class="m">ease-out</td><td>Check glyph and the word Live. No burst, no rise.</td><td><div class="demo"><div class="ok"><svg width="56" height="56" viewBox="-34 -34 68 68" aria-hidden="true"><g class="orb" data-state="done"><circle class="o-halo" cx="0" cy="0" r="24.7"/><circle class="o-ring" cx="0" cy="0" r="21.1"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:39.7px;--dy:7.0px;animation-delay:0.00s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:23.1px;--dy:33.0px;animation-delay:0.21s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-7.0px;--dy:39.7px;animation-delay:0.42s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-33.0px;--dy:23.1px;animation-delay:0.63s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-39.7px;--dy:-7.0px;animation-delay:0.84s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:-23.1px;--dy:-33.0px;animation-delay:1.05s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:7.0px;--dy:-39.7px;animation-delay:1.26s"/><circle class="o-part" cx="0" cy="0" r="1.6" style="--dx:33.0px;--dy:-23.1px;animation-delay:1.47s"/><circle class="o-arcs" cx="0" cy="0" r="16.9" stroke-dasharray="21.2 14.1"/><polygon class="o-core" points="0.0,-13.0 11.3,-6.5 11.3,6.5 0.0,13.0 -11.3,6.5 -11.3,-6.5"/><g class="g-reading"><path class="gl" d="M-4.42 -3.536 h8.84 M-4.42 0 h8.84 M-4.42 3.536 h5.746"/></g><g class="g-thinking"><circle class="gl gl-fill" cx="-4.42" cy="0" r="1.3"/><circle class="gl gl-fill" cx="0" cy="0" r="1.3"/><circle class="gl gl-fill" cx="4.42" cy="0" r="1.3"/></g><g class="g-waiting"><path class="gl" d="M0 -4.862 L3.978 0 L0 4.862 L-3.978 0 Z"/></g><g class="g-working"><path class="gl" d="M-4.42 -3.536 l3.536 3.536 l-3.536 3.536 M0.442 -3.536 l3.536 3.536 l-3.536 3.536"/></g><g class="g-done"><path class="gl" d="M-4.42 0.442 l3.094 3.536 l6.188 -7.072"/></g><g class="g-failed"><path class="gl" d="M-3.536 -3.536 l7.072 7.072 M3.536 -3.536 l-7.072 7.072"/></g><circle class="o-burst" cx="0" cy="0" r="14.3"/></g></svg></div></div></td></tr><tr><td>Skeleton shimmer</td><td>Loading, shaped like the content (replaces spinners)</td><td>Data not here yet. Built as the Dashboard loading boards (English and Persian).</td><td class="m">1.6 s gradient sweep, loops. Block sizes equal the final content so nothing shifts.</td><td class="m">linear</td><td>Static tone, no sweep.</td><td><div class="demo"><div class="sk sk2"></div></div></td></tr><tr><td>Logs</td><td>Facts, not decoration</td><td>Any log line</td><td class="m">Never animated. Lines append instantly.</td><td class="m">none</td><td>Same.</td><td><div class="demo"><span class="tag">no demo</span></div></td></tr><tr><td>Apply and Decline</td><td>Decision controls</td><td>Always</td><td class="m">Never move, resize or reflow. Focus ring only.</td><td class="m">none</td><td>Same.</td><td><div class="demo"><span class="tag">no demo</span></div></td></tr></tbody></table>
+
+<div class="tok" style="margin-top:64px"><div><h2>Easing</h2><ul class="rules" style="grid-template-columns:1fr;gap:0"><li><b class="mono">ease-out</b> cubic-bezier(.2,.7,.2,1). Things arriving: outlines, numbers, bursts, page content.</li><li><b class="mono">ease-in-out</b> cubic-bezier(.4,0,.2,1). Things that breathe: waiting orb, wobble.</li><li><b class="mono">linear</b> Things that run continuously: flow, rotation, shimmer, progress sweep, the replay clock.</li><li><b class="mono">none</b> Anything that carries text or a decision: logs, buttons, status words.</li></ul></div><div><h2>Durations</h2><ul class="rules" style="grid-template-columns:1fr;gap:0"><li><b class="mono">120 / 200 / 300 ms</b> Hover, transitions, page in/out. Nothing structural is slower than 300 ms.</li><li><b class="mono">0.5 to 2.4 s</b> State animations that tell a step is happening (draw, tick, create).</li><li><b class="mono">1 to 3.2 s loops</b> Continuous state cues: flow 1 s, waiting breath 3.2 s, approval ring 1.5 s.</li></ul></div></div>
+</div></div>
+
+</body></html>

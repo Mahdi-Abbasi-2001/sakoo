@@ -1,0 +1,14 @@
+.venv
+.env
+.web-data
+.agent-state
+__pycache__
+*.pyc
+.pytest_cache
+tests
+docs/samples
+frontend/node_modules
+frontend/dist
+frontend/e2e
+design
+references

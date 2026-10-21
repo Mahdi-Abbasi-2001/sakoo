@@ -1,0 +1,42 @@
+/* One token set. Surface roles: glass (shell and hero only), panel (everything dense, opaque), terminal (logs and code, always opaque and LTR).
+   Dark is the default; [data-theme="light"] overrides. Values come from the final design boards, after the contrast audit. */
+:root{
+  color-scheme:dark;
+  --bg:#04070A;--surface:#0D151A;--raised:#142029;--sunken:#080F13;--line:#1F2D35;--line-strong:#364955;
+  --text:#EAF6F4;--text-2:#B6CBC9;--text-3:#9BB3B1;
+  --accent:#13E2D0;--accent-2:#3DE6A6;--accent-ink:#03130F;
+  --run:#62C6FF;--ok:#D7F13B;--warn:#FF9B2E;--fail:#FF5A5F;--wait:#9B92F8;
+  --code:#050A0D;
+  --glass:rgba(7,13,17,.62);--glassline:rgba(255,255,255,.12);
+  --apprbg:linear-gradient(180deg,rgba(26,22,60,.78),rgba(10,14,32,.82));
+  --apprs:linear-gradient(180deg,#171B3D,#0A0F22);
+  --shadow:rgba(0,0,0,.75);
+  /* page background: graphite, directional light, grain, vignette */
+  --gr1:#0B1316;--gr2:#070C0F;--glw:24%;--wrm:13%;--vga:.5;--gop:.06;--gop2:0;
+  /* badge text mixes toward this colour so tinted badges keep 4.5:1 */
+  --bkc:#fff;--bk:24%;--bpi:28%;
+  /* scrollbars: thumb and track, tuned per theme so the thumb is always at least 3:1 against what it sits on */
+  --sb-thumb:rgba(234,246,244,.34);--sb-thumb-hover:rgba(234,246,244,.58);--sb-track:rgba(234,246,244,.06);
+  /* shape and motion */
+  --r-chip:8px;--r-ctl:10px;--r-card:14px;--r-glass:18px;--r-pill:999px;
+  --ease-out:cubic-bezier(.2,.7,.2,1);--ease-io:cubic-bezier(.4,0,.2,1);
+  --t-fast:.12s;--t-base:.2s;--t-enter:.22s;
+}
+[data-theme="light"]{
+  color-scheme:light;
+  --bg:#F1F7F6;--surface:#FFFFFF;--raised:#FFFFFF;--sunken:#E7F0EF;--line:#D0DEDC;--line-strong:#A3BAB7;
+  --text:#0A1A19;--text-2:#36504E;--text-3:#3F5C59;
+  --accent:#05655C;--accent-2:#146B4C;--accent-ink:#FFFFFF;
+  --run:#0A609F;--ok:#2A6419;--warn:#8F4400;--fail:#B31B33;--wait:#5B4FD6;
+  --code:#EDF4F3;
+  --glass:rgba(255,255,255,.74);--glassline:rgba(10,26,25,.12);
+  --apprbg:linear-gradient(180deg,rgba(236,233,255,.92),rgba(255,255,255,.94));
+  --apprs:linear-gradient(180deg,#ECE9FF,#FFFFFF);
+  --shadow:rgba(20,50,48,.2);
+  --gr1:#F4F9F8;--gr2:#EEF5F4;--glw:7%;--wrm:6%;--vga:.05;--gop:0;--gop2:.04;
+  --bkc:#000;--bk:42%;--bpi:0%;
+  --sb-thumb:rgba(10,26,25,.42);--sb-thumb-hover:rgba(10,26,25,.68);--sb-track:rgba(10,26,25,.07);
+}
+/* the approval is waiting: the warm light behind the hero is stronger */
+[data-waiting="1"]{--wrm:16%}
+[data-theme="light"][data-waiting="1"]{--wrm:11%}
