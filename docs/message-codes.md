@@ -29,6 +29,7 @@ Codes appear in: plan `notes[]`, plan `questions[]` and `question` events, `conf
 |---|---|---|
 | `worker_without_port` | `service` | `worker`, `needs_port` |
 | `multiple_ports` | `service`, `ports`, `chosen` | none (free text) |
+| `code_fix_choice` | `diagnosis` (the cause code), `summary`, `evidence[]`, `location` (file:line or ""), `sakoo_can_fix` (false: no model and no rule can fix it, so the card should say so and not offer it), `mcp_url`, `app` | `sakoo`, `own_agent`, `sakoo_remember`, `own_agent_remember` (the `_remember` variants also keep the answer for the project) |
 Questions written by the model have `code: null`; their `options` (if any) are plain answer texts in the user's language.
 
 ## Approvals (`confirm_request.code`)
@@ -40,9 +41,11 @@ Questions written by the model have `code: null`; their `options` (if any) are p
 | `set_port` | fix | `port`, `from_port` |
 | `patch_add_dependency` | patch | `file`, `append` |
 | `patch_node_engine` | patch | `file`, `engines_node`, `platform_version`, `expected` |
+| `patch_add_npm_dependency` | patch | `file`, `add_dependency` (the package; its current version is looked up on the npm registry when the patch is applied) |
+| `repair_code` | patch | `files[]`, `env[]` (names only), `summary` (what the model says it changes, in the user's language), `diff` (the unified diff, up to 8000 characters: show it on the card, the person decides on it), `digest`, `steps` (a model read the project and proposes these changes to Sakoo's copy; the full diff arrives as `patch_ready`) |
 
 ## Warnings (`warning.code`)
-`slow_start` {`minutes`} (the app answers 5xx but its logs show no crash: the agent waits up to 6 more minutes), `app_renamed` {`old`, `new`} (Liara answered 409: the name is used by another user; the app got a short random ending), `unresolved_db_vars` {`names`}, `secret_file_not_uploaded` {`file`}, `missing_env_values` {`names`}.
+`repair_gave_up` {`reason`} (the model could not find a safe code fix: said in words, then the failure is reported as it is), `slow_start` {`minutes`} (the app answers 5xx but its logs show no crash: the agent waits up to 6 more minutes), `app_renamed` {`old`, `new`} (Liara answered 409: the name is used by another user; the app got a short random ending), `unresolved_db_vars` {`names`}, `secret_file_not_uploaded` {`file`}, `missing_env_values` {`names`}.
 
 ## Diagnoses (`diagnosis.code`, `diagnosis.params`)
 | code | params |
@@ -60,13 +63,16 @@ Questions written by the model have `code: null`; their `options` (if any) are p
 | `bound_to_localhost` | none |
 | `no_dockerfile` | none |
 | `not_serving` | `http` |
+| `code_error` | `location` (file:line in the project, or "") |
 | `unknown` | `state`, `reason` |
+
+`diagnosis.category` says who has to change what: `code` (the developer's source: `missing_python_module`, `missing_node_module`, `node_engine_mismatch`, `db_localhost`, `bound_to_localhost`, `code_error`; the run asks `code_fix_choice`), `config` (settings on Liara: `missing_env`, `db_auth_failed`, `wrong_port`, `not_serving`), `resources` (a bigger plan, costs money: `build_timeout`, `out_of_memory`), `outside` (nothing a redeploy fixes: `outbound_blocked`, `no_dockerfile`), `unknown`.
 
 ## Fixes (`diagnosis.fixes[].code`, also `fix_applied.code`)
 Each fix event is `{code, kind, text, params, cost_delta_hourly}`.
-`resize_tier`, `resize_plan` (cost > 0), `set_port`, `set_env`, `patch_add_dependency`, `patch_node_engine`, `refresh_db_credentials` (free, applied without asking),
+`resize_tier`, `resize_plan` (cost > 0), `set_port`, `set_env`, `patch_add_dependency`, `patch_add_npm_dependency`, `patch_node_engine`, `repair_code` (changes to Sakoo's copy, asked first unless the person turned auto-fix on), `refresh_db_credentials` (free, applied without asking),
 and manual advice (no action by us): `shorten_build`, `reduce_memory`, `declare_dependency`, `npm_install`, `outbound_options`, `db_point_host`, `db_create`,
-`bind_all_interfaces`, `add_dockerfile`, `check_port_and_bind`, `read_logs`.
+`bind_all_interfaces`, `add_dockerfile`, `check_port_and_bind`, `read_logs`, `fix_code_error`; and the two entries a hand-off to the developer's own agent leaves in the run's fixes: `handoff_fix` (their agent sent files), `handoff_redeploy` (their agent pushed to Git and Sakoo released the newest code).
 
 ## Run outcome (`run_finished.reason_code`)
 `no_plan`, `agent_unavailable`, `blocked`, `not_approved`, `deploy_failed`, or any diagnosis code when the failure was diagnosed.
@@ -96,6 +102,9 @@ Each finding is `{code, level, file, line, params}`; `readiness.counts` is `{war
 | `set_env` | `names` (variable names to ask the user for) |
 | `patch_add_dependency` | `file`, `append` (the dependency line added to the copy) |
 | `patch_node_engine` | `file`, `engines_node` (the relaxed range written to the copy), `platform_version` (the Node version the build uses), `expected` (the original pin) |
+| `patch_add_npm_dependency` | `file`, `add_dependency` |
+| `repair_code` | `files[]`, `env[]`, `summary`, `digest`, `steps` |
+| `fix_code_error` | `location` (may be absent) |
 | `declare_dependency` | `module` |
 | `npm_install` | `module` |
 | `outbound_options` | `hosts` |
@@ -119,14 +128,14 @@ Every error response is `{"detail": {"code", "message", "params"?}}`; `message` 
 |---|---|
 | 401 | `not_logged_in`, `bad_credentials` |
 | 403 | `csrf` |
-| 404 | `not_found`, `no_such_request` (an approval/question that is no longer waiting, e.g. it expired) |
-| 409 | `username_taken`, `run_active`, `no_live_app` (deploy first: a domain needs a running app this agent created), `domain_taken` (the domain is already attached to an app on Liara) |
+| 404 | `no_patch` (the agent changed nothing in this project), `not_found`, `no_such_request` (an approval/question that is no longer waiting, e.g. it expired) |
+| 409 | `not_waiting` (the run is not waiting for the developer's own agent), `too_many_tokens` (10 active agent tokens), `username_taken`, `run_active`, `no_live_app` (deploy first: a domain needs a running app this agent created), `domain_taken` (the domain is already attached to an app on Liara) |
 | 403 | `not_owned` (the agent did not create that app, domain or DNS record, so it will not change it) |
 | 404 (domains) | `domain_not_found` |
 | 404 (history) | `release_not_found` |
 | 409 (history) | `release_current` (already the running one), `release_not_ready` (only a READY release can be rolled back to), `rollback_unavailable` |
 | 422 (domains) | `domain_invalid`, `domain_is_liara_address`, `domain_unsupported_tld` {tld}, `confirm_required` (a domain is only created after the plan was approved) |
-| 422 (account) | `bad_username`, `weak_password`, `bad_language`, `bad_mode`, `confirm_mismatch`, `bad_option` (an answer that is not one of the question's `options`) |
+| 422 (account) | `bad_username`, `weak_password`, `bad_language`, `bad_mode`, `confirm_mismatch`, `bad_choice` (the remembered code-fix choice must be `sakoo`, `own_agent` or null), `bad_option` (an answer that is not one of the question's `options`) |
 | 422 (project source) | `source_required`, `upload_too_large`, `bad_zip`, `too_many_files`, `too_large`, `path_traversal`, `symlink`, `empty`, `git_scheme`, `git_credentials`, `git_host`, `git_branch`, `git_token_invalid`, `git_path`, `git_failed`, `git_timeout`, `git_missing` |
 | 429 | `rate_limited`, `too_many_runs` |
 | 400 | `no_liara_token` |
@@ -220,3 +229,11 @@ Alerts: when the uptime check sees an app go down, the agent diagnoses it at onc
 Limits (`GET /projects/{id}/limits`): `known` codes `daily_deployments`, `networks_not_deletable`, `tier_fixed_at_creation`, `release_not_cancellable`, `app_names_global`, `logs_lag`, `free_address_expires`, `cpu_unit_unknown` (worded by the client as `lim.known.<code>`). Card warning `deploy_quota` {`used`, `cap`}: only a few of the day's releases are left.
 
 Scheduled health check: the alert webhook gets `event: report` (with the same `diagnosis` object as an outage alert) when a running app is not healthy or has advice; a healthy app is kept silently. `diagnosis.ai` is the model's reading, used only when the rules gave no cause or one below 60: each entry has `confidence` (never above `medium`, and `low` without a real quoted log line) and `grounded`.
+
+## Code problems: Sakoo or your own agent
+When a deploy stops because of an error in the developer's code (`diagnosis.category == "code"`), the run asks one question, `code_fix_choice`. The answer sends the run one of two ways:
+
+- **`sakoo`**: rules first (`patch_add_dependency`, `patch_add_npm_dependency`, `patch_node_engine`), then a model reads a copy of the project and proposes `repair_code`. Changes go to Sakoo's copy only and are asked first (`confirm_request.kind == "patch"`), unless the person turned auto-fix on: then `fix_auto_applied` {`code`, `kind`, `text`, `params`} is emitted instead of a card. The diff of every change arrives as `patch_ready` and is kept so the person can open a pull request (`POST /api/projects/{id}/pr`) or download it (`GET /api/projects/{id}/fixes.patch`).
+- **`own_agent`**: the run waits. `handoff_waiting` {`id`, `app`, `run_id`, `mcp_url`, `diagnosis`, `expires_at`} tells the page to show how to connect the developer's coding agent (Claude Code, Cursor...) to the MCP server at `mcp_url` with a personal token (`/api/settings/agent-tokens`). Every tool call the agent makes while the run waits appears as `external_agent_call` {`id`, `tool`, `ok`, `detail?`}. The wait ends with `handoff_received` {`id`, `how`: `fix` (files sent), `redeploy` (pushed to Git, newest code released) or `sakoo` (the person chose Sakoo instead: `POST /api/runs/{id}/handoff/sakoo`), `files`}, after which the same run releases the app and checks it. After 30 minutes without an answer the wait ends with `request_expired` {`request`: `handoff`} and the failure is reported as it is.
+
+The answers ending in `_remember` store the choice on the project (`ProjectRow.code_fix_choice`; change it with `PUT /api/projects/{id}/code-fix-choice`), and the question is no longer asked.

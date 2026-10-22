@@ -5,6 +5,7 @@ import { Icon } from '../../components/Icon';
 import { Ticker } from '../../components/Ticker';
 import { useSay } from '../wording';
 import { clock, money, signed } from '../format';
+import { CodeFixChoice } from './CodeFixChoice';
 import type { OpenReq, RunViewState } from '../types';
 
 export interface Responder { (req: OpenReq, value: unknown): Promise<void> }
@@ -89,9 +90,9 @@ export function ApprovalCard({ view, req, onRespond, limitSeconds, startedAt, ap
         {head}
         <h2 className="ap-title" id="ap-title">{fix ? say('fix', fix.code, fix.params, fix.text) : say('confirm', req.code, req.params, req.prompt)}{delta ? `? ${signed(lang, delta)} ${t('ap.toman_hr')}` : ''}</h2>
         {fix && <p className="ap-text">{say('fix', fix.code, fix.params, '', 'detail')}</p>}
-        {!fix && <p className="ap-text">{say('confirm', req.code, req.params, req.prompt)}</p>}
         {delta > 0 && <div className="ap-delta"><span className="cost up">{signed(lang, delta)} <i>{t('ap.toman_hr')}</i></span><span className="cost up">{t('ap.delta_month', { delta: signed(lang, delta * 720) })}</span><span className="hint">{t('ap.incl_vat')}</span></div>}
         {delta > 0 && <p className="ap-note">{t('ap.delta_note')}</p>}
+        {typeof req.params?.diff === 'string' && req.params.diff && <pre className="term diff ltr cf-ev" dir="ltr" aria-label={t('ag.patch')}>{req.params.diff}</pre>}
         <div className="ap-acts">
           <button ref={applyRef} type="button" className="btn btn-p no-lift" disabled={!!busy} onClick={() => void run('apply', true)}>{busy === 'apply' ? t('ap.working') : delta > 0 ? t('ap.apply_fix', { delta: signed(lang, delta) }) : t('ap.apply')}</button>
           <button type="button" className="btn no-lift" aria-describedby="ap-decline" disabled={!!busy} onClick={() => void run('decline', false)}>{t('ap.decline')}</button>
@@ -100,6 +101,10 @@ export function ApprovalCard({ view, req, onRespond, limitSeconds, startedAt, ap
         <p className="hint" id="ap-decline">{t('ap.decline_fix', { hourly: money(lang, view.money.currentHourly) })}</p>
       </section>
     );
+  }
+
+  if (req.kind === 'question' && req.code === 'code_fix_choice') {
+    return <CodeFixChoice req={req} head={head} busy={busy} err={err && <div className="err" role="alert"><Icon name="alert" />{err}</div>} onPick={(a) => void run(a, a)} />;
   }
 
   if (req.kind === 'question') {

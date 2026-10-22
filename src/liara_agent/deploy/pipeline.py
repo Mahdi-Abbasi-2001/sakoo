@@ -18,6 +18,8 @@ from liara_agent.detect.fingerprints import fingerprint
 from liara_agent.detect.readiness import check_readiness
 from liara_agent.events import Run
 from liara_agent.heal.loop import HealIO
+from liara_agent.handoff import CodeFixOptions, make_chooser
+from liara_agent.heal.repair import clean_lines, repair_fix
 from liara_agent.interact import Channel
 from liara_agent.liara.client import LiaraAPIError, LiaraClient
 from liara_agent.liara.live import TIER_LABELS, LiveCatalog
@@ -159,7 +161,8 @@ def namespace_databases(plan) -> None:
 
 def run_deployment(path: str | Path, project: str, cat: LiveCatalog, cfg: Settings, client: LiaraClient, channel: Channel, run: Run, *,
                    network_id: str | None, execute_: bool, confirm_plan: bool = True, llm: LLM | None = None,
-                   max_heal_attempts: int = 3, networks: list[dict] | None = None, network_name: str = "") -> PipelineResult:
+                   max_heal_attempts: int = 3, networks: list[dict] | None = None, network_name: str = "", language: str = "en",
+                   auto_fix: bool = False, code_fix: CodeFixOptions | None = None) -> PipelineResult:
     """`networks` (the account's private networks) lets the agent choose or create the project's network; without it `network_id` is used as given."""
     path = Path(path)
     dry = not execute_
@@ -283,7 +286,15 @@ def run_deployment(path: str | Path, project: str, cat: LiveCatalog, cfg: Settin
 
     # 4) provision, deploy, verify (and self-heal on real runs)
     run.emit("phase_started", {"phase": "deploy"})
-    heal = HealIO(confirm=channel.confirm, ask_value=channel.secret, emit=run) if execute_ else None
+    def wait_for_own_agent(d, f, c, root):
+        diagnosis = {"code": d.code, "category": d.category, "summary": d.summary, "evidence": d.evidence, "params": d.params, "fixes": [x.as_event() for x in d.fixes]}
+        info = {"log_tail": clean_lines(f.build_lines + f.runtime_lines, 60, run.secrets), "state": f.state, "http": f.http_detail, "platform": c.platform}
+        return code_fix.handoff.wait(c.app, diagnosis, info, root)
+
+    heal = HealIO(confirm=channel.confirm, ask_value=channel.secret, emit=run, auto_fix=auto_fix,
+                  choose_code_fix=make_chooser(channel, code_fix, model_available=llm is not None) if code_fix else None,
+                  await_handoff=wait_for_own_agent if code_fix else None,
+                  repair=lambda d, f, c, root: repair_fix(llm, d, f, c, root, language=language, emit=run, secrets=run.secrets)) if execute_ else None
     try:
         out = execute(plan, cat, client, path, network_id=network_id, emit=run, heal=heal, max_heal_attempts=max_heal_attempts)
     except LiaraAPIError as e:

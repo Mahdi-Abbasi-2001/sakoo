@@ -32,6 +32,7 @@ class SettingsOut(BaseModel):
     team_id: str
     team_name: str
     language: str
+    auto_fix_code: bool = False   # patches to the agent's copy of the code are applied without asking (money and live-service changes are always asked)
 
 
 class TeamOut(BaseModel):
@@ -140,6 +141,7 @@ class ProjectRowOut(BaseModel):
     private: bool = False
     down: bool = False
     wordpress: bool = False  # the project is a WordPress site (wp-content, wp-config...)
+    code_fix_choice: str | None = None  # remembered answer for a code error: "sakoo" | "own_agent" | null (ask every time)
     created_at: float
     last_run: LastRunOut | None = None
     live: LiveOut | None = None
@@ -599,3 +601,23 @@ class ChatOut(BaseModel):
     pending: str | None = None
     available: bool | None = None
     hidden_secret: bool | None = None
+
+
+class AgentTokenOut(BaseModel):
+    id: int
+    name: str
+    created_at: float
+    last_used_at: float | None = None
+
+
+class AgentTokensOut(BaseModel):
+    tokens: list[AgentTokenOut]
+    mcp_url: str
+
+
+class AgentTokenCreatedOut(AgentTokenOut):
+    token: str   # shown once, when it is made; only a digest is kept
+
+
+class CodeFixChoiceOut(BaseModel):
+    code_fix_choice: str | None = None

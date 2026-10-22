@@ -53,6 +53,7 @@ export function ResultCard({ view, projectId, freeDays, demo, onCleanup }: { vie
                 ? <Link className="btn btn-p" to={`/projects/${projectId}#domain`}>{t('live.domain')}</Link>
                 : <><button type="button" className="btn btn-p no-lift" disabled>{t('live.domain')}</button><span className="badge s-pend"><Icon name="dashed" />{t('live.domain_planned')}</span></>}</div></div></div>
         </section>
+        <FixBack view={view} projectId={projectId} demo={demo} />
         <FollowUps items={r.followUps} />
       </div>
     );
@@ -77,6 +78,21 @@ export function ResultCard({ view, projectId, freeDays, demo, onCleanup }: { vie
       {r.blockers.length > 0 && <><p className="sect">{t('fail.blockers')}</p><ul className="stack" style={{ gap: 6 }}>{r.blockers.map((b, i) => <li key={i}>{say('note', b.code, b.params, b.message)}</li>)}</ul></>}
       <p className="hint">{(r.created.apps.length + r.created.databases.length + (r.created.buckets ?? []).length + (r.created.mail_servers ?? []).length) ? `${t('fail.created')}: ${[...r.created.apps, ...r.created.databases, ...(r.created.buckets ?? []), ...(r.created.mail_servers ?? [])].join(', ')}` : t('fail.nothing_created')}</p>
       {(r.created.apps.length + r.created.databases.length + (r.created.buckets ?? []).length + (r.created.mail_servers ?? []).length) > 0 && <div className="row"><button type="button" className="btn btn-d" onClick={onCleanup} disabled={demo}>{t('run.delete_created')}</button></div>}
+    </section>
+  );
+}
+
+/** The agent changed the code to make it run, in its own copy. Without those changes the next deploy from the repository fails the same way: offer them back. */
+export function FixBack({ view, projectId, demo }: { view: RunViewState; projectId?: number; demo?: boolean }) {
+  const { t } = useI18n();
+  const files = [...new Set(view.timeline.flatMap((it) => (it.type === 'patch' ? it.file.split(', ') : [])))];
+  if (!files.length || !projectId || demo) return null;
+  return (
+    <section className="card pad stack result" style={{ gap: 10 }} aria-label={t('fb.t')}>
+      <div className="row" style={{ alignItems: 'flex-start', flexWrap: 'nowrap' }}><Icon name="shield" className="ic big" />
+        <div className="stack" style={{ gap: 8 }}><h3 className="card-t">{t('fb.t')}</h3><p className="hint">{t('fb.d', { files: files.join(', ') })}</p>
+          <div className="row"><Link className="btn btn-p" to={`/projects/${projectId}?tab=deploys`}>{t('fb.pr')}</Link>
+            <a className="btn" href={`/api/projects/${projectId}/fixes.patch`} download>{t('fb.download')}</a></div></div></div>
     </section>
   );
 }

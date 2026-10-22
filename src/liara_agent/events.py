@@ -23,7 +23,9 @@ EVENT_KINDS = {
     # deploy
     "step_started", "step_finished", "resource_created", "resource_updated", "build", "build_error", "warning", "test_result",
     # self-heal
-    "heal_attempt", "diagnosis", "fix_applied", "fix_declined", "patch_ready",
+    "heal_attempt", "diagnosis", "fix_applied", "fix_declined", "fix_auto_applied", "patch_ready",
+    # a code problem handed to the developer's own agent through the MCP server, and what that agent did
+    "handoff_waiting", "external_agent_call", "handoff_received",
     # interaction (request -> response pairs; secret values never appear in responses)
     "question", "answered", "confirm_request", "confirm_response", "secret_request", "secret_provided", "request_expired",
 }
@@ -87,6 +89,11 @@ class Run:
     @property
     def cancelled(self) -> bool:
         return self._cancelled
+
+    @property
+    def secrets(self) -> set[str]:
+        with self._lock:
+            return set(self._secrets)
 
     def register_secret(self, value: str) -> None:
         if value and len(value) >= 4:

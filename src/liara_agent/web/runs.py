@@ -7,10 +7,11 @@ import traceback
 import threading
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Protocol
+from typing import Callable, Protocol
 
 from liara_agent.config import Settings
 from liara_agent.deploy.pipeline import run_deployment
+from liara_agent.handoff import CodeFixOptions, Handoff
 from liara_agent.events import Event, Run, RunCancelled
 from liara_agent.interact import QueueChannel
 from liara_agent.liara.client import Journal, LiaraClient
@@ -50,6 +51,8 @@ class LiveRun:
     channel: QueueChannel
     thread: threading.Thread | None = None
     journal_path: Path | None = None
+    project_id: int = 0
+    handoff: Handoff | None = None   # set while a deployment can hand a code problem to the developer's own agent
 
 
 def status_of(run: Run, channel: QueueChannel | None) -> str:
@@ -72,6 +75,8 @@ class RunManager:
         self.settings, self.db, self.deps, self.agent_settings = settings, db, deps, agent_settings
         self.live: dict[str, LiveRun] = {}
         self._lock = threading.Lock()
+        # (user_id, project_id) -> {mcp_url, remembered, remember, fetch_latest, auto_fix}; set by the web app, which knows the database and the repositories
+        self.code_fix_context: Callable[[int, int], dict] | None = None
         # a restart kills worker threads and their pending approvals: mark such runs honestly
         db.run("UPDATE runs SET status='interrupted', finished_at=? WHERE status IN ('running','waiting')", (db.now(),))
 
@@ -95,7 +100,7 @@ class RunManager:
         self.run_dir(run_id).mkdir(parents=True, exist_ok=True)
         run = Run(run_id=run_id, log_path=self.log_path(run_id))
         channel = QueueChannel(run, timeout=self.settings.request_timeout_seconds)
-        live = LiveRun(run_id, user_id, run, channel, journal_path=self.run_dir(run_id) / "created.json")
+        live = LiveRun(run_id, user_id, run, channel, journal_path=self.run_dir(run_id) / "created.json", project_id=project_id)
         self.db.run("INSERT INTO runs(id,user_id,project_id,mode,status,created_at) VALUES (?,?,?,?,?,?)",
                     (run_id, user_id, project_id, mode, "running", self.db.now()))
         t = threading.Thread(target=self._work, args=(live, project_name, source, token, team_id, language, mode, network), daemon=True)
@@ -150,8 +155,14 @@ class RunManager:
             execute = mode == "deploy"
             client = self.deps.client(token, team_id, not execute, journal)
             cfg = self.agent_settings.model_copy(update={"language": language})
+            ctx = self.code_fix_context(live.user_id, live.project_id) if self.code_fix_context and execute else None
+            code_fix = None
+            if ctx:
+                live.handoff = Handoff(run, mcp_url=ctx["mcp_url"], fetch_latest=ctx.get("fetch_latest"))
+                code_fix = CodeFixOptions(live.handoff, remembered=ctx.get("remembered"), remember=ctx.get("remember"))
             run_deployment(source, project, cat, cfg, client, live.channel, run, network_id=None, networks=nets, network_name=network,
-                           execute_=execute, llm=self.deps.llm(cfg), confirm_plan=True, max_heal_attempts=self.settings.max_heal_attempts)
+                           execute_=execute, llm=self.deps.llm(cfg), confirm_plan=True, max_heal_attempts=self.settings.max_heal_attempts,
+                           language=language, auto_fix=bool(ctx and ctx.get("auto_fix")), code_fix=code_fix)
         except RunCancelled:   # the person pressed "stop": what was already created stays (the page offers to delete it), a release already building finishes on Liara
             run._cancelled = False
             j = Journal.load(live.journal_path)

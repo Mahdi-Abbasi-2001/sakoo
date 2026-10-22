@@ -10,7 +10,7 @@ export function countPhrase(lang: Lang, what: 'app' | 'database' | 'manifest' | 
 }
 
 /** Params that name things (ports, versions, HTTP codes) are identifiers: never localized, always left to right. */
-export const IDENT_PARAMS = new Set(['port', 'from_port', 'actual', 'expected', 'http', 'status', 'ports', 'chosen', 'service', 'app', 'name', 'names', 'key', 'file', 'source', 'target', 'image', 'hosts', 'module', 'append', 'plan', 'tier', 'tier_label', 'from_tier', 'from_tier_label', 'from_plan', 'kind', 'wanted', 'used', 'state', 'reason', 'question', 'question_code', 'answer', 'host', 'allowed', 'step', 'type', 'version', 'platform', 'signals', 'base_url']);
+export const IDENT_PARAMS = new Set(['port', 'from_port', 'actual', 'expected', 'http', 'status', 'ports', 'chosen', 'service', 'app', 'name', 'names', 'key', 'file', 'source', 'target', 'image', 'hosts', 'module', 'append', 'plan', 'tier', 'tier_label', 'from_tier', 'from_tier_label', 'from_plan', 'kind', 'wanted', 'used', 'state', 'reason', 'question', 'question_code', 'answer', 'host', 'allowed', 'step', 'type', 'version', 'platform', 'signals', 'base_url', 'files', 'env', 'add_dependency', 'location', 'digest', 'steps']);
 
 export type MsgType = 'note' | 'question' | 'option' | 'confirm' | 'warning' | 'diagnosis' | 'fix' | 'outcome' | 'readiness' | 'kindlabel' | 'how' | 'send';
 export const msgKey = (type: MsgType, code: string, part?: 'title' | 'detail') => `msg.${type}.${code}${part ? '.' + part : ''}`;

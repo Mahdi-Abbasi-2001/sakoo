@@ -40,7 +40,7 @@ function matches(it: TimelineItem, f: string) {
   if (f === 'plan') return ['question', 'plan', 'notes'].includes(it.type);
   if (f === 'confirm') return ['confirm', 'secret', 'expired'].includes(it.type) || (it.type === 'finished');
   if (f === 'provision') return it.type === 'resource' && (it.kind === 'database' || it.kind === 'bucket' || it.kind === 'mail');
-  if (f === 'deploy') return (it.type === 'resource' && it.kind === 'app') || ['diagnosis', 'fix', 'patch', 'warning'].includes(it.type);
+  if (f === 'deploy') return (it.type === 'resource' && it.kind === 'app') || ['diagnosis', 'fix', 'patch', 'warning', 'handoff'].includes(it.type);
   if (f === 'verify' || f === 'live') return it.type === 'test' || it.type === 'finished';
   return true;
 }
@@ -92,7 +92,13 @@ function Step({ it, t0, view }: { it: TimelineItem; t0: number; view: RunViewSta
         {dg.evidence.length > 0 && <p className="hint">{t('ag.evidence')}: <span className="code">{dg.evidence.join(' · ')}</span></p>}
         <p className="sect">{t('ag.fix_options')}</p><ul className="stack" style={{ gap: 6 }}>{dg.fixes.map((f, i) => <li key={i} className="drow"><p>{say('fix', f.code, f.params, f.text)}</p><p className="hint">{say('fix', f.code, f.params, '', 'detail')}</p><span style={{ alignSelf: 'flex-start' }} className={'badge ' + (f.cost_delta_hourly > 0 ? 's-warn' : f.kind === 'manual' ? 's-pend' : 's-ok')}>{f.cost_delta_hourly > 0 ? t('ag.fix_paid') : f.kind === 'manual' ? t('ag.fix_manual') : t('ag.fix_free')}</span></li>)}</ul></>; break;
     }
-    case 'fix': title = it.declined ? t('ag.fix_declined') : t('ag.fix_applied'); body = <p className="sp">{say('fix', it.fix.code, it.fix.params, it.fix.fix)}</p>; break;
+    case 'handoff': {
+      const h = it.handoff;
+      title = h.state === 'waiting' ? t('ag.handoff_wait') : h.state === 'expired' ? t('ag.handoff_expired') : t('ag.handoff_' + (h.how ?? 'fix'));
+      body = <><p className="sp">{h.state === 'waiting' ? t('ag.handoff_wait_text') : h.state === 'expired' ? t('ag.handoff_expired_text') : h.files.length ? t('ag.handoff_files', { files: h.files.join(', ') }) : t('ag.handoff_' + (h.how ?? 'fix') + '_text')}</p>
+        {h.calls.length > 0 && <ul className="stack" style={{ gap: 2 }}>{h.calls.map((c, i) => <li key={i} className="hint row" style={{ gap: 6 }}><Icon name={c.ok ? 'check' : 'x'} />{t('ho.call.' + c.tool) === 'ho.call.' + c.tool ? c.tool : t('ho.call.' + c.tool)}</li>)}</ul>}</>; break;
+    }
+    case 'fix': title = it.declined ? t('ag.fix_declined') : it.auto ? t('ag.fix_auto') : t('ag.fix_applied'); body = <p className="sp">{say('fix', it.fix.code, it.fix.params, it.fix.fix)}</p>; break;
     case 'patch': title = t('ag.patch'); body = <pre className="term diff">{it.diff}</pre>; break;
     case 'test': title = t('ag.test', { name: it.test.name }); body = <p className="sp">{it.test.ok ? t('ag.test_ok', { url: it.test.url ?? it.test.app }) : t('ag.test_fail', { url: it.test.url ?? it.test.app })} <span className="code">{it.test.detail}</span></p>; break;
     case 'warning': title = t('ag.warning'); body = <p className="sp">{say('warning', it.code, it.params, it.message)}</p>; break;

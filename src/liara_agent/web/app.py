@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import base64
+import contextlib
 import hashlib
 import hmac
 import json
@@ -14,7 +15,7 @@ import tempfile
 import threading
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 from urllib.parse import urlparse
 
 import httpx
@@ -46,6 +47,7 @@ from liara_agent import wpdeliver
 from liara_agent.detect.wordpress import looks_like_wordpress
 from liara_agent.web import alerts, github, monitor
 from liara_agent.web import sources
+from liara_agent.web import mcp as mcp_endpoint
 from liara_agent.web.config import WebSettings
 from liara_agent.web import models as m
 from liara_agent.web.db import DB
@@ -78,6 +80,15 @@ class SettingsIn(BaseModel):
     team_id: str | None = None
     team_name: str | None = None  # display only, taken from /liara/check
     language: str | None = None
+    auto_fix_code: bool | None = None
+
+
+class AgentTokenIn(BaseModel):
+    name: str = Field(default="my coding agent", min_length=1, max_length=60)
+
+
+class CodeFixChoiceIn(BaseModel):
+    choice: str | None = None   # "sakoo" | "own_agent" | None (ask every time)
 
 
 class RunIn(BaseModel):
@@ -178,7 +189,10 @@ def create_app(settings: WebSettings | None = None, deps=None, agent_settings: S
                 while not health_stop.wait(settings.health_report_hours * 3600):
                     app.state.health_round()
             threading.Thread(target=_health_loop, daemon=True).start()
-        yield
+        async with contextlib.AsyncExitStack() as stack:
+            if getattr(app.state, "mcp", None):   # the MCP server's sessions run for as long as the app does
+                await stack.enter_async_context(app.state.mcp.session_manager.run())
+            yield
         health_stop.set()
         if stop:
             stop.set()
@@ -194,13 +208,22 @@ def create_app(settings: WebSettings | None = None, deps=None, agent_settings: S
     async def csrf_guard(request: Request, call_next):
         """Cookie auth needs CSRF protection: a changing request must come from an allowed origin, or carry a header that
         cross-site forms cannot set (and that CORS does not allow other origins to set)."""
-        if request.method in UNSAFE:
+        if request.method in UNSAFE and not (request.url.path.startswith("/mcp") and request.headers.get("authorization", "").lower().startswith("bearer ")):   # /mcp never reads cookies: a token or nothing
             origin = request.headers.get("origin")
             # same-origin (the page and the API share a host: the normal deployment) or an explicitly allowed origin (a dev server)
             same_origin = bool(origin) and urlparse(origin).netloc == request.headers.get("host", "")
             ok = (same_origin or origin.rstrip("/") in settings.origins()) if origin else request.headers.get("x-requested-with") == "XMLHttpRequest"
             if not ok:
                 return JSONResponse({"detail": {"code": "csrf", "message": "request origin not allowed"}}, status_code=403)
+        return await call_next(request)
+
+    app.state.base_url = "http://127.0.0.1:8000"
+
+    @app.middleware("http")
+    async def remember_base_url(request: Request, call_next):
+        """The address people reach this server at (behind a proxy too), for the MCP address shown to the developer's agent."""
+        if not settings.public_url and request.url.path.startswith("/api/") and request.method == "GET":
+            app.state.base_url = str(request.base_url).rstrip("/")
         return await call_next(request)
 
     def current_user(request: Request) -> dict:
@@ -293,7 +316,7 @@ def create_app(settings: WebSettings | None = None, deps=None, agent_settings: S
 
     def project_view(row, with_runs: bool = False) -> dict:
         runs = db.q("SELECT * FROM runs WHERE project_id=? AND user_id=? AND mode!='release' ORDER BY created_at DESC", (row["id"], row["user_id"]))   # a release of new code is listed with the releases
-        out = {"id": row["id"], "name": row["name"], "source_kind": row["source_kind"], "git_url": row["git_url"], "git_branch": row["git_branch"], "private": bool(row["git_token_enc"]), "down": monitor.is_down(db, row["id"]), "wordpress": bool(row["source_kind"] != "oneclick" and project_dir(row["id"]).is_dir() and looks_like_wordpress(project_dir(row["id"]))), "created_at": row["created_at"],
+        out = {"id": row["id"], "name": row["name"], "source_kind": row["source_kind"], "git_url": row["git_url"], "git_branch": row["git_branch"], "private": bool(row["git_token_enc"]), "code_fix_choice": row["code_fix_choice"], "down": monitor.is_down(db, row["id"]), "wordpress": bool(row["source_kind"] != "oneclick" and project_dir(row["id"]).is_dir() and looks_like_wordpress(project_dir(row["id"]))), "created_at": row["created_at"],
                "last_run": None if not runs else {k: v for k, v in run_view(runs[0]).items() if k not in ("summary", "project", "project_id")},
                "live": live_resources(runs)}
         if with_runs:
@@ -382,8 +405,9 @@ def create_app(settings: WebSettings | None = None, deps=None, agent_settings: S
     @app.get("/api/settings", response_model=m.SettingsOut)
     def get_settings_(user=Depends(current_user)):
         s = user_settings(user["id"])
-        hook = db.one("SELECT alert_webhook_enc FROM settings WHERE user_id=?", (user["id"],))
-        return {"has_liara_token": bool(s["token_enc"]), "has_alert_webhook": bool(hook and hook["alert_webhook_enc"]), "github_login": github_login_name(user["id"]), "team_id": s["team_id"], "team_name": s["team_name"], "language": s["language"]}
+        hook = db.one("SELECT alert_webhook_enc, auto_fix_code FROM settings WHERE user_id=?", (user["id"],))
+        return {"has_liara_token": bool(s["token_enc"]), "has_alert_webhook": bool(hook and hook["alert_webhook_enc"]), "github_login": github_login_name(user["id"]), "team_id": s["team_id"], "team_name": s["team_name"], "language": s["language"],
+                "auto_fix_code": bool(hook and hook["auto_fix_code"])}
 
     @app.put("/api/settings", response_model=m.SettingsOut)
     def put_settings(body: SettingsIn, user=Depends(current_user)):
@@ -403,6 +427,8 @@ def create_app(settings: WebSettings | None = None, deps=None, agent_settings: S
         db.run("INSERT INTO settings(user_id,liara_token_enc,team_id,team_name,language) VALUES (?,?,?,?,?) ON CONFLICT(user_id) DO UPDATE SET "
                "liara_token_enc=excluded.liara_token_enc, team_id=excluded.team_id, team_name=excluded.team_name, language=excluded.language",
                (user["id"], enc, team_id, team_name[:100], body.language or cur["language"]))
+        if body.auto_fix_code is not None:
+            db.run("UPDATE settings SET auto_fix_code=? WHERE user_id=?", (int(body.auto_fix_code), user["id"]))
         return get_settings_(user)
 
     @app.put("/api/settings/alert-webhook", response_model=m.SettingsOut)
@@ -1310,6 +1336,89 @@ def create_app(settings: WebSettings | None = None, deps=None, agent_settings: S
             raise err(409, "not_a_git_project", "only a project that came from a Git repository can pick up new code")
         live_app(user["id"], pid)
         return {"status": "started", "run_id": start_redeploy(row, "released from the page")}
+
+    # -- code problems: the developer's own coding agent (MCP) and the remembered choice -----------------------------------------
+    def mcp_base() -> str:
+        """The address the developer's agent connects to. Behind Liara's proxy the request says http even though people use https: a server that sets secure cookies is https-only."""
+        base = settings.public_url.rstrip("/") or app.state.base_url
+        if settings.cookie_secure and base.startswith("http://"):
+            base = "https://" + base[len("http://"):]
+        return base + "/mcp"
+
+    @app.get("/api/settings/agent-tokens", response_model=m.AgentTokensOut)
+    def list_agent_tokens(user=Depends(current_user)):
+        rows = db.q("SELECT id,name,created_at,last_used_at FROM api_tokens WHERE user_id=? AND revoked_at IS NULL ORDER BY id DESC", (user["id"],))
+        return {"tokens": [dict(r) for r in rows], "mcp_url": mcp_base()}
+
+    @app.post("/api/settings/agent-tokens", status_code=201, response_model=m.AgentTokenCreatedOut)
+    def create_agent_token(body: AgentTokenIn, user=Depends(current_user)):
+        """A token for the developer's own coding agent. Shown once; only its digest is kept. It can read this person's projects and runs and send code fixes, nothing else."""
+        if db.one("SELECT COUNT(*) n FROM api_tokens WHERE user_id=? AND revoked_at IS NULL", (user["id"],))["n"] >= 10:
+            raise err(409, "too_many_tokens", "revoke a token you no longer use first")
+        token = "sk_sakoo_" + secrets.token_urlsafe(32)
+        now = time.time()
+        tid = db.run("INSERT INTO api_tokens(user_id,name,digest,created_at) VALUES (?,?,?,?)", (user["id"], body.name.strip() or "my coding agent", token_digest(token), now))
+        return {"id": tid, "name": body.name.strip() or "my coding agent", "created_at": now, "last_used_at": None, "token": token}
+
+    @app.delete("/api/settings/agent-tokens/{tid}", response_model=m.OkOut)
+    def revoke_agent_token(tid: int, user=Depends(current_user)):
+        db.run("UPDATE api_tokens SET revoked_at=? WHERE id=? AND user_id=? AND revoked_at IS NULL", (time.time(), tid, user["id"]))
+        return {"ok": True}
+
+    @app.put("/api/projects/{pid}/code-fix-choice", response_model=m.CodeFixChoiceOut)
+    def put_code_fix_choice(pid: int, body: CodeFixChoiceIn, user=Depends(current_user)):
+        """Who fixes a code error in this project without asking each time: "sakoo", "own_agent", or null (ask)."""
+        own_project(user["id"], pid)
+        if body.choice not in (None, "sakoo", "own_agent"):
+            raise err(422, "bad_choice", "choice must be sakoo, own_agent or null")
+        db.run("UPDATE projects SET code_fix_choice=? WHERE id=? AND user_id=?", (body.choice, pid, user["id"]))
+        return {"code_fix_choice": body.choice}
+
+    @app.post("/api/runs/{rid}/handoff/sakoo", response_model=m.OkOut)
+    def handoff_to_sakoo(rid: str, user=Depends(current_user)):
+        """The run is waiting for the developer's own agent: stop waiting, Sakoo fixes the code itself."""
+        own_run(user["id"], rid)
+        live = manager.get_live(rid)
+        if not live or not live.handoff or not live.handoff.choose_sakoo():
+            raise err(409, "not_waiting", "this run is not waiting for your agent")
+        return {"ok": True}
+
+    @app.get("/api/projects/{pid}/fixes.patch")
+    def download_fixes(pid: int, user=Depends(current_user)):
+        """What the agent changed in the code to make it run, as a patch: apply it to the repository with `git apply`."""
+        own_project(user["id"], pid)
+        f = project_dir(pid) / ".agent-state" / "fixes.patch"
+        if not f.is_file():
+            raise err(404, "no_patch", "the agent made no changes to this project")
+        return Response(f.read_bytes(), media_type="text/x-diff", headers={"Content-Disposition": 'attachment; filename="sakoo-fixes.patch"'})
+
+    def code_fix_context(uid: int, pid: int) -> dict:
+        """What a run of this project needs to hand a code problem to the developer's own agent."""
+        row = db.one("SELECT * FROM projects WHERE id=? AND user_id=?", (pid, uid))
+        if not row:
+            return {}
+        st = db.one("SELECT auto_fix_code FROM settings WHERE user_id=?", (uid,))
+        ctx: dict = {"mcp_url": mcp_base(), "remembered": row["code_fix_choice"], "auto_fix": bool(st and st["auto_fix_code"]),
+                     "remember": lambda choice: db.run("UPDATE projects SET code_fix_choice=? WHERE id=? AND user_id=?", (choice, pid, uid))}
+        if row["source_kind"] == "git" and row["git_url"]:
+            def fetch_latest() -> Path:
+                dest = project_dir(pid).parent / "handoff-src"
+                shutil.rmtree(dest, ignore_errors=True)
+                sources.clone_git(row["git_url"], dest, allowed_hosts=settings.hosts(), max_extracted_bytes=settings.max_extracted_mb * 1024 * 1024, max_files=settings.max_files,
+                                  token=clone_token(row), branch=row["git_branch"] or "")
+                return dest
+            ctx["fetch_latest"] = fetch_latest
+        return ctx
+    manager.code_fix_context = code_fix_context
+
+    def runtime_logs_for(uid: int, pid: int) -> list[str]:
+        try:
+            journal, name = live_app(uid, pid)
+        except HTTPException:
+            raise LookupError("this project has no running app yet; use kind=build for the build log")
+        token, team = token_of(uid)
+        return manager.deps.client(token, team, False, journal).runtime_logs(name)
+    app.state.mcp = mcp_endpoint.mount(app, mcp_endpoint.McpDeps(db, manager, mcp_base, runtime_logs_for), settings.origins)
 
     # -- pull request with the agent's fixes ------------------------------------------------------------------------------
     def pr_material(user: dict, pid: int):

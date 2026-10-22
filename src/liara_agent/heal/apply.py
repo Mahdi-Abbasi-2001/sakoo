@@ -40,6 +40,40 @@ def apply_engines_node(copy_root: Path, value: str) -> str | None:
     return "".join(difflib.unified_diff(before.splitlines(True), after.splitlines(True), "a/package.json", "b/package.json"))
 
 
+def npm_latest(package: str, get=None) -> str:
+    """The current version of an npm package from the public registry. LookupError (in words) when the registry cannot say."""
+    import httpx
+
+    get = get or (lambda url: httpx.get(url, timeout=6, follow_redirects=True))
+    try:
+        r = get(f"https://registry.npmjs.org/{package.replace('/', '%2F')}/latest")
+        if r.status_code == 404:
+            raise LookupError(f"{package} does not exist on the npm registry (a typo, or a private package)")
+        r.raise_for_status()
+        version = r.json().get("version")
+    except LookupError:
+        raise
+    except Exception as e:
+        raise LookupError(f"could not look up {package} on the npm registry ({type(e).__name__})") from e
+    if not isinstance(version, str) or not version:
+        raise LookupError(f"the npm registry gave no version for {package}")
+    return version
+
+
+def apply_npm_dependency(copy_root: Path, package: str, version: str | None = None, lookup=npm_latest) -> str | None:
+    """Declare `package` in package.json's dependencies (in the copy) with a caret range of its current version; returns a unified diff, None if already declared."""
+    p = copy_root / "package.json"
+    before = p.read_text()
+    data = json.loads(before)
+    if any(package in (data.get(k) or {}) for k in ("dependencies", "devDependencies", "optionalDependencies")):
+        return None
+    data.setdefault("dependencies", {})[package] = "^" + (version or lookup(package))
+    data["dependencies"] = dict(sorted(data["dependencies"].items()))
+    after = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
+    p.write_text(after)
+    return "".join(difflib.unified_diff(before.splitlines(True), after.splitlines(True), "a/package.json", "b/package.json"))
+
+
 def save_patches(state_dir: Path, diffs: list[str]) -> Path | None:
     if not diffs:
         return None

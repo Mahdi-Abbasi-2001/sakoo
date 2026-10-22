@@ -14,6 +14,7 @@ import { LimitsSection } from './LimitsSection';
 import { UptimeSection } from './UptimeSection';
 import { BranchSection } from './BranchSection';
 import { PrSection } from './PrSection';
+import { CodeFixSection, FixPatchSection } from './CodeFixSection';
 import { WordpressSection } from './WordpressSection';
 import { useI18n, usePageTitle } from '../i18n';
 import { errorText } from '../i18n/errors';
@@ -144,6 +145,7 @@ export function ProjectPage() {
       {tab === 'deploys' && (
         <div className="stack" style={{ gap: 20, marginTop: 20 }} role="tabpanel">
           {github && <PrSection pid={pid} private={!!p.private} />}
+          <FixPatchSection pid={pid} />
           <section className="card" aria-label={t('proj.hist.t')}>
             <div className="card-h"><div><h2 className="card-t">{t('proj.hist.t')}</h2><p className="hint">{t('proj.hist.d')}</p></div></div>
             <div className="rtable">
@@ -182,6 +184,7 @@ export function ProjectPage() {
                 env.map((e) => <div className="rw" key={e.name}><span className="code">{e.name}</span><span className={'badge ' + (e.kind === 'secret' ? 's-wait' : '')}><Icon name={e.kind === 'secret' ? 'shield' : 'check'} />{t('proj.env.' + e.kind)}</span><span className="hint">{e.note}</span></div>)}
             </section>
           )}
+          <CodeFixSection pid={pid} current={p.code_fix_choice} />
           <Danger p={p} onChanged={load} />
         </div>
       )}

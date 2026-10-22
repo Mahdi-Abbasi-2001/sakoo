@@ -19,6 +19,7 @@ export function Announcer({ view, projectName, limitSeconds }: { view: RunViewSt
   const [urgent, setUrgent] = useState('');
   const [polite, setPolite] = useState('');
   const key = req ? String(req.eventId) : '';
+  const handoffId = !view.result && view.handoff?.state === 'waiting' ? view.handoff.id : '';
   const r = view.result;
 
   useEffect(() => {
@@ -58,6 +59,8 @@ export function Announcer({ view, projectName, limitSeconds }: { view: RunViewSt
       setPolite(plain(t('ann.failed', { why, created: created ? t('ann.failed_created', { names: [...r.created.apps, ...r.created.databases].join(', ') }) : t('fail.nothing_created') })));
     }
   }, [doneKey, lang]);   // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => { if (handoffId) setUrgent(plain(t('ann.handoff'))); }, [handoffId, lang]);   // eslint-disable-line react-hooks/exhaustive-deps
 
   const removedKey = view.removed ? String(view.removed.at ?? 'x') : '';
   useEffect(() => { if (removedKey) setPolite(plain(t('ann.removed'))); }, [removedKey, lang]);   // eslint-disable-line react-hooks/exhaustive-deps

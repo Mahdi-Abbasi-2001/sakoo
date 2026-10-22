@@ -5,11 +5,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
 
-from liara_agent.heal.apply import apply_append, apply_engines_node, patched_copy, save_patches
+from liara_agent.heal.apply import apply_append, apply_engines_node, apply_npm_dependency, patched_copy, save_patches
 from liara_agent.heal.diagnose import Diagnosis, Failure, Fix, HealContext, diagnose
 from liara_agent.liara.client import LiaraClient
 
 Emit = Callable[[str, dict], None]
+MAX_REPAIRS = 2   # a model-made fix is tried at most twice per app; a third failure is reported, not retried
 
 
 @dataclass
@@ -17,6 +18,13 @@ class HealIO:
     confirm: Callable[..., bool] = lambda prompt, **kw: False  # default: never spend or change code without a yes; called as confirm(prompt, price_delta_hourly=..., kind=...)
     ask_value: Callable[[str], str | None] = lambda name: None
     emit: Emit = lambda kind, data: None
+    # Proposes a fix for a code problem no rule can fix (a model reads the copy of the project): (diagnosis, failure, ctx, copy_root) -> Fix | None. None = no model or no fix.
+    repair: Callable[..., Fix | None] | None = None
+    # Who fixes a code problem: (diagnosis, ctx) -> "sakoo" | "own_agent". None: Sakoo does (the CLI has no developer agent to hand over to).
+    choose_code_fix: Callable[..., str] | None = None
+    # Waits for the developer's own agent (MCP): (diagnosis, failure, ctx, copy_root) -> HandoffResult | None (nobody answered in time)
+    await_handoff: Callable[..., object] | None = None
+    auto_fix: bool = False  # apply patches to the agent's copy without asking (the person turned this on); anything that costs money is still asked
 
 
 @dataclass
@@ -35,6 +43,8 @@ class HealState:
     diffs: list[str] = field(default_factory=list)
     redeploy_needed: bool = True
     platform_config: dict = field(default_factory=dict)  # sent with every release, e.g. {"version": "14"} for node
+    repairs: int = 0   # how many times the repair agent was asked in this run
+    code_choice: str | None = None   # "sakoo" | "own_agent": asked once per run, kept for the next code problem
 
 
 def _signature(d: Diagnosis, fix: Fix) -> str:
@@ -45,10 +55,16 @@ def heal_once(failure: Failure, ctx: HealContext, client: LiaraClient, state: He
               project: Path, state_dir: Path) -> bool:
     """Try one fix. Returns True if something was changed and the deploy should be checked/retried."""
     d = diagnose(failure, ctx)
-    io.emit("diagnosis", {"code": d.code, "params": d.params, "summary": d.summary, "evidence": d.evidence, "fixes": [f.as_event() for f in d.fixes], "app": ctx.app})
+    io.emit("diagnosis", {"code": d.code, "category": d.category, "params": d.params, "summary": d.summary, "evidence": d.evidence, "fixes": [f.as_event() for f in d.fixes], "app": ctx.app})
     if not d.retryable:
         state.steps.append(HealStep(d, None, False, "not something a redeploy can fix"))
         return False
+    if d.category == "code" and io.choose_code_fix:
+        state.code_choice = state.code_choice or io.choose_code_fix(d, ctx)
+        if state.code_choice == "own_agent" and io.await_handoff:
+            handled = _handoff(d, failure, ctx, state, io, project, state_dir)
+            if handled is not None:
+                return handled
     for fix in d.fixes:
         sig = _signature(d, fix)
         if fix.kind == "manual" or sig in state.tried:
@@ -60,7 +76,84 @@ def heal_once(failure: Failure, ctx: HealContext, client: LiaraClient, state: He
                                                                "cost_delta_hourly": round(fix.cost_delta_hourly, 2), "app": ctx.app, "code": fix.code})
         if applied:
             return True
+    if d.category == "code" and io.repair and state.repairs < MAX_REPAIRS:
+        state.repairs += 1
+        fix = io.repair(d, failure, ctx, patched_copy(project, state_dir, ctx.app))
+        if fix is None:
+            return False
+        sig = _signature(d, fix)
+        if sig in state.tried:   # the model proposed what it already proposed: stop instead of looping
+            return False
+        state.tried.add(sig)
+        applied, note = _apply(fix, ctx, client, state, io, project, state_dir)
+        state.steps.append(HealStep(d, fix, applied, note))
+        io.emit("fix_applied" if applied else "fix_declined", {"fix": fix.description, "note": note, "kind": fix.kind, "params": fix.params,
+                                                               "cost_delta_hourly": 0, "app": ctx.app, "code": fix.code})
+        return applied
     return False
+
+
+def _handoff(d: Diagnosis, failure: Failure, ctx: HealContext, state: HealState, io: HealIO, project: Path, state_dir: Path) -> bool | None:
+    """The developer's own agent fixes the code. True: something changed, redeploy. False: nobody answered, report the failure. None: the person chose Sakoo after all."""
+    res = io.await_handoff(d, failure, ctx, patched_copy(project, state_dir, ctx.app))
+    if res is None:
+        state.steps.append(HealStep(d, None, False, "no fix arrived from your own agent"))
+        return False
+    if res.how == "sakoo":
+        state.code_choice = "sakoo"
+        return None
+    if res.how == "redeploy":
+        state.source_dir = res.source_dir
+        state.redeploy_needed = True
+        state.steps.append(HealStep(d, Fix("manual", "your own agent pushed the fix; the newest code of the repository was released", code="handoff_redeploy"), True, "released the newest code"))
+        return True
+    from liara_agent.web import chat_code
+
+    chat_code.apply(patched_copy(project, state_dir, ctx.app), res.plan, state_dir / "handoff-backup")
+    state.diffs.append(res.plan["diff"] + "\n")
+    io.emit("patch_ready", {"file": ", ".join(f["path"] for f in res.plan["files"]), "diff": res.plan["diff"]})
+    state.source_dir = patched_copy(project, state_dir, ctx.app)
+    save_patches(state_dir, state.diffs)
+    state.redeploy_needed = True
+    state.steps.append(HealStep(d, Fix("manual", "your own agent sent the fix", code="handoff_fix"), True, "applied the files from your agent"))
+    return True
+
+
+def _approved(io: HealIO, fix: Fix, prompt: str) -> bool:
+    """A change to the agent's copy of the code: asked, unless the person turned auto-fix on (then it is applied at once and the page is told)."""
+    if io.auto_fix:
+        io.emit("fix_auto_applied", {"code": fix.code, "kind": fix.kind, "text": fix.description, "params": fix.params})
+        return True
+    return io.confirm(prompt, kind="patch", code=fix.code, params=fix.params)
+
+
+def _apply_repair(fix: Fix, ctx: HealContext, client: LiaraClient, state: HealState, io: HealIO, project: Path, state_dir: Path) -> tuple[bool, str]:
+    """Write a repair agent's file changes to the copy and set its database-based variables on the app."""
+    plan, env = (fix.payload or {}).get("plan"), (fix.payload or {}).get("env") or {}
+    shown = {"files": [f["path"] for f in (plan or {}).get("files", [])], "env": sorted(env), "summary": fix.params.get("summary", "")}
+    # the person decides on what will change: the diff is part of the question (cut at 8000 characters; the whole diff is kept as patch_ready)
+    asked = {**shown, **({"diff": plan["diff"][:8000]} if plan else {})}
+    if not _approved(io, Fix(fix.kind, fix.description, asked, code=fix.code), f"{fix.description}. Apply to a copy of your project (never your files)?"):
+        return False, "declined"
+    if env:
+        from liara_agent.deploy.dbvars import DB_VAR, substitute_db_vars
+
+        fresh = {pid: client.database(api_id) for pid, api_id in ctx.db_api_ids.items()}
+        client.set_env(ctx.app, substitute_db_vars(env, fresh))   # an env change redeploys the app by itself (verified on Liara)
+        ctx.env_names |= set(env)
+        ctx.env_templates.update(env)
+        state.redeploy_needed = False
+    if plan:
+        from liara_agent.web import chat_code
+
+        copy_root = patched_copy(project, state_dir, ctx.app)
+        chat_code.apply(copy_root, plan, state_dir / "repair-backup")
+        state.diffs.append(plan["diff"] + "\n")
+        io.emit("patch_ready", {"file": ", ".join(shown["files"]), "diff": plan["diff"]})
+        state.source_dir = copy_root
+        save_patches(state_dir, state.diffs)
+        state.redeploy_needed = True
+    return True, "changed " + ", ".join(shown["files"] + shown["env"])
 
 
 def apply_fix(fix: Fix, ctx: HealContext, client: LiaraClient, state: HealState, io: HealIO, project: Path, state_dir: Path) -> tuple[bool, str]:
@@ -112,13 +205,20 @@ def _apply(fix: Fix, ctx: HealContext, client: LiaraClient, state: HealState, io
         ctx.env_names |= set(values)
         state.redeploy_needed = False
         return True, f"set {', '.join(values)}"
+    if fix.kind == "code_changes":
+        return _apply_repair(fix, ctx, client, state, io, project, state_dir)
     if fix.kind == "code_patch":
-        if not io.confirm(f"{fix.description} (applied to a copy of your project, never to your files). Apply?", kind="patch", code=fix.code, params=fix.params):
+        if not _approved(io, fix, f"{fix.description} (applied to a copy of your project, never to your files). Apply?"):
             return False, "declined"
         copy_root = patched_copy(project, state_dir, ctx.app)
         if "engines_node" in fix.params:
             diff = apply_engines_node(copy_root, fix.params["engines_node"])
             state.platform_config["version"] = fix.params["platform_version"]
+        elif "add_dependency" in fix.params:
+            try:
+                diff = apply_npm_dependency(copy_root, fix.params["add_dependency"])
+            except LookupError as e:
+                return False, str(e)
         else:
             diff = apply_append(copy_root, fix.params["file"], fix.params["append"])
         if diff is None and "engines_node" not in fix.params:

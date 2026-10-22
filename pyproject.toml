@@ -22,6 +22,7 @@ dependencies = [
   "argon2-cffi>=23.1",
   "cryptography>=42",
   "dnspython>=2.6",
+  "mcp>=2.3,<3",   # the MCP server the developer's own coding agent talks to (web/mcp.py)
 ]
 
 [project.optional-dependencies]

@@ -29,6 +29,14 @@ CREATE TABLE IF NOT EXISTS chat_actions (
   info TEXT NOT NULL, status TEXT NOT NULL, result TEXT, created_at REAL NOT NULL);
 """
 
+# Personal access tokens for the developer's own coding agent (the MCP server). Only a digest is stored; the token is shown once, when it is made.
+TOKEN_SCHEMA = """
+CREATE TABLE IF NOT EXISTS api_tokens (
+  id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE, name TEXT NOT NULL, digest TEXT UNIQUE NOT NULL,
+  created_at REAL NOT NULL, last_used_at REAL, revoked_at REAL);
+CREATE INDEX IF NOT EXISTS api_tokens_user ON api_tokens(user_id);
+"""
+
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY, username TEXT UNIQUE NOT NULL, pw_hash TEXT NOT NULL, created_at REAL NOT NULL);
@@ -60,6 +68,7 @@ class DB:
         self._conn.executescript(MONITOR_SCHEMA)
         self._conn.executescript(CHAT_SCHEMA)
         self._conn.executescript(INCIDENT_SCHEMA)
+        self._conn.executescript(TOKEN_SCHEMA)
         if "team_name" not in {r["name"] for r in self._conn.execute("PRAGMA table_info(settings)")}:
             self._conn.execute("ALTER TABLE settings ADD COLUMN team_name TEXT NOT NULL DEFAULT ''")
         if "github_id" not in {r["name"] for r in self._conn.execute("PRAGMA table_info(users)")}:
@@ -68,7 +77,9 @@ class DB:
         for col in ("alert_webhook_enc", "github_token_enc", "github_login"):
             if col not in {r["name"] for r in self._conn.execute("PRAGMA table_info(settings)")}:
                 self._conn.execute(f"ALTER TABLE settings ADD COLUMN {col} TEXT")
-        for col in ("git_token_enc", "git_branch"):  # added after the first release
+        if "auto_fix_code" not in {r["name"] for r in self._conn.execute("PRAGMA table_info(settings)")}:   # apply patches to the agent's copy without a card
+            self._conn.execute("ALTER TABLE settings ADD COLUMN auto_fix_code INTEGER NOT NULL DEFAULT 0")
+        for col in ("git_token_enc", "git_branch", "code_fix_choice"):  # added after the first release; code_fix_choice: sakoo | own_agent (the remembered answer for code errors)
             if col not in {r["name"] for r in self._conn.execute("PRAGMA table_info(projects)")}:
                 self._conn.execute(f"ALTER TABLE projects ADD COLUMN {col} TEXT")
         if "tail" not in {r["name"] for r in self._conn.execute("PRAGMA table_info(auto_deploys)")}:   # the last lines of the build, so the page can follow it

@@ -37,9 +37,18 @@ class Fix:
     params: dict = field(default_factory=dict)
     cost_delta_hourly: float = 0.0  # toman/hour incl. VAT; positive = more expensive
     code: str = ""
+    payload: object = None  # data the executor needs that does not belong in an event (a repair's file contents)
 
     def as_event(self) -> dict:
         return {"code": self.code, "kind": self.kind, "text": self.description, "params": self.params, "cost_delta_hourly": round(self.cost_delta_hourly, 2)}
+
+
+# Who has to change what. "code": the developer's source is wrong (Sakoo can patch its copy, or the developer's own agent can fix the repo);
+# "config": the service settings on Liara are wrong (fixed through the API); "resources": the plan is too small (costs money);
+# "outside": nothing a redeploy or a patch can fix.
+CODE_CAUSES = {"missing_python_module", "missing_node_module", "node_engine_mismatch", "db_localhost", "bound_to_localhost", "code_error"}
+RESOURCE_CAUSES = {"build_timeout", "out_of_memory"}
+OUTSIDE_CAUSES = {"outbound_blocked", "no_dockerfile"}
 
 
 @dataclass
@@ -50,6 +59,16 @@ class Diagnosis:
     fixes: list[Fix] = field(default_factory=list)
     retryable: bool = True
     params: dict = field(default_factory=dict)  # values the summary mentions, for localized wording
+
+    @property
+    def category(self) -> str:
+        if self.code in CODE_CAUSES:
+            return "code"
+        if self.code in RESOURCE_CAUSES:
+            return "resources"
+        if self.code in OUTSIDE_CAUSES:
+            return "outside"
+        return "config" if self.code in {"missing_env", "db_auth_failed", "wrong_port", "not_serving"} else "unknown"
 
 
 @dataclass
@@ -62,6 +81,7 @@ class HealContext:
     cat: LiveCatalog
     env_names: set[str] = field(default_factory=set)
     db_kinds: set[str] = field(default_factory=set)
+    db_kinds_by_id: dict[str, str] = field(default_factory=dict)  # plan database id -> kind, for the repair agent's templates
     project_files: set[str] = field(default_factory=set)  # relative paths available for patching, e.g. {"requirements.txt"}
     db_api_ids: dict[str, str] = field(default_factory=dict)  # plan database id -> Liara database id
     env_templates: dict[str, str] = field(default_factory=dict)  # env with $DB_ references, before substitution
@@ -118,6 +138,29 @@ def node_for_engine(expected: str) -> tuple[str, str]:
     return str(version), f">={floor}"
 
 
+CODE_ERROR = re.compile(r"(?m)^.*(?:SyntaxError|IndentationError|NameError|TypeError|ReferenceError|AttributeError|ImportError|ModuleNotFoundError|ValueError|KeyError|"
+                        r"Cannot find module '\.{1,2}/|npm ERR! (?:missing script|Missing script)|error TS\d+|UnhandledPromiseRejection|Uncaught (?:Exception|Error)).*$")
+LOCATION = re.compile(r"""(?:File "([^"]+)", line (\d+))|(?:\(?(/?(?:[\w.\-]+/)*[\w.\-]+\.(?:js|jsx|ts|tsx|mjs|cjs|py)):(\d+)(?::\d+)?\)?)""")
+
+
+def _code_error_lines(t: str, n: int = 4) -> list[str]:
+    return [m.group(0).strip()[:300] for m in CODE_ERROR.finditer(t)][:n]
+
+
+CONTAINER_ROOT = re.compile(r"^/(?:usr/src/app|home/\w+/app|opt/app|workspace|app|code|srv|src)/")   # the folder a Dockerfile copies the project to
+
+
+def _source_location(t: str) -> str:
+    """file:line of the last frame in the project (not node_modules or the standard library) that appears in the log, or ''."""
+    best = ""
+    for m in LOCATION.finditer(t):
+        path, line = (m.group(1), m.group(2)) if m.group(1) else (m.group(3), m.group(4))
+        if "node_modules" in path or "site-packages" in path or path.startswith(("node:", "/usr/lib", "internal/")):
+            continue
+        best = f"{(CONTAINER_ROOT.sub('', path) if path.startswith('/') else path).lstrip('./')}:{line}"
+    return best
+
+
 def diagnose(f: Failure, ctx: HealContext) -> Diagnosis:
     t = f.text()
 
@@ -152,10 +195,11 @@ def diagnose(f: Failure, ctx: HealContext) -> Diagnosis:
                  if "requirements.txt" in ctx.project_files else [Fix("manual", f"declare {pkg} in your dependency file", {"module": pkg}, code="declare_dependency")])
         return Diagnosis("missing_python_module", f"The code imports {pkg}, which is not declared as a dependency.", _evidence(t, r"ModuleNotFoundError"), fixes, params={"module": pkg})
 
-    if m := re.search(r"Cannot find module '([^'./][^']*)'", t):
-        return Diagnosis("missing_node_module", f"The code requires {m.group(1)}, which is not in package.json.", _evidence(t, r"Cannot find module"),
-                         [Fix("manual", f"run `npm install {m.group(1)}` locally and redeploy; I will not guess a version", {"module": m.group(1)}, code="npm_install")],
-                         params={"module": m.group(1)})
+    if m := re.search(r"Cannot find module '((?:@[\w.\-]+/)?[\w][\w.\-]*)'", t):
+        pkg = m.group(1)
+        fixes = ([Fix("code_patch", f"add {pkg} to package.json (the current version from the npm registry)", {"file": "package.json", "add_dependency": pkg}, code="patch_add_npm_dependency")]
+                 if "package.json" in ctx.project_files else [Fix("manual", f"run `npm install {pkg}` locally and redeploy", {"module": pkg}, code="npm_install")])
+        return Diagnosis("missing_node_module", f"The code requires {pkg}, which is not in package.json.", _evidence(t, r"Cannot find module"), fixes, params={"module": pkg})
 
     names = set()
     for rx in (r"KeyError: '([A-Z][A-Z0-9_]+)'", r"(?i:missing|required|set the) (?:required )?(?i:env(?:ironment)?(?: variable)?)?:? ?['\"`]?([A-Z][A-Z0-9_]{2,})['\"`]?\b(?!\w)",
@@ -212,6 +256,11 @@ def diagnose(f: Failure, ctx: HealContext) -> Diagnosis:
     if f.http_detail and re.search(r"50[23]", f.http_detail) and f.state == "READY":
         return Diagnosis("not_serving", f"The release is READY but the app answers {f.http_detail}; the logs do not say why.", _evidence(t, r"(?i)error|exception") or [],
                          [Fix("manual", "check the port setting and that the app binds to 0.0.0.0", code="check_port_and_bind")], params={"http": f.http_detail})
+
+    if errs := _code_error_lines(t):
+        where = _source_location(t)
+        return Diagnosis("code_error", "The app stops because of an error in its own code" + (f" ({where})." if where else "."), errs,
+                         [Fix("manual", "fix the error in the code", {"location": where} if where else {}, code="fix_code_error")], params={"location": where or ""})
 
     return Diagnosis("unknown", f"I could not classify this failure ({f.reason or f.state or f.http_detail}).", _evidence(t, r"(?i)error|failed|exception"),
                      [Fix("manual", "read the log lines above, or fix the build locally first", code="read_logs")], retryable=False,

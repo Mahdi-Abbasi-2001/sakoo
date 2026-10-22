@@ -137,7 +137,7 @@ def execute(plan: DeployPlan, cat: LiveCatalog, client: LiaraClient, project_roo
                     client.create_disk(a.name, d.name, d.size_gb)
                     emit("build", {"step": step, "line": f"created disk {d.name} ({d.size_gb} GB) to mount at {d.mount_to}"})
         ctx = HealContext(app=a.name, platform=a.platform, port=a.port or 80, plan_id=plan_id, tier=tier, cat=cat,
-                          env_names=set(env), db_kinds={d.kind for d in plan.databases}, db_api_ids=dict(api_ids), env_templates=dict(a.env),
+                          env_names=set(env), db_kinds={d.kind for d in plan.databases}, db_kinds_by_id={d.id: d.kind for d in plan.databases}, db_api_ids=dict(api_ids), env_templates=dict(a.env),
                           project_files={f for f in ("requirements.txt", "package.json") if (root / a.path / f).is_file()})
         hstate = HealState(source_dir=root / a.path)
 

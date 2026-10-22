@@ -6,7 +6,7 @@ import { applyRemoval, reduceRun } from './reduceRun';
 import type { OpenReq, Removal } from './types';
 
 /** Every event kind in docs/events.d.ts. SSE delivers each kind as a named event, so each is listened to; an unknown kind is simply never heard. */
-export const KINDS = ['run_started', 'phase_started', 'phase_finished', 'plan_ready', 'run_finished', 'agent_message', 'tool_call', 'plan_rejected', 'plan_updated', 'step_started', 'step_finished', 'resource_created', 'resource_updated', 'build', 'build_error', 'warning', 'test_result', 'heal_attempt', 'diagnosis', 'fix_applied', 'fix_declined', 'patch_ready', 'question', 'answered', 'confirm_request', 'confirm_response', 'secret_request', 'secret_provided', 'request_expired'] as const;
+export const KINDS = ['run_started', 'phase_started', 'phase_finished', 'plan_ready', 'run_finished', 'agent_message', 'tool_call', 'plan_rejected', 'plan_updated', 'step_started', 'step_finished', 'resource_created', 'resource_updated', 'build', 'build_error', 'warning', 'test_result', 'heal_attempt', 'diagnosis', 'fix_applied', 'fix_declined', 'patch_ready', 'question', 'answered', 'confirm_request', 'confirm_response', 'secret_request', 'secret_provided', 'request_expired', 'fix_auto_applied', 'handoff_waiting', 'external_agent_call', 'handoff_received'] as const;
 export type Conn = 'loading' | 'live' | 'reconnecting' | 'ended' | 'error' | 'missing';
 
 export function useRunStream(runId: string) {

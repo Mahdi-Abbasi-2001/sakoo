@@ -42,13 +42,23 @@ export type TimelineItem =
   | { key: string; type: 'secret'; state: 'wait' | 'ok'; ts: number; id: string; name: string; provided: boolean }
   | { key: string; type: 'resource'; state: 'run' | 'ok' | 'fail'; ts: number; id: string; kind: 'app' | 'database' | 'bucket' | 'mail' }
   | { key: string; type: 'diagnosis'; state: 'fail'; ts: number; diagnosis: DiagnosisView & { app: string }; attempt: number | null }
-  | { key: string; type: 'fix'; state: 'ok' | 'fail'; ts: number; fix: FixResult; declined: boolean }
+  | { key: string; type: 'fix'; state: 'ok' | 'fail'; ts: number; fix: FixResult; declined: boolean; auto?: boolean }
+  | { key: string; type: 'handoff'; state: 'wait' | 'ok' | 'fail'; ts: number; handoff: HandoffView }
   | { key: string; type: 'patch'; state: 'ok'; ts: number; file: string; diff: string }
   | { key: string; type: 'test'; state: 'ok' | 'fail'; ts: number; test: TestRow }
   | { key: string; type: 'warning'; state: 'warn'; ts: number; step: string; code: string | null; params: Params; message: string }
   | { key: string; type: 'agent'; state: 'ok'; ts: number; text: string }
   | { key: string; type: 'expired'; state: 'fail'; ts: number; id: string; request: string }
   | { key: string; type: 'finished'; state: 'ok' | 'fail' | 'wait'; ts: number; ok: boolean; cancelled: boolean; reasonCode: string | null; reasonParams: Params };
+
+/** A code problem the run handed to the developer's own coding agent (MCP). The same object is shared by the state and its timeline item, so later events update both. */
+export interface HandoffView {
+  id: string; app: string; runId: string; mcpUrl: string; diagnosis: DiagnosisView; expiresAt: number | null;
+  state: 'waiting' | 'received' | 'expired';
+  how: 'fix' | 'redeploy' | 'sakoo' | null; files: string[];
+  /** what the agent did while the run waited: only the tool's name and whether it worked */
+  calls: { tool: string; ok: boolean; ts: number; detail?: string }[];
+}
 
 export interface OpenReq {
   kind: 'question' | 'confirm' | 'secret';
@@ -78,6 +88,7 @@ export interface RunViewState {
   money: { plannedHourly: number | null; plannedMonthly: number | null; currentHourly: number; currentMonthly: number; fixDeltaHourly: number };
   timeline: TimelineItem[]; logs: LogLine[]; tests: TestRow[];
   openRequests: OpenReq[];
+  handoff: HandoffView | null;
   diagnoses: (DiagnosisView & { app: string })[]; fixesApplied: FixResult[]; fixesDeclined: FixResult[]; healAttempts: number; maxAttempts: number | null;
   urls: Record<string, string>; created: Created | null;
   removed: Removal | null;

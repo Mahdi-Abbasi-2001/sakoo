@@ -466,3 +466,30 @@ html[lang="fa"] .dash-head .h1{line-height:1.5}
 .h-line .stop-run{margin-inline-start:auto}
 .stop-ask{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
 
+
+/* -- an error in the person's code: who fixes it (CodeFixChoice) and the wait for their own agent (AgentHandoff) -- */
+.cf,.ho{max-width:760px}
+.cf-what{display:flex;flex-direction:column;gap:8px}
+.cf-ev{max-height:132px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;margin:0;font-size:12.5px;padding:10px 12px;border-radius:var(--r-ctl)}
+.cf-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cf-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:start;padding:16px;border-radius:var(--r-card);border:1px solid var(--line-strong);background:color-mix(in srgb,var(--surface) 86%,transparent);color:var(--text);cursor:pointer;transition:border-color var(--t-base) var(--ease-out),box-shadow var(--t-base) var(--ease-out),background var(--t-base) var(--ease-out)}
+.cf-card:hover:not(:disabled),.cf-card:focus-visible{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 12px 32px -14px color-mix(in srgb,var(--accent) 60%,transparent)}
+.cf-card:disabled{cursor:not-allowed;opacity:.62}
+.cf-rec{border-color:color-mix(in srgb,var(--accent) 70%,var(--line-strong));background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 12%,var(--surface)),color-mix(in srgb,var(--surface) 90%,transparent))}
+.cf-ic{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:color-mix(in srgb,var(--accent) 16%,var(--sunken));color:var(--accent)}
+.cf-ic .ic{width:20px;height:20px}
+.cf-t{font-size:17px;line-height:24px;font-weight:700;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+html[lang="fa"] .cf-t{line-height:30px}
+.cf-tag{font-weight:600;font-size:12px}
+.cf-d{color:var(--text-2);font-size:14px}
+.cf-pts{display:flex;flex-direction:column;gap:6px;margin:4px 0 0;padding:0;list-style:none;font-size:13.5px;color:var(--text-2)}
+.cf-pts li{display:flex;gap:8px;align-items:flex-start}
+.cf-pts .ic{width:14px;height:14px;margin-top:5px;color:var(--ok);flex:none}
+.cf-remember{display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
+.ho-step,.ho-calls{display:flex;flex-direction:column;gap:8px}
+.ho-snip{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border:1px solid var(--line-strong);border-radius:var(--r-ctl);background:var(--sunken)}
+.ho-snip pre{margin:0;font-size:12.5px;max-height:150px;overflow:auto}
+.ho-calls{padding:10px 12px;border-radius:var(--r-ctl);background:color-mix(in srgb,var(--wait) 10%,var(--sunken))}
+.ho details summary{cursor:pointer;color:var(--text-2);font-size:14px}
+.agt-auto{cursor:pointer}
+@media (max-width:640px){.cf-grid{grid-template-columns:1fr}}

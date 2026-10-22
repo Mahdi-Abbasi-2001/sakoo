@@ -10,6 +10,7 @@ checks that the app answers, and when something fails it diagnoses the cause and
 - **Prices before it spends:** real plan prices from the Liara API (per hour and per month, including VAT), shown before anything is created.
 - **Deploys and verifies:** creates databases and apps on one private network, wires generated credentials into the app, uploads the source, waits for the build, and checks the app answers over HTTP.
 - **Self-heals:** classifies failures (build timeout, out of memory, wrong port, database login, missing dependency or variable, blocked foreign service) and applies a fix after approval. Code fixes go to a copy of the project, never the developer's files.
+- **Errors in the developer's own code have two automatic ways out, and no copying between tools** (see [When the code has an error](#when-the-code-has-an-error)): Launchpad fixes it itself (rules first, then a model reads the project), or the developer's own coding agent (Claude Code, Cursor) connects to Launchpad's MCP server, fixes the real repository and the same run carries on.
 - **Diagnoses a running app:** "Check my running app" (and the chat's `diagnose_app`) probes the site, reads the runtime logs, releases, CPU and memory against the plan, and ranks the likely causes of an error or a slowdown with the evidence for each. A fix the person approves (roll back, resize, set a variable) can be applied from the panel, then the app is checked again. It needs no language model.
 - **Guides the registrar steps:** for a custom domain it lists what only the person can do at the registrar, with IRNIC's panel for a `.ir` domain (steps taken from public tutorials) and Liara's nameservers filled in.
 - **Releases new code:** edits made in the chat or a newer Git commit are released on the running app as a run of its own whose page follows the build line by line.
@@ -57,8 +58,28 @@ cd .. && .venv/bin/liara-agent serve        # http://127.0.0.1:8000
 cd frontend && npm run try                  # demo with a stand-in for api.liara.ir: any token works, nothing touches Liara
 ```
 Responses are gzip-compressed (the live event stream is not), and hashed build files are cached for a year.
-Environment: `WEB_SECRET_KEY` (encrypts stored Liara tokens; otherwise a key file is created in `WEB_DATA_DIR`), `WEB_DATA_DIR`, `WEB_COOKIE_SECURE=true` behind HTTPS, `LLM_API_KEY` / `LLM_BASE_URL` / `LLM_MODEL`.
+Environment: `WEB_PUBLIC_URL` (the https address people use; the MCP address shown to the developer's agent is built from it), `WEB_SECRET_KEY` (encrypts stored Liara tokens; otherwise a key file is created in `WEB_DATA_DIR`), `WEB_DATA_DIR`, `WEB_COOKIE_SECURE=true` behind HTTPS, `LLM_API_KEY` / `LLM_BASE_URL` / `LLM_MODEL`.
 Docs: `docs/api.md` (API), `docs/events.d.ts` (event types), `docs/message-codes.md` (the translation contract).
+
+## When the code has an error
+A deploy can fail for reasons that are not Liara's: a missing package, a syntax or startup error, a database address hard-coded to `localhost`, an app bound to `127.0.0.1`. Every diagnosis carries a `category` (`code`, `config`, `resources`, `outside`). Only `code` problems go to the developer's code; a wrong port, a missing variable or a database login are fixed on Liara through the API, a bigger plan shows its price first.
+For a `code` problem the run asks one question, and the answer decides who works:
+
+| | **Launchpad fixes it** | **My own agent fixes it** |
+|---|---|---|
+| How | rules first (add the package to `requirements.txt` / `package.json` with its real version, relax a Node pin), then a model reads a copy of the project (read-only tools) and proposes the smallest change; database wiring is done with environment variables whose values the model never sees | the run waits; the developer's agent connects to `/mcp`, reads the failure, fixes the real repository and either pushes (`redeploy`) or sends the files (`submit_fix`) |
+| What the person sees | the diff on the approval card (or, with auto-fix on in Settings, after it is applied) | a card with the one-line command to connect their agent, and every tool call their agent makes, live |
+| The developer's files | never touched: changes go to Launchpad's copy | their agent changes them, as it always does |
+| Then | redeploy and check; the result offers the fix back as a pull request or a `.patch` download, so the next deploy from the repository does not bring the bug back | the same run redeploys and checks |
+
+"Remember my choice for this project" keeps the answer (`PUT /api/projects/{id}/code-fix-choice`).
+
+**The MCP server** (`/mcp`, streamable HTTP, `src/liara_agent/web/mcp.py`) is reached with a personal token made in Settings, "Your coding agent" (`sk_sakoo_…`, shown once, only its digest is stored, revocable). It sees only its owner's projects. Tools: `list_projects`, `get_status`, `get_failure`, `get_logs`, `submit_fix`, `redeploy`, `wait_for_run`. There is no tool that deletes, changes a plan, touches a domain or reads an environment value: anything that costs money or removes something is asked in Launchpad.
+```bash
+claude mcp add --transport http sakoo https://<your server>/mcp --header "Authorization: Bearer sk_sakoo_…"
+```
+Safety: every file an outside agent sends is checked like the chat's own edits (paths stay inside the project, size limits, nothing that looks like a secret); log lines and evidence go through the secret filter before they reach any model or agent; a run waits at most 30 minutes for the developer's agent, then reports the failure as it is; a call to `/mcp` with an `Origin` header from another site is refused.
+Limits: the model-based repair needs `LLM_API_KEY`; without it option one still handles the cases the rules know and says so on the card; at most two model repairs per app per run; Launchpad cannot push to a repository it was not given write access to (the pull request needs the GitHub connection or a token that can write).
 
 ## Running this app on Liara
 `Dockerfile` and `liara.json` (docker platform, port 8000, a disk mounted at `/data`) are written but **not yet built or deployed**. Set `WEB_SECRET_KEY` and the LLM variables as environment variables on the app, and keep the `/data` disk, otherwise accounts and run history are lost on redeploy.

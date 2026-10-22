@@ -26,7 +26,9 @@ export interface CostLine { kind: "app" | "database" | "bucket" | "mail"; name: 
 export interface Cost { lines: CostLine[]; total_hourly_incl_vat: number; total_monthly_incl_vat: number }
 export interface ReadinessFinding { code: string; level: "info" | "warning"; file: string; line: number | null; params: Params }
 export interface FixView { code: string; kind: string; text: string; params: Params; cost_delta_hourly: number }
-export interface DiagnosisView { code: string; params: Params; summary: string; evidence: string[]; fixes: FixView[] }
+/** `category` says who has to change what: code = the developer's source (Sakoo patches its copy, or the developer's own agent fixes the repository), config = service settings on Liara, resources = a bigger plan (costs money), outside = nothing a redeploy can fix. */
+export type DiagnosisCategory = "code" | "config" | "resources" | "outside" | "unknown";
+export interface DiagnosisView { code: string; category?: DiagnosisCategory; params: Params; summary: string; evidence: string[]; fixes: FixView[] }
 // A request a run would make. `summary` is English; `op` + `params` are stable (create_app, create_database, set_env, upload_source, create_release, resize_app, update_port).
 export interface RequestView { method: string; path: string; summary: string; op: string; params: Record<string, string | number> }
 /** A thing the agent cannot do for the person. `code` says which (mail_dns | mail_dev_mode | bucket_endpoint_unconfirmed | wordpress_console); `records` are DNS records to add, when there are any. */
@@ -65,6 +67,10 @@ export type RunEvent =
   | Ev<"diagnosis", DiagnosisView & { app: string }>
   | Ev<"fix_applied", FixResult>
   | Ev<"fix_declined", FixResult>
+  | Ev<"fix_auto_applied", { code: string; kind: string; text: string; params: Params }>  // a change to the agent's copy applied without a card, because the person turned auto-fix on
+  | Ev<"handoff_waiting", { id: string; app: string; run_id: string; mcp_url: string; diagnosis: DiagnosisView; expires_at?: number | null }>  // the run waits for the developer's own agent (MCP) to fix the code
+  | Ev<"external_agent_call", { id: string; tool: string; ok: boolean; detail?: string }>  // the developer's agent used one of Sakoo's MCP tools; never contains file contents or secrets
+  | Ev<"handoff_received", { id: string; how: "fix" | "redeploy" | "sakoo"; files: string[]; message?: string }>  // the wait ended: the agent sent a fix, asked for a redeploy, or the person chose Sakoo instead
   | Ev<"patch_ready", { file: string; diff: string }>
   | Ev<"question", { id: string; text: string; options: string[]; code: string | null; params: Params; expires_at?: number | null }>
   | Ev<"answered", { id: string; value: string | null }>

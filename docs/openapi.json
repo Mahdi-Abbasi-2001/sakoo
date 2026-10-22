@@ -2210,6 +2210,228 @@
     }
    }
   },
+  "/api/settings/agent-tokens": {
+   "get": {
+    "summary": "List Agent Tokens",
+    "operationId": "list_agent_tokens_api_settings_agent_tokens_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AgentTokensOut"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "summary": "Create Agent Token",
+    "description": "A token for the developer's own coding agent. Shown once; only its digest is kept. It can read this person's projects and runs and send code fixes, nothing else.",
+    "operationId": "create_agent_token_api_settings_agent_tokens_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AgentTokenIn"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AgentTokenCreatedOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/settings/agent-tokens/{tid}": {
+   "delete": {
+    "summary": "Revoke Agent Token",
+    "operationId": "revoke_agent_token_api_settings_agent_tokens__tid__delete",
+    "parameters": [
+     {
+      "name": "tid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Tid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OkOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/code-fix-choice": {
+   "put": {
+    "summary": "Put Code Fix Choice",
+    "description": "Who fixes a code error in this project without asking each time: \"sakoo\", \"own_agent\", or null (ask).",
+    "operationId": "put_code_fix_choice_api_projects__pid__code_fix_choice_put",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/CodeFixChoiceIn"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CodeFixChoiceOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/runs/{rid}/handoff/sakoo": {
+   "post": {
+    "summary": "Handoff To Sakoo",
+    "description": "The run is waiting for the developer's own agent: stop waiting, Sakoo fixes the code itself.",
+    "operationId": "handoff_to_sakoo_api_runs__rid__handoff_sakoo_post",
+    "parameters": [
+     {
+      "name": "rid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Rid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/OkOut"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/projects/{pid}/fixes.patch": {
+   "get": {
+    "summary": "Download Fixes",
+    "description": "What the agent changed in the code to make it run, as a patch: apply it to the repository with `git apply`.",
+    "operationId": "download_fixes_api_projects__pid__fixes_patch_get",
+    "parameters": [
+     {
+      "name": "pid",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "integer",
+       "title": "Pid"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "422": {
+      "description": "Validation Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/api/projects/{pid}/pr": {
    "get": {
     "summary": "Pr Preview",
@@ -2667,6 +2889,113 @@
  },
  "components": {
   "schemas": {
+   "AgentTokenCreatedOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "created_at": {
+      "type": "number",
+      "title": "Created At"
+     },
+     "last_used_at": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Used At"
+     },
+     "token": {
+      "type": "string",
+      "title": "Token"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "created_at",
+     "token"
+    ],
+    "title": "AgentTokenCreatedOut"
+   },
+   "AgentTokenIn": {
+    "properties": {
+     "name": {
+      "type": "string",
+      "maxLength": 60,
+      "minLength": 1,
+      "title": "Name",
+      "default": "my coding agent"
+     }
+    },
+    "type": "object",
+    "title": "AgentTokenIn"
+   },
+   "AgentTokenOut": {
+    "properties": {
+     "id": {
+      "type": "integer",
+      "title": "Id"
+     },
+     "name": {
+      "type": "string",
+      "title": "Name"
+     },
+     "created_at": {
+      "type": "number",
+      "title": "Created At"
+     },
+     "last_used_at": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Last Used At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "created_at"
+    ],
+    "title": "AgentTokenOut"
+   },
+   "AgentTokensOut": {
+    "properties": {
+     "tokens": {
+      "items": {
+       "$ref": "#/components/schemas/AgentTokenOut"
+      },
+      "type": "array",
+      "title": "Tokens"
+     },
+     "mcp_url": {
+      "type": "string",
+      "title": "Mcp Url"
+     }
+    },
+    "type": "object",
+    "required": [
+     "tokens",
+     "mcp_url"
+    ],
+    "title": "AgentTokensOut"
+   },
    "AiHypothesis": {
     "properties": {
      "title": {
@@ -3239,6 +3568,40 @@
      "deleted"
     ],
     "title": "CleanupOut"
+   },
+   "CodeFixChoiceIn": {
+    "properties": {
+     "choice": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Choice"
+     }
+    },
+    "type": "object",
+    "title": "CodeFixChoiceIn"
+   },
+   "CodeFixChoiceOut": {
+    "properties": {
+     "code_fix_choice": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Code Fix Choice"
+     }
+    },
+    "type": "object",
+    "title": "CodeFixChoiceOut"
    },
    "ConfirmIn": {
     "properties": {
@@ -4958,6 +5321,17 @@
       "title": "Wordpress",
       "default": false
      },
+     "code_fix_choice": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Code Fix Choice"
+     },
      "created_at": {
       "type": "number",
       "title": "Created At"
@@ -5049,6 +5423,17 @@
       "type": "boolean",
       "title": "Wordpress",
       "default": false
+     },
+     "code_fix_choice": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Code Fix Choice"
      },
      "created_at": {
       "type": "number",
@@ -5851,6 +6236,17 @@
        }
       ],
       "title": "Language"
+     },
+     "auto_fix_code": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Auto Fix Code"
      }
     },
     "type": "object",
@@ -5889,6 +6285,11 @@
      "language": {
       "type": "string",
       "title": "Language"
+     },
+     "auto_fix_code": {
+      "type": "boolean",
+      "title": "Auto Fix Code",
+      "default": false
      }
     },
     "type": "object",

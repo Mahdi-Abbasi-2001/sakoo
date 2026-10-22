@@ -15,15 +15,17 @@ import { Architecture } from './parts/Architecture';
 import { Timeline } from './parts/Timeline';
 import { Details } from './parts/Details';
 import { Cleanup, FailBanner, ResultCard } from './parts/Results';
+import { AgentHandoff } from './parts/AgentHandoff';
 import type { RunViewState } from './types';
 import type { Conn } from './useRunStream';
 
-type Sit = 'stopped' | 'removed' | 'reading' | 'thinking' | 'waiting' | 'question' | 'secret' | 'fix' | 'working' | 'live' | 'preview' | 'cancelled' | 'failed' | 'buildfailed' | 'interrupted';
+type Sit = 'handoff' | 'stopped' | 'removed' | 'reading' | 'thinking' | 'waiting' | 'question' | 'secret' | 'fix' | 'working' | 'live' | 'preview' | 'cancelled' | 'failed' | 'buildfailed' | 'interrupted';
 export function situation(v: RunViewState): Sit {
   if (v.removed) return 'removed';
   if (v.status === 'interrupted') return 'interrupted';
   const o = v.openRequests[0];
   if (o) return o.kind === 'question' ? 'question' : o.kind === 'secret' ? 'secret' : o.confirmKind === 'plan' ? 'waiting' : 'fix';
+  if (!v.result && v.handoff?.state === 'waiting') return 'handoff';
   if (v.result) { if (v.result.ok) return v.result.dryRun ? 'preview' : 'live'; if (v.result.stopped === 'cancelled') return v.result.reasonCode === 'run_cancelled' ? 'stopped' : 'cancelled'; return v.diagnoses.length ? 'buildfailed' : 'failed'; }
   if (v.phase === 'deploy' || v.phase === 'confirm') return 'working';
   return v.phase === 'plan' ? 'thinking' : 'reading';
@@ -48,6 +50,9 @@ export function RunView({ view, conn, runId, projectId, projectName, onRespond, 
   const [stopAsk, setStopAsk] = useState(false); const [stopBusy, setStopBusy] = useState(false); const [stopErr, setStopErr] = useState<string | null>(null);
   const [askOpen, setAskOpen] = useState(true);   // a question or approval opens in the middle of the screen; it can be closed and opened again from the page
   useEffect(() => { setAskOpen(!!req); }, [req?.eventId]);   // eslint-disable-line react-hooks/exhaustive-deps
+  const handoff = !view.result && view.handoff?.state === 'waiting' ? view.handoff : null;   // the run waits for the person's own coding agent
+  const [handoffOpen, setHandoffOpen] = useState(true);
+  useEffect(() => { setHandoffOpen(true); }, [handoff?.id]);
   const left = useCountdown(req, limitSeconds, startedAt);
 
   const h1Ref = useRef<HTMLHeadingElement>(null);
@@ -92,6 +97,7 @@ export function RunView({ view, conn, runId, projectId, projectName, onRespond, 
             <div className="h-line">{req ? <button type="button" className={'badge badge-btn ' + AGENT_TONE[view.agent]} onClick={() => setAskOpen(true)}><Icon name={AGENT_ICON[view.agent]} />{t('agent.' + view.agent)}</button> : <span className={'badge ' + AGENT_TONE[view.agent]}><Icon name={AGENT_ICON[view.agent]} />{t('agent.' + view.agent)}</span>}
               <h1 className="h1" ref={h1Ref} tabIndex={-1}><span className="gt">{t(`run.h1.${sit}.a`)}</span> {t(`run.h1.${sit}.b`)}</h1></div>
               {req && !askOpen && <button type="button" className="btn btn-p btn-s ask-again" onClick={() => setAskOpen(true)}><Icon name="diamond" />{t('ask.open')}</button>}
+              {handoff && !req && !handoffOpen && <button type="button" className="btn btn-p btn-s ask-again" onClick={() => setHandoffOpen(true)}><Icon name="plug" />{t('ho.open')}</button>}
               {finished && !resultOpen && <button type="button" className="btn btn-s ask-again" onClick={() => setResultOpen(true)}><Icon name="diamond" />{t('res.show')}</button>}
               {going && !stopAsk && <button type="button" className="btn btn-s btn-d stop-run" onClick={() => setStopAsk(true)}><Icon name="x" />{t('stop.btn')}</button>}
               {going && stopAsk && <span className="stop-ask" role="alertdialog" aria-label={t('stop.btn')}><span className="hint">{t('stop.sure')}</span>
@@ -123,6 +129,7 @@ export function RunView({ view, conn, runId, projectId, projectName, onRespond, 
             </div>
             <FailBanner view={view} />
           </div></AskModal>}
+      {handoff && !req && handoffOpen && <AskModal label={t('ho.waiting')} onClose={() => setHandoffOpen(false)}><AgentHandoff h={handoff} runId={runId} demo={demo} /></AskModal>}
       {req && askOpen && <AskModal label={t('ap.waiting')} onClose={() => setAskOpen(false)}><ApprovalCard view={view} req={req} onRespond={onRespond} limitSeconds={limitSeconds} startedAt={startedAt} applyRef={applyRef} /></AskModal>}
       <Announcer view={view} projectName={projectName} limitSeconds={limitSeconds} />
     </div>

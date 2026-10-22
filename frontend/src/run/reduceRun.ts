@@ -1,5 +1,5 @@
 import type { RunEvent, PlanView, Phase } from '../api/events';
-import type { AgentState, Removal, Edge, LogLine, NodeState, OpenReq, PipeNode, Resource, RunStatusView, RunViewState, TestRow, TimelineItem } from './types';
+import type { AgentState, HandoffView, Removal, Edge, LogLine, NodeState, OpenReq, PipeNode, Resource, RunStatusView, RunViewState, TestRow, TimelineItem } from './types';
 
 /** The samples price a month as 720 hours (825,000 toman / 1,145.83 per hour = 720.0), so a price changed by a fix is turned into a month the same way. */
 export const HOURS_PER_MONTH = 720;
@@ -20,7 +20,7 @@ export function initialRunState(): RunViewState {
     events: 0, lastEventId: 0, t0: null, tLast: null, project: null, dryRun: null, release: false, started: false, status: 'running', agent: 'reading', phase: null,
     pipeline: emptyPipeline(), plan: null, how: null, howCode: null, howParams: {}, planNotes: [], readiness: [], wouldSend: [], network: null, networkNew: false, cost: null, usage: null, disks: [],
     resources: [], edges: [], money: { plannedHourly: null, plannedMonthly: null, currentHourly: 0, currentMonthly: 0, fixDeltaHourly: 0 }, removed: null,
-    timeline: [], logs: [], tests: [], openRequests: [], diagnoses: [], fixesApplied: [], fixesDeclined: [], healAttempts: 0, maxAttempts: null, urls: {}, created: null, result: null,
+    timeline: [], logs: [], tests: [], openRequests: [], handoff: null, diagnoses: [], fixesApplied: [], fixesDeclined: [], healAttempts: 0, maxAttempts: null, urls: {}, created: null, result: null,
   };
 }
 
@@ -64,6 +64,7 @@ export function reduceRun(events: readonly RunEvent[]): RunViewState {
   let finished = false;
   let lastDiagnosisApp: string | null = null;
   let attempt: number | null = null;
+  let autoNext = false;     // fix_auto_applied comes right before the fix_applied it belongs to
   const tl = S.timeline;
   const push = (it: TimelineItem) => { tl.push(it); };
   const setNode = (id: Pid, state: NodeState) => { node(id).state = state; };
@@ -188,6 +189,7 @@ export function reduceRun(events: readonly RunEvent[]): RunViewState {
         break;   // only name and provided are read; whatever else an event might carry is dropped here
       }
       case 'request_expired': {
+        if (d.request === 'handoff') { if (S.handoff && S.handoff.state === 'waiting') { S.handoff.state = 'expired'; for (const it of tl) if (it.type === 'handoff' && it.handoff === S.handoff) it.state = 'fail'; } break; }
         const i = open.findIndex((r) => r.id === d.id && (!d.request || r.kind.startsWith(String(d.request).slice(0, 4)) || String(d.request).includes(r.kind)));
         if (i >= 0) open.splice(i, 1);
         push({ key: 'e' + e.id, type: 'expired', state: 'fail', ts: e.ts, id: d.id, request: String(d.request ?? '') });
@@ -245,9 +247,23 @@ export function reduceRun(events: readonly RunEvent[]): RunViewState {
         const declined = e.kind === 'fix_declined'; const f = d as never as RunViewStateFix;
         (declined ? S.fixesDeclined : S.fixesApplied).push(f);
         if (!declined) { S.money.fixDeltaHourly += f.cost_delta_hourly ?? 0; if (node('deploy').state === 'fail') setNode('deploy', 'running'); }
-        push({ key: 'e' + e.id, type: 'fix', state: declined ? 'fail' : 'ok', ts: e.ts, fix: f, declined });
+        push({ key: 'e' + e.id, type: 'fix', state: declined ? 'fail' : 'ok', ts: e.ts, fix: f, declined, auto: autoNext && !declined });
+        autoNext = false;
         break;
       }
+      case 'handoff_waiting': {
+        const h: HandoffView = { id: d.id, app: d.app, runId: d.run_id, mcpUrl: d.mcp_url, diagnosis: d.diagnosis, expiresAt: d.expires_at ?? null, state: 'waiting', how: null, files: [], calls: [] };
+        S.handoff = h; setNode('deploy', 'waiting');
+        push({ key: 'e' + e.id, type: 'handoff', state: 'wait', ts: e.ts, handoff: h });
+        break;
+      }
+      case 'external_agent_call': if (S.handoff) S.handoff.calls.push({ tool: String(d.tool), ok: !!d.ok, ts: e.ts, detail: d.detail }); break;
+      case 'handoff_received': {
+        const h = S.handoff;
+        if (h) { h.state = 'received'; h.how = d.how; h.files = d.files ?? []; for (const it of tl) if (it.type === 'handoff' && it.handoff === h) it.state = 'ok'; if (node('deploy').state === 'waiting') setNode('deploy', 'running'); }
+        break;
+      }
+      case 'fix_auto_applied': autoNext = true; break;
       case 'patch_ready': push({ key: 'e' + e.id, type: 'patch', state: 'ok', ts: e.ts, file: d.file, diff: d.diff }); break;
       case 'agent_message': push({ key: 'e' + e.id, type: 'agent', state: 'ok', ts: e.ts, text: d.text }); break;
       case 'run_finished': {
@@ -291,11 +307,11 @@ export function reduceRun(events: readonly RunEvent[]): RunViewState {
   // status and the agent's presence, both derived and never stored
   let status: RunStatusView;
   if (finished) status = S.result!.ok ? 'succeeded' : (S.result!.stopped === 'cancelled' ? 'cancelled' : 'failed');
-  else if (open.length) status = 'waiting'; else status = 'running';
+  else if (open.length || S.handoff?.state === 'waiting') status = 'waiting'; else status = 'running';
   S.status = status;
   let agent: AgentState;
   if (finished) agent = S.result!.ok ? 'done' : (S.result!.stopped === 'cancelled' ? 'done' : 'failed');
-  else if (open.length) agent = 'waiting';
+  else if (open.length || S.handoff?.state === 'waiting') agent = 'waiting';
   else if (S.phase === 'deploy' || S.phase === 'confirm') agent = S.diagnoses.length && S.diagnoses.length > S.fixesApplied.length + S.fixesDeclined.length ? 'thinking' : 'working';
   else if (S.phase === 'plan') agent = 'thinking'; else agent = 'reading';
   S.agent = agent;

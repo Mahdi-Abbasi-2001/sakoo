@@ -4,6 +4,7 @@ import { useAuth } from '../auth/AuthContext';
 import { ConnectFlow } from './ConnectFlow';
 import { GithubConnect } from './GithubConnect';
 import { AlertSettings } from './AlertSettings';
+import { AgentSettings } from './AgentSettings';
 import { api } from '../api/client';
 import { useNavigate } from 'react-router-dom';
 import type { Lang } from '../api/types';
@@ -30,7 +31,7 @@ export function Settings() {
       <h1 className="title">{t('settings.title')}</h1>
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,180px) minmax(0,1fr)', gap: 40, marginTop: 28 }} className="settings-grid">
         <nav aria-label={t('settings.nav')} className="settings-nav stack" style={{ gap: 4, alignSelf: 'start', position: 'sticky', top: 80 }}>
-          {['liara', 'language', 'theme', 'account'].map((k) => <a key={k} href={'#s-' + k} className="nav-link">{t('settings.' + k)}</a>)}
+          {['liara', 'language', 'agent', 'theme', 'account'].map((k) => <a key={k} href={'#s-' + k} className="nav-link">{t('settings.' + k)}</a>)}
         </nav>
         <div className="stack" style={{ gap: 40 }}>
           <section id="s-liara" aria-labelledby="h-liara" className="stack">
@@ -44,6 +45,7 @@ export function Settings() {
             <Choice<Lang> value={lang} label={t('settings.language')} onPick={(l) => void pickLang(l)} options={[{ id: 'en', text: 'English', lang: 'en' }, { id: 'fa', text: 'فارسی', lang: 'fa' }]} />
           </section>
           <GithubConnect />
+          <AgentSettings />
           <AlertSettings />
           <section id="s-theme" aria-labelledby="h-theme" className="card pad stack">
             <h2 id="h-theme" style={{ fontSize: 20, lineHeight: '28px' }}>{t('settings.theme')}</h2>

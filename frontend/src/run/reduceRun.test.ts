@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { reduceRun, maskSecrets, applyRemoval } from './reduceRun';
 import { situation } from './RunView';
+import { KINDS } from './useRunStream';
 import { describeRun } from '../projects/describe';
 import type { RunEvent } from '../api/events';
 
@@ -301,5 +302,55 @@ describe('a release of new code on a running app (a run of its own)', () => {
       ev(14, 'run_finished', { ok: false, dry_run: false, release: true, stopped: 'error', reason_code: 'release_failed', reason_params: { state: 'FAILED', detail: 'FAILED' }, created: nothing, urls: {} })]);
     expect(failed.status).toBe('failed');
     expect(failed.result?.reasonCode).toBe('release_failed');
+  });
+});
+
+describe('a code error: the choice, the wait for the developer\'s own agent, and an automatic fix', () => {
+  const mk = (id: number, kind: string, data: Record<string, unknown>) => ({ id, ts: 1000 + id, kind, data }) as unknown as RunEvent;
+  const diag = { code: 'code_error', category: 'code', params: { location: 'server.js:3' }, summary: 'x', evidence: ['SyntaxError'], fixes: [] };
+  const head = [mk(1, 'run_started', { project: 'p', dry_run: false }), mk(2, 'phase_started', { phase: 'deploy' }), mk(3, 'diagnosis', { ...diag, app: 'a' }),
+    mk(4, 'question', { id: 'q1', text: 'Who?', options: ['sakoo', 'own_agent', 'sakoo_remember', 'own_agent_remember'], code: 'code_fix_choice', params: { location: 'server.js:3', sakoo_can_fix: true }, expires_at: 2000 })];
+  const waitingEv = mk(6, 'handoff_waiting', { id: 'h1', app: 'a', run_id: 'r1', mcp_url: 'https://x/mcp', diagnosis: diag, expires_at: 3000 });
+  it('the choice is an open question with its code and params', () => {
+    const s = reduceRun(head);
+    expect(s.openRequests[0]).toMatchObject({ kind: 'question', code: 'code_fix_choice', options: ['sakoo', 'own_agent', 'sakoo_remember', 'own_agent_remember'] });
+    expect(s.diagnoses[0].category).toBe('code');
+    expect(situation(s)).toBe('question');
+  });
+  it('after "own agent" the run waits, shows what the agent does, and carries on when it sends the fix', () => {
+    const waiting = reduceRun([...head, mk(5, 'answered', { id: 'q1', value: 'own_agent' }), waitingEv]);
+    expect(waiting.openRequests).toEqual([]);
+    expect(waiting.status).toBe('waiting'); expect(waiting.agent).toBe('waiting'); expect(situation(waiting)).toBe('handoff');
+    expect(waiting.handoff).toMatchObject({ state: 'waiting', mcpUrl: 'https://x/mcp', runId: 'r1', expiresAt: 3000 });
+    const during = reduceRun([...head, mk(5, 'answered', { id: 'q1', value: 'own_agent' }), waitingEv, mk(7, 'external_agent_call', { id: 'h1', tool: 'get_failure', ok: true }), mk(8, 'external_agent_call', { id: 'h1', tool: 'submit_fix', ok: false, detail: 'not a path' })]);
+    expect(during.handoff!.calls.map((c) => [c.tool, c.ok])).toEqual([['get_failure', true], ['submit_fix', false]]);
+    const got = reduceRun([...head, mk(5, 'answered', { id: 'q1', value: 'own_agent' }), waitingEv, mk(9, 'handoff_received', { id: 'h1', how: 'fix', files: ['server.js'] })]);
+    expect(got.handoff).toMatchObject({ state: 'received', how: 'fix', files: ['server.js'] });
+    expect(got.status).toBe('running'); expect(situation(got)).not.toBe('handoff');
+    const item = got.timeline.find((i) => i.type === 'handoff');
+    expect(item).toMatchObject({ type: 'handoff', state: 'ok' });
+  });
+  it('nobody answering ends the wait without a generic "expired" card', () => {
+    const s = reduceRun([...head, mk(5, 'answered', { id: 'q1', value: 'own_agent' }), waitingEv, mk(9, 'request_expired', { id: 'h1', request: 'handoff' })]);
+    expect(s.handoff!.state).toBe('expired');
+    expect(s.timeline.some((i) => i.type === 'expired')).toBe(false);
+    expect(s.timeline.find((i) => i.type === 'handoff')).toMatchObject({ state: 'fail' });
+  });
+  it('a finished run is never shown as waiting for an agent', () => {
+    const s = reduceRun([...head, mk(5, 'answered', { id: 'q1', value: 'own_agent' }), waitingEv, mk(9, 'run_finished', { ok: false, dry_run: false, stopped: 'error', reason_code: 'code_error', created: { apps: [], databases: [], database_ids: [] } })]);
+    expect(s.status).toBe('failed'); expect(situation(s)).not.toBe('handoff');
+  });
+  it('an automatic fix is marked on the fix that follows it', () => {
+    const s = reduceRun([...head.slice(0, 3), mk(5, 'fix_auto_applied', { code: 'repair_code', kind: 'code_changes', text: 't', params: {} }), mk(6, 'fix_applied', { fix: 't', note: 'ok', kind: 'code_changes', params: {}, cost_delta_hourly: 0, app: 'a', code: 'repair_code' }),
+      mk(7, 'fix_applied', { fix: 'u', note: 'ok', kind: 'set_port', params: {}, cost_delta_hourly: 0, app: 'a', code: 'set_port' })]);
+    expect(s.timeline.filter((i) => i.type === 'fix').map((i) => (i.type === 'fix' ? i.auto : null))).toEqual([true, false]);
+  });
+});
+
+describe('the live stream listens to every event kind the backend can send', () => {
+  it('KINDS equals the kinds declared in docs/events.d.ts', () => {
+    const ts = fs.readFileSync(path.resolve(__dirname, '../../../docs/events.d.ts'), 'utf8');
+    const declared = [...ts.matchAll(/Ev<"([a-z_]+)"/g)].map((m) => m[1]).sort();
+    expect([...KINDS].sort()).toEqual(declared);
   });
 });

@@ -60,6 +60,7 @@ SECRET_PATTERNS = [
     re.compile(r"\bAKIA[0-9A-Z]{16}\b"), re.compile(r"\bxox[abp]-[A-Za-z0-9\-]{10,}"), re.compile(r"\beyJ[A-Za-z0-9_\-]{15,}\.[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{5,}"),
     re.compile(r"(?i)\b\w*(?:password|passwd|secret|token|api[_-]?key|private[_-]?key)\w*\s*[=:]\s*['\"]?[^\s'\"]{6,}"),
     re.compile(r"://[^/\s:@]+:[^@\s/]{4,}@"),
+    re.compile(r"\bsk_sakoo_[A-Za-z0-9_\-]{16,}"),   # a personal access token for the developer's own coding agent (MCP)
 ]
 LONG_TOKEN = re.compile(r"\b(?=[A-Za-z0-9_\-]*\d)(?=[A-Za-z0-9_\-]*[A-Za-z])[A-Za-z0-9_\-]{32,}\b")
 

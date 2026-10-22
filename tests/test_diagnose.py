@@ -46,10 +46,43 @@ def test_missing_python_module_patches_requirements_only_when_it_exists():
     assert not fx(diagnose(Failure("app:a", "UNHEALTHY", runtime_lines=log), ctx()), "code_patch")
 
 
-def test_missing_node_module_is_manual_never_guessing_a_version():
-    d = diagnose(Failure("app:a", "UNHEALTHY", runtime_lines=["Error: Cannot find module 'express-rate-limit'"]), ctx())
-    assert d.code == "missing_node_module" and not fx(d, "code_patch") and "npm install express-rate-limit" in d.fixes[0].description
+def test_missing_node_module_patches_package_json_when_it_exists():
+    log = ["Error: Cannot find module 'express-rate-limit'"]
+    d = diagnose(Failure("app:a", "UNHEALTHY", runtime_lines=log), ctx(project_files={"package.json"}))
+    assert d.code == "missing_node_module" and d.category == "code"
+    assert fx(d, "code_patch")[0].params == {"file": "package.json", "add_dependency": "express-rate-limit"}
+    # without a package.json there is nothing to patch: honest manual advice
+    d = diagnose(Failure("app:a", "UNHEALTHY", runtime_lines=log), ctx())
+    assert not fx(d, "code_patch") and "npm install express-rate-limit" in d.fixes[0].description
     assert diagnose(Failure("a", runtime_lines=["Error: Cannot find module './config'"]), ctx()).code != "missing_node_module"
+    assert diagnose(Failure("a", runtime_lines=["Error: Cannot find module '@scope/pkg'"]), ctx(project_files={"package.json"})).fixes[0].params["add_dependency"] == "@scope/pkg"
+
+
+def test_categories_say_who_has_to_change_what():
+    cases = {"missing_python_module": "code", "db_localhost": "code", "code_error": "code", "missing_env": "config", "wrong_port": "config",
+             "build_timeout": "resources", "out_of_memory": "resources", "outbound_blocked": "outside"}
+    from liara_agent.heal.diagnose import Diagnosis
+    for code, cat in cases.items():
+        assert Diagnosis(code, "x").category == cat, code
+
+
+def test_a_startup_error_in_the_users_code_is_a_code_error_with_its_location():
+    log = ["/app/src/server.js:12", "  const port = config.port.toString();", "TypeError: Cannot read properties of undefined (reading 'toString')",
+           "    at Object.<anonymous> (/app/src/server.js:12:28)", "    at node:internal/modules/cjs/loader:1105:14"]
+    d = diagnose(Failure("app:a", "UNHEALTHY", runtime_lines=log), ctx())
+    assert d.code == "code_error" and d.category == "code" and d.params["location"] == "src/server.js:12"
+    assert any("TypeError" in e for e in d.evidence)
+
+
+def test_python_traceback_location_skips_library_frames():
+    log = ["Traceback (most recent call last):", '  File "/usr/lib/python3.11/site-packages/flask/app.py", line 10, in run', '  File "app.py", line 7, in <module>', "SyntaxError: invalid syntax"]
+    d = diagnose(Failure("app:a", "UNHEALTHY", runtime_lines=log), ctx())
+    assert d.code == "code_error" and d.params["location"] == "app.py:7"
+
+
+def test_a_known_cause_wins_over_the_generic_code_error():
+    d = diagnose(Failure("app:a", "UNHEALTHY", runtime_lines=["Error: unable to connect to database: mongodb://localhost:27017/x", "TypeError: foo"]), ctx(db_kinds=set()))
+    assert d.code == "db_localhost"
 
 
 @pytest.mark.parametrize("line,name", [
