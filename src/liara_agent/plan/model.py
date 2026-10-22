@@ -36,6 +36,7 @@ class AppSpec(BaseModel):
     env: dict[str, str] = Field(default_factory=dict)  # may reference $DB_<id>_HOST etc.
     disks: list[DiskSpec] = Field(default_factory=list)
     min_ram_gb: float = 0.5  # the smallest memory the app should get (a ready-made app's spec says how big it wants to be)
+    min_build_minutes: float = 0  # the build time the tier must allow; 0 = the cheapest tier is fine (set when the person accepts a bigger tier for a heavy build)
     role: str = "web"  # web | worker (no listening port)
     platform_config: dict = Field(default_factory=dict)  # sent with the release, e.g. {"version": "16"}; set from the project's own version pins
     evidence: list[Evidence] = Field(default_factory=list)

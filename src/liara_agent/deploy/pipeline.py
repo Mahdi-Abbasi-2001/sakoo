@@ -11,7 +11,7 @@ from liara_agent.deploy.network import decide_network
 from liara_agent.agent.planner import apply_env, make_plan
 from liara_agent.config import Settings
 from liara_agent.deploy.advice import add_advice
-from liara_agent.deploy.decisions import decide_mail, decide_storage, decide_wordpress, decide_wordpress_server
+from liara_agent.deploy.decisions import decide_build_tier, decide_mail, decide_storage, decide_wordpress, decide_wordpress_server
 from liara_agent.detect.wordpress import looks_like_wordpress
 from liara_agent.deploy.executor import Outcome, execute
 from liara_agent.detect.fingerprints import fingerprint
@@ -220,6 +220,7 @@ def run_deployment(path: str | Path, project: str, cat: LiveCatalog, cfg: Settin
     hints = {(h.kind, h.value) for h in fp.hints}
     decide_storage(plan, hints, set(fp.env_vars), cat, ask)
     decide_mail(plan, hints, set(fp.env_vars), cat, ask)
+    decide_build_tier(plan, path, cat, ask)
     add_advice(plan, path, hints)
     pin_platform_versions(plan, path)
     try:  # a name clash must stop the run BEFORE anything is created (databases are created before apps)

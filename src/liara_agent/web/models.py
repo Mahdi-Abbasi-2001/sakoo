@@ -606,6 +606,7 @@ class ChatOut(BaseModel):
 class AgentTokenOut(BaseModel):
     id: int
     name: str
+    can_deploy: bool = False   # false: reads and sends code fixes only; true: also starts deployments and answers their questions and approvals
     created_at: float
     last_used_at: float | None = None
 

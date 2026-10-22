@@ -4,12 +4,14 @@ Each is a question with stable option ids (the UI words them from `msg.question.
 anything is created. The code only ever adds to the plan what the person agreed to."""
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Callable
 
 from liara_agent.deploy.services import bucket_name, wire_mail_env, wire_storage_env
 from liara_agent.detect.wordpress import MANAGED_CHEAPEST_MONTHLY_INCL_VAT
 from liara_agent.domains import DomainError, normalize
-from liara_agent.liara.live import LiveCatalog
+from liara_agent.detect.buildweight import estimate_build
+from liara_agent.liara.live import TIER_LABELS, LiveCatalog
 from liara_agent.liara.pricing import (HOURS_PER_MONTH, VAT, choose_database_plan, choose_mail_plan, choose_project_plan, choose_storage_plan, database_cost, mail_cost,
                                        project_cost, storage_cost)
 from liara_agent.plan.model import DeployPlan, MailSpec, Note, StorageSpec
@@ -41,6 +43,36 @@ def decide_storage(plan: DeployPlan, hints: set[tuple[str, str]], detected: set[
     names = wire_storage_env(plan, spec, detected)
     plan.notes.append(Note(level="info", message=f"{plan.apps[0].name} reaches the bucket {spec.id} through {', '.join(sorted(names))}", code="storage_wired",
                            params={"bucket": spec.id, "names": sorted(names)}))
+
+
+BUILD_MARGIN = 1.25   # a build estimate is rough: ask for a tier that allows a quarter more than it
+
+
+def decide_build_tier(plan: DeployPlan, root: str | Path, cat: LiveCatalog, ask: Ask) -> None:
+    """A heavy JavaScript build does not finish within the cheapest tier's time limit, and a build that runs out of time still costs that whole time. When the estimate says so,
+    the person chooses before anything is created: the tier that fits (the agent's recommendation) or the cheapest one anyway. A failed build still gets the usual upgrade offer."""
+    for app in plan.apps:
+        if app.platform not in ("node", "docker") or app.image or app.min_build_minutes:
+            continue
+        est = estimate_build(Path(root) / app.path)
+        if not est:
+            continue
+        need = est.minutes * BUILD_MARGIN
+        try:
+            cheap = choose_project_plan(cat, min_ram_gb=app.min_ram_gb)
+            fit = choose_project_plan(cat, min_ram_gb=app.min_ram_gb, min_build_minutes=need)
+        except LookupError:
+            continue
+        cheap_limit, fit_limit = cat.project_bundles[cheap[0]][cheap[1]].build_timeout, cat.project_bundles[fit[0]][fit[1]].build_timeout
+        if cheap_limit >= need or fit == cheap:
+            continue
+        answer = ask(f"{app.name}: the build looks heavy (about {est.rounded()} minutes) and the cheapest tier stops builds after {cheap_limit:g} minutes. Use the {TIER_LABELS.get(fit[1], fit[1])} tier "
+                     f"(builds up to {fit_limit:g} minutes) or the cheapest anyway?", ["recommended", "smallest"], code="build_tier_choice",
+                     params={"app": app.name, "minutes": est.rounded(), "smallest_tier": TIER_LABELS.get(cheap[1], cheap[1]), "smallest_minutes": cheap_limit,
+                             "smallest_monthly": _month(project_cost(cat, *cheap)), "recommended_tier": TIER_LABELS.get(fit[1], fit[1]), "recommended_minutes": fit_limit,
+                             "recommended_monthly": _month(project_cost(cat, *fit))})
+        if answer != "smallest":
+            app.min_build_minutes = need
 
 
 def decide_mail(plan: DeployPlan, hints: set[tuple[str, str]], detected: set[str], cat: LiveCatalog, ask: Ask) -> None:

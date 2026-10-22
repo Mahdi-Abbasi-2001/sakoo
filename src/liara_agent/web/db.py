@@ -69,6 +69,8 @@ class DB:
         self._conn.executescript(CHAT_SCHEMA)
         self._conn.executescript(INCIDENT_SCHEMA)
         self._conn.executescript(TOKEN_SCHEMA)
+        if "scope" not in {r["name"] for r in self._conn.execute("PRAGMA table_info(api_tokens)")}:   # fix = read and send code fixes; deploy = also start runs and answer for the person
+            self._conn.execute("ALTER TABLE api_tokens ADD COLUMN scope TEXT NOT NULL DEFAULT 'fix'")
         if "team_name" not in {r["name"] for r in self._conn.execute("PRAGMA table_info(settings)")}:
             self._conn.execute("ALTER TABLE settings ADD COLUMN team_name TEXT NOT NULL DEFAULT ''")
         if "github_id" not in {r["name"] for r in self._conn.execute("PRAGMA table_info(users)")}:

@@ -101,7 +101,14 @@
     "msg.confirm.repair_code": "{summary} Apply this to a copy of your project? Your own files are not changed.",
     "msg.fix.handoff_fix": "Your own agent sent the fix",
     "msg.fix.handoff_redeploy": "Your own agent pushed the fix and the newest code was released",
-    "msg.warning.repair_gave_up": "No automatic code fix was found: {reason}"
+    "msg.warning.repair_gave_up": "No automatic code fix was found: {reason}",
+    "msg.question.build_tier_choice": "The build of {app} looks heavy (about {minutes} minutes), and the {smallest_tier} tier stops a build after {smallest_minutes} minutes. I recommend the {recommended_tier} tier: builds can run up to {recommended_minutes} minutes, about {recommended_monthly} toman a month including VAT. The cheapest ({smallest_tier}, about {smallest_monthly} toman a month) may run out of time. Which one?",
+    "msg.option.build_tier_choice.recommended": "Use the tier you recommend",
+    "msg.option.build_tier_choice.smallest": "Stay on the cheapest tier anyway",
+    "agt.deploy": "Let this agent deploy for me",
+    "agt.deploy_d": "It can add a project, start a deployment, answer its questions, supply secrets and approve the plan, including its price. It can never delete anything. Leave it off and the token only reads and fixes code.",
+    "agt.perm.deploy": "can deploy",
+    "agt.perm.fix": "fixes code"
   },
   "fa": {
     "msg.confirm.create_resources": "{apps_phrase} و {databases_phrase} روی حساب لیارای شما ساخته شود؟ حدود {hourly} تومان در ساعت ({monthly} در ماه) با مالیات.",
@@ -396,6 +403,13 @@
     "msg.confirm.repair_code": "{summary} این تغییر روی یک کپی از پروژه‌ی شما اعمال شود؟ فایل‌های خودتان تغییر نمی‌کنند.",
     "msg.fix.handoff_fix": "ایجنت خودتان اصلاح را فرستاد",
     "msg.fix.handoff_redeploy": "ایجنت خودتان اصلاح را پوش کرد و آخرین کد ریلیز شد",
-    "msg.warning.repair_gave_up": "راه‌حل خودکاری برای کد پیدا نشد: {reason}"
+    "msg.warning.repair_gave_up": "راه‌حل خودکاری برای کد پیدا نشد: {reason}",
+    "msg.question.build_tier_choice": "بیلد {app} سنگین به نظر می‌رسد (حدود {minutes} دقیقه) و پلن {smallest_tier} بیلد را بعد از {smallest_minutes} دقیقه قطع می‌کند. پلن {recommended_tier} را پیشنهاد می‌کنم: بیلد تا {recommended_minutes} دقیقه وقت دارد، با مالیات حدود {recommended_monthly} تومان در ماه. ارزان‌ترین گزینه ({smallest_tier}، حدود {smallest_monthly} تومان در ماه) ممکن است وسط بیلد تمام شود. کدام را انتخاب می‌کنید؟",
+    "msg.option.build_tier_choice.recommended": "همان پلنی که پیشنهاد می‌کنی",
+    "msg.option.build_tier_choice.smallest": "با این حال ارزان‌ترین پلن باشد",
+    "agt.deploy": "این ایجنت برای من دیپلوی هم بکند",
+    "agt.deploy_d": "می‌تواند پروژه اضافه کند، دیپلوی را شروع کند، به سؤال‌هایش جواب بدهد، مقدار رمزها را بدهد و پلن را با قیمتش تأیید کند. هیچ‌وقت نمی‌تواند چیزی را حذف کند. اگر خاموش بماند، توکن فقط می‌خواند و کد را درست می‌کند.",
+    "agt.perm.deploy": "می‌تواند دیپلوی کند",
+    "agt.perm.fix": "کد را درست می‌کند"
   }
 }

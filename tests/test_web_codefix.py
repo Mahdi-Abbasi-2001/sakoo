@@ -29,7 +29,7 @@ def rpc(c, token, method, params=None, id_=1, headers=None):
     return c.post("/mcp", headers=h, json={"jsonrpc": "2.0", "id": id_, "method": method, "params": params or {}})
 
 
-def tool(c, token, name, **args):
+def tool(c, token, name, /, **args):
     r = rpc(c, token, "tools/call", {"name": name, "arguments": args})
     assert r.status_code == 200, r.text
     body = r.json()["result"]
@@ -63,7 +63,10 @@ def test_a_code_error_asks_who_fixes_it_and_the_developers_agent_can_fix_it_over
 
         assert rpc(c, token, "initialize", {"protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "t", "version": "1"}}).status_code == 200
         names = {t["name"] for t in rpc(c, token, "tools/list", id_=2).json()["result"]["tools"]}
-        assert names == {"list_projects", "get_status", "get_failure", "get_logs", "submit_fix", "redeploy", "wait_for_run"}   # nothing that deletes or spends
+        assert {"list_projects", "get_status", "get_failure", "get_logs", "get_pending", "submit_fix", "redeploy", "wait_for_run"} <= names
+        assert not any(n.startswith(("delete", "remove", "set_")) for n in names)   # nothing that deletes
+        err, refused = tool(c, token, "start_deploy", project=str(pid))
+        assert err and "deploy permission" in refused    # a default token fixes code, it does not start or approve anything
         err, failure = tool(c, token, "get_failure", project_or_run=rid)
         assert not err and failure["waiting_for_code_fix"] and failure["category"] == "code" and failure["cause"] == "code_error" and failure["location"] == "server.js:3"
         assert any("SyntaxError" in ln for ln in failure["log_tail"]) and "submit_fix" in failure["next"]
@@ -138,3 +141,75 @@ def test_the_mcp_address_is_https_on_a_secure_server_and_follows_the_public_url(
             register(c)
             c.get("/api/settings")   # the server learns the address people use from a request
             assert c.get("/api/settings/agent-tokens").json()["mcp_url"] == expect
+
+
+def deploy_app(tmp_path, scenario=None):
+    fake = FakeLiara(scenario or [READY, READY, READY])
+    settings = WebSettings(data_dir=tmp_path / "data", secret_key="test-secret", request_timeout_seconds=5, static_dir=tmp_path / "no-frontend")
+    return create_app(settings, FakeDeps(fake, None, None), Settings(liara_api_token="", llm_api_key="")), fake
+
+
+def test_an_agent_with_deploy_permission_goes_from_a_project_to_a_running_app_over_mcp(tmp_path):
+    app, fake = deploy_app(tmp_path)
+    with TestClient(app, headers=ORIGIN) as c:
+        register(c)
+        connect(c)
+        pid = new_project(c)
+        fix_only = c.post("/api/settings/agent-tokens", json={"name": "reader"}).json()
+        made = c.post("/api/settings/agent-tokens", json={"name": "deployer", "can_deploy": True}).json()
+        assert fix_only["can_deploy"] is False and made["can_deploy"] is True
+        assert {t["name"]: t["can_deploy"] for t in c.get("/api/settings/agent-tokens").json()["tokens"]} == {"reader": False, "deployer": True}
+        token = made["token"]
+
+        err, _ = tool(c, fix_only["token"], "start_deploy", project=str(pid))
+        assert err                                                       # the reading token cannot start a run
+        err, started = tool(c, token, "start_deploy", project=str(pid))
+        assert not err and started["run_id"]
+        rid = started["run_id"]
+        err, waited = tool(c, token, "wait_for_run", run_id=rid, timeout_seconds=20)
+        assert not err and waited["open_requests"] == 1 and "get_pending" in waited["next"]
+        err, pending = tool(c, token, "get_pending", run_id=rid)
+        assert not err and pending["plan"]["apps"] and pending["plan"]["cost"]["total_monthly_incl_vat"]
+        ask = pending["requests"][0]
+        assert ask["type"] == "approval" and ask["monthly_toman_incl_vat"] == pending["plan"]["cost"]["total_monthly_incl_vat"]
+        # the person's reading token can look, but not answer
+        err, seen = tool(c, fix_only["token"], "get_pending", run_id=rid)
+        assert not err and "wait for the person" in seen["next"]
+        err, _ = tool(c, fix_only["token"], "approve", run_id=rid, request_id=ask["request_id"], approve=True, expected_monthly_toman=ask["monthly_toman_incl_vat"])
+        assert err
+        # spending needs the price the agent actually read
+        err, text = tool(c, token, "approve", run_id=rid, request_id=ask["request_id"], approve=True)
+        assert err and "expected_monthly_toman" in text
+        err, text = tool(c, token, "approve", run_id=rid, request_id=ask["request_id"], approve=True, expected_monthly_toman=ask["monthly_toman_incl_vat"] * 3)
+        assert err and "not" in text
+        err, ok = tool(c, token, "approve", run_id=rid, request_id=ask["request_id"], approve=True, expected_monthly_toman=ask["monthly_toman_incl_vat"])
+        assert not err and ok["accepted"]
+        err, done = tool(c, token, "wait_for_run", run_id=rid, timeout_seconds=30)
+        assert not err and done["status"] == "succeeded" and done["last_check"]["ok"] and done["urls"]
+        err, status = tool(c, token, "get_status", project=str(pid))
+        assert not err and status["ok"] and status["urls"]
+        assert token not in json.dumps(c.get(f"/api/runs/{rid}/events").json())
+
+
+def test_the_agent_can_decline_and_cancel_and_a_stale_request_is_refused(tmp_path):
+    app, _ = deploy_app(tmp_path)
+    with TestClient(app, headers=ORIGIN) as c:
+        register(c)
+        connect(c)
+        pid = new_project(c)
+        token = c.post("/api/settings/agent-tokens", json={"name": "d", "can_deploy": True}).json()["token"]
+        rid = tool(c, token, "start_deploy", project=str(pid))[1]["run_id"]
+        tool(c, token, "wait_for_run", run_id=rid, timeout_seconds=20)
+        ask = tool(c, token, "get_pending", run_id=rid)[1]["requests"][0]
+        err, no = tool(c, token, "approve", run_id=rid, request_id=ask["request_id"], approve=False)
+        assert not err and no["accepted"] is False
+        err, done = tool(c, token, "wait_for_run", run_id=rid, timeout_seconds=20)
+        assert done["status"] in ("failed", "cancelled")                    # declining stops the run before anything is created
+        err, text = tool(c, token, "approve", run_id=rid, request_id=ask["request_id"], approve=True, expected_monthly_toman=1)
+        assert err and "no longer" in text or "not waiting" in text
+        err, text = tool(c, token, "start_deploy", project="nobody")
+        assert err and "no project" in text
+        err, text = tool(c, token, "create_project", name="x", git_url="https://not-allowed.example/x.git")
+        assert err                                                          # the same source checks as the web form
+        err, apps = tool(c, token, "list_ready_made_apps")
+        assert not err and isinstance(apps["apps"], list)

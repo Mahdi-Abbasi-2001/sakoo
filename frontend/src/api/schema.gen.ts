@@ -3,6 +3,7 @@
 export interface AgentTokenCreatedOut {
   id: number;
   name: string;
+  can_deploy?: boolean;
   created_at: number;
   last_used_at?: number | null;
   token: string;
@@ -10,11 +11,13 @@ export interface AgentTokenCreatedOut {
 
 export interface AgentTokenIn {
   name?: string;
+  can_deploy?: boolean;
 }
 
 export interface AgentTokenOut {
   id: number;
   name: string;
+  can_deploy?: boolean;
   created_at: number;
   last_used_at?: number | null;
 }

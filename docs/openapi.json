@@ -2229,7 +2229,7 @@
    },
    "post": {
     "summary": "Create Agent Token",
-    "description": "A token for the developer's own coding agent. Shown once; only its digest is kept. It can read this person's projects and runs and send code fixes, nothing else.",
+    "description": "A token for the developer's own coding agent. Shown once; only its digest is kept. By default it can read this person's projects and runs and send code fixes; with can_deploy it can also start deployments and answer for the person.",
     "operationId": "create_agent_token_api_settings_agent_tokens_post",
     "requestBody": {
      "content": {
@@ -2899,6 +2899,11 @@
       "type": "string",
       "title": "Name"
      },
+     "can_deploy": {
+      "type": "boolean",
+      "title": "Can Deploy",
+      "default": false
+     },
      "created_at": {
       "type": "number",
       "title": "Created At"
@@ -2936,6 +2941,11 @@
       "minLength": 1,
       "title": "Name",
       "default": "my coding agent"
+     },
+     "can_deploy": {
+      "type": "boolean",
+      "title": "Can Deploy",
+      "default": false
      }
     },
     "type": "object",
@@ -2950,6 +2960,11 @@
      "name": {
       "type": "string",
       "title": "Name"
+     },
+     "can_deploy": {
+      "type": "boolean",
+      "title": "Can Deploy",
+      "default": false
      },
      "created_at": {
       "type": "number",

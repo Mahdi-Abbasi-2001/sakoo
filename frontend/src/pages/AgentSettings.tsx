@@ -7,12 +7,13 @@ import { errorText } from '../i18n/errors';
 import { when } from '../lib/time';
 
 /** The person's own coding agent (Claude Code, Cursor...) and how much it, and Sakoo, may do about errors in the code.
- *  A token is shown once, when it is made. It can read this person's projects and runs and send code fixes; it cannot delete anything or spend money. */
+ *  A token is shown once, when it is made. By default it can read this person's projects and runs and send code fixes; with the deploy permission it can also start deployments and answer for the person. It can never delete anything. */
 export function AgentSettings() {
   const { t, lang } = useI18n();
   const [list, setList] = useState<G.AgentTokensOut | null>(null);
   const [auto, setAuto] = useState(false);
   const [name, setName] = useState('');
+  const [canDeploy, setCanDeploy] = useState(false);
   const [fresh, setFresh] = useState<G.AgentTokenCreatedOut | null>(null);
   const [copied, setCopied] = useState('');
   const [busy, setBusy] = useState(false); const [err, setErr] = useState<string | null>(null);
@@ -37,13 +38,17 @@ export function AgentSettings() {
         {url && <p className="hint">{t('agt.url')} <span className="code ltr" dir="ltr">{url}</span> <button type="button" className="btn btn-s" onClick={() => void copy('url', url)}>{copied === 'url' ? t('log.copied') : t('live.copy')}</button></p>}
         {list && list.tokens.length === 0 && <p className="hint">{t('agt.none')}</p>}
         {list?.tokens.map((k) => (
-          <div className="rw" key={k.id}><span><b>{k.name}</b> <span className="hint">{t('agt.made', { when: when(lang, k.created_at) })}{k.last_used_at ? ' · ' + t('agt.used', { when: when(lang, k.last_used_at) }) : ''}</span></span>
+          <div className="rw" key={k.id}><span><b>{k.name}</b> <span className="tag">{t(k.can_deploy ? 'agt.perm.deploy' : 'agt.perm.fix')}</span> <span className="hint">{t('agt.made', { when: when(lang, k.created_at) })}{k.last_used_at ? ' · ' + t('agt.used', { when: when(lang, k.last_used_at) }) : ''}</span></span>
             <button type="button" className="btn btn-s btn-d" disabled={busy} onClick={() => void run(async () => { await api.revokeAgentToken(k.id); load(); })}>{t('agt.revoke')}</button></div>
         ))}
-        <form className="row" style={{ gap: 10, alignItems: 'flex-end' }} onSubmit={(e) => { e.preventDefault(); void run(async () => { setFresh(await api.createAgentToken(name.trim() || t('ho.token_name'))); setName(''); load(); }); }}>
+        <form className="row" style={{ gap: 10, alignItems: 'flex-end' }} onSubmit={(e) => { e.preventDefault(); void run(async () => { setFresh(await api.createAgentToken(name.trim() || t('ho.token_name'), canDeploy)); setName(''); setCanDeploy(false); load(); }); }}>
           <div className="field" style={{ flex: 1, minWidth: 220 }}><label className="lbl" htmlFor="agt-name">{t('agt.name')}</label>
             <input id="agt-name" className="inp" value={name} maxLength={60} onChange={(e) => setName(e.target.value)} placeholder={t('ho.token_name')} autoComplete="off" /></div>
           <button type="submit" className="btn btn-p" disabled={busy}>{t('agt.make')}</button>
+          <label className="row agt-auto" style={{ gap: 10, alignItems: 'flex-start', flexWrap: 'nowrap', flexBasis: '100%' }}>
+            <input type="checkbox" checked={canDeploy} disabled={busy} onChange={(e) => setCanDeploy(e.target.checked)} />
+            <span><b>{t('agt.deploy')}</b><br /><span className="hint">{t('agt.deploy_d')}</span></span>
+          </label>
         </form>
       </div>
 

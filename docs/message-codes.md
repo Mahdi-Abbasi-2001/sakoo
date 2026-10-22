@@ -181,6 +181,7 @@ Questions (`question.code`; options are stable ids, worded from `msg.option.<cod
 |---|---|---|
 | `storage_choice` | `create_bucket`, `keep_current` | `monthly` (toman incl. VAT) |
 | `mail_choice` | `liara_mail`, `own_smtp`, `skip` | `monthly` (toman incl. VAT) |
+| `build_tier_choice` | `recommended`, `smallest` | `app`, `minutes` (estimated build), `smallest_tier`, `smallest_minutes` (its build limit), `smallest_monthly`, `recommended_tier`, `recommended_minutes`, `recommended_monthly` (toman incl. VAT) |
 | `mail_domain` | none (free text: a domain the person owns) | none |
 | `wordpress_choice` | `wordpress_app`, `generic_php`, `managed_console` | `managed`, `generic`, `app` (monthly, incl. VAT; `app` = Liara's WordPress image through the API), `marker` (the file that says WordPress) |
 | `wordpress_server` | `openlitespeed`, `apache` | `openlitespeed`, `apache` (monthly, incl. VAT), `htaccess` (the project has a .htaccess) |

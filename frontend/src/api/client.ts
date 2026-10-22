@@ -104,7 +104,7 @@ export const api = {
   wpUpload: (id: number, b: G.WpUploadIn) => call<G.WpJobOut>(R('wp_upload_api_projects__pid__wordpress_upload_post'), { args: { pid: id }, json: b }),
   wpStatus: (id: number) => call<G.WpJobOut>(R('wp_upload_status_api_projects__pid__wordpress_upload_get'), { args: { pid: id } }),
   agentTokens: () => call<G.AgentTokensOut>(R('list_agent_tokens_api_settings_agent_tokens_get')),
-  createAgentToken: (name: string) => call<G.AgentTokenCreatedOut>(R('create_agent_token_api_settings_agent_tokens_post'), { json: { name } }),
+  createAgentToken: (name: string, can_deploy = false) => call<G.AgentTokenCreatedOut>(R('create_agent_token_api_settings_agent_tokens_post'), { json: { name, can_deploy } }),
   revokeAgentToken: (id: number) => call<G.OkOut>(R('revoke_agent_token_api_settings_agent_tokens__tid__delete'), { args: { tid: id } }),
   setCodeFixChoice: (id: number, choice: 'sakoo' | 'own_agent' | null) => call<G.CodeFixChoiceOut>(R('put_code_fix_choice_api_projects__pid__code_fix_choice_put'), { args: { pid: id }, json: { choice } }),
   handoffToSakoo: (runId: string) => call<G.OkOut>(R('handoff_to_sakoo_api_runs__rid__handoff_sakoo_post'), { args: { rid: runId } }),

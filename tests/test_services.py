@@ -426,3 +426,41 @@ def test_pipeline_a_wordpress_site_can_still_take_the_generic_route(tmp_path):
     proj = _project(tmp_path, {}, wordpress=True)
     res, run, _, _ = _run(tmp_path, proj, Services(), ["generic_php"])
     assert res.ok and "plan_ready" in [e.kind for e in run.events]
+
+
+def _node_app(tmp_path, scripts, deps):
+    import json as _json
+    (tmp_path / "package.json").write_text(_json.dumps({"scripts": scripts, "dependencies": {f"d{i}": "1" for i in range(deps)}}))
+    return DeployPlan(apps=[AppSpec(name="shop", platform="node", port=3000)])
+
+
+def test_a_heavy_build_asks_before_the_cheapest_tier_and_remembers_the_answer(tmp_path):
+    from liara_agent.deploy.decisions import decide_build_tier
+    from liara_agent.liara.pricing import estimate_plan
+    plan = _node_app(tmp_path, {"build": "webpack --config a.js && webpack --config b.js"}, 35)
+    ask = asker(["recommended"])
+    decide_build_tier(plan, tmp_path, CAT, ask)
+    code, options, params = ask.seen[0]
+    assert code == "build_tier_choice" and options == ["recommended", "smallest"]
+    assert params["smallest_minutes"] == 5 and params["recommended_minutes"] >= 15 and params["recommended_monthly"] > params["smallest_monthly"]
+    assert plan.apps[0].min_build_minutes > 5
+    line = estimate_plan(CAT, plan)[0]
+    assert CAT.project_bundles[line.plan][line.tier].build_timeout >= 15   # the price card and the app that gets created use the tier that fits
+
+
+def test_the_person_can_still_pick_the_cheapest_tier(tmp_path):
+    from liara_agent.deploy.decisions import decide_build_tier
+    from liara_agent.liara.pricing import estimate_plan
+    plan = _node_app(tmp_path, {"build": "webpack --config a.js && webpack --config b.js"}, 35)
+    decide_build_tier(plan, tmp_path, CAT, asker(["smallest"]))
+    assert plan.apps[0].min_build_minutes == 0
+    line = estimate_plan(CAT, plan)[0]
+    assert CAT.project_bundles[line.plan][line.tier].build_timeout == 5
+
+
+def test_a_light_project_is_not_asked(tmp_path):
+    from liara_agent.deploy.decisions import decide_build_tier
+    ask = asker([])
+    decide_build_tier(_node_app(tmp_path, {"start": "node server.js"}, 8), tmp_path, CAT, ask)
+    decide_build_tier(DeployPlan(apps=[AppSpec(name="py", platform="python", port=8000)]), tmp_path, CAT, ask)
+    assert ask.seen == []

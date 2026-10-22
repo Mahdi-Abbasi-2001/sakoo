@@ -107,7 +107,7 @@ def execute(plan: DeployPlan, cat: LiveCatalog, client: LiaraClient, project_roo
         emit("step_started", {"step": step})
         if not client.dry_run and client.app_exists(a.name):
             return Outcome(False, step, f"an app named {a.name!r} already exists; refusing to reuse it", reason_code="name_taken", reason_params={"name": a.name})
-        plan_id, tier = choose_project_plan(cat, min_ram_gb=a.min_ram_gb)
+        plan_id, tier = choose_project_plan(cat, min_ram_gb=a.min_ram_gb, min_build_minutes=a.min_build_minutes)
         for attempt in range(4):   # app names are shared by every Liara user: when one is taken, a short random ending makes it free
             try:
                 client.create_app(a.name, a.platform, plan_id, tier, network_id)

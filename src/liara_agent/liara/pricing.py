@@ -117,7 +117,7 @@ def estimate_plan(cat: LiveCatalog, plan, *, min_build_minutes: float = 0) -> li
     """Cheapest sensible plan per resource. Defaults to the basic tier; databases and big builds may need more."""
     lines: list[PlanCostLine] = []
     for app in plan.apps:
-        pid, tier = choose_project_plan(cat, min_ram_gb=app.min_ram_gb, min_build_minutes=min_build_minutes)
+        pid, tier = choose_project_plan(cat, min_ram_gb=app.min_ram_gb, min_build_minutes=max(min_build_minutes, getattr(app, "min_build_minutes", 0)))
         lines.append(PlanCostLine("app", app.name, pid, tier, project_cost(cat, pid, tier)))
     for db in plan.databases:
         pid, tier = choose_database_plan(cat, db.kind, min_ram_gb=db.min_ram_gb)

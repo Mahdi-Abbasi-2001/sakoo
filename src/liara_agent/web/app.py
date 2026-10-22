@@ -85,6 +85,7 @@ class SettingsIn(BaseModel):
 
 class AgentTokenIn(BaseModel):
     name: str = Field(default="my coding agent", min_length=1, max_length=60)
+    can_deploy: bool = False   # also start deployments and answer their questions and approvals (including the approval that spends money)
 
 
 class CodeFixChoiceIn(BaseModel):
@@ -1347,18 +1348,19 @@ def create_app(settings: WebSettings | None = None, deps=None, agent_settings: S
 
     @app.get("/api/settings/agent-tokens", response_model=m.AgentTokensOut)
     def list_agent_tokens(user=Depends(current_user)):
-        rows = db.q("SELECT id,name,created_at,last_used_at FROM api_tokens WHERE user_id=? AND revoked_at IS NULL ORDER BY id DESC", (user["id"],))
-        return {"tokens": [dict(r) for r in rows], "mcp_url": mcp_base()}
+        rows = db.q("SELECT id,name,created_at,last_used_at,scope FROM api_tokens WHERE user_id=? AND revoked_at IS NULL ORDER BY id DESC", (user["id"],))
+        return {"tokens": [{**{k: r[k] for k in ("id", "name", "created_at", "last_used_at")}, "can_deploy": r["scope"] == "deploy"} for r in rows], "mcp_url": mcp_base()}
 
     @app.post("/api/settings/agent-tokens", status_code=201, response_model=m.AgentTokenCreatedOut)
     def create_agent_token(body: AgentTokenIn, user=Depends(current_user)):
-        """A token for the developer's own coding agent. Shown once; only its digest is kept. It can read this person's projects and runs and send code fixes, nothing else."""
+        """A token for the developer's own coding agent. Shown once; only its digest is kept. By default it can read this person's projects and runs and send code fixes; with can_deploy it can also start deployments and answer for the person."""
         if db.one("SELECT COUNT(*) n FROM api_tokens WHERE user_id=? AND revoked_at IS NULL", (user["id"],))["n"] >= 10:
             raise err(409, "too_many_tokens", "revoke a token you no longer use first")
         token = "sk_sakoo_" + secrets.token_urlsafe(32)
         now = time.time()
-        tid = db.run("INSERT INTO api_tokens(user_id,name,digest,created_at) VALUES (?,?,?,?)", (user["id"], body.name.strip() or "my coding agent", token_digest(token), now))
-        return {"id": tid, "name": body.name.strip() or "my coding agent", "created_at": now, "last_used_at": None, "token": token}
+        tid = db.run("INSERT INTO api_tokens(user_id,name,digest,created_at,scope) VALUES (?,?,?,?,?)",
+                     (user["id"], body.name.strip() or "my coding agent", token_digest(token), now, "deploy" if body.can_deploy else "fix"))
+        return {"id": tid, "name": body.name.strip() or "my coding agent", "created_at": now, "last_used_at": None, "can_deploy": body.can_deploy, "token": token}
 
     @app.delete("/api/settings/agent-tokens/{tid}", response_model=m.OkOut)
     def revoke_agent_token(tid: int, user=Depends(current_user)):
@@ -1418,7 +1420,32 @@ def create_app(settings: WebSettings | None = None, deps=None, agent_settings: S
             raise LookupError("this project has no running app yet; use kind=build for the build log")
         token, team = token_of(uid)
         return manager.deps.client(token, team, False, journal).runtime_logs(name)
-    app.state.mcp = mcp_endpoint.mount(app, mcp_endpoint.McpDeps(db, manager, mcp_base, runtime_logs_for), settings.origins)
+    def said(e: HTTPException) -> str:
+        return str(e.detail.get("message") if isinstance(e.detail, dict) else e.detail)
+
+    async def mcp_create_git(uid: int, name: str, git_url: str, branch: str) -> dict:
+        try:   # the same code as the web form; a private repository is cloned with the account's GitHub login, never with a token that came through MCP
+            return await create_project(name=name, git_url=git_url, git_token="", git_branch=branch, file=None, user={"id": uid})
+        except HTTPException as e:
+            raise ValueError(said(e)) from e
+
+    def mcp_create_ready_made(uid: int, ready_made: str, name: str) -> dict:
+        try:
+            return create_oneclick_project(OneClickIn(app=ready_made, name=name), {"id": uid})
+        except HTTPException as e:
+            raise ValueError(said(e)) from e
+
+    def mcp_ready_made_list(uid: int) -> list[dict]:
+        return [a for a in oneclick_list({"id": uid})["apps"] if not a["needs_vm"]]
+
+    def mcp_start_run(uid: int, pid: int, mode: str) -> str:
+        try:
+            return start_run(pid, RunIn(mode=mode), {"id": uid})["id"]
+        except HTTPException as e:
+            raise ValueError(said(e)) from e
+
+    app.state.mcp = mcp_endpoint.mount(app, mcp_endpoint.McpDeps(db, manager, mcp_base, runtime_logs_for, create_git=mcp_create_git, create_ready_made=mcp_create_ready_made,
+                                                                ready_made_list=mcp_ready_made_list, start_run=mcp_start_run), settings.origins)
 
     # -- pull request with the agent's fixes ------------------------------------------------------------------------------
     def pr_material(user: dict, pid: int):
