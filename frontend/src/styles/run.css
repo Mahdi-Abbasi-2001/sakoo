@@ -69,7 +69,14 @@ html[dir=rtl] .ap-name{text-align:right}
 .url{flex:1;min-width:0;overflow-wrap:anywhere;direction:ltr;text-align:start;font-size:15px}
 .ic.big{width:22px;height:22px}.ic.warn{color:var(--warn)}
 .banner{display:flex;gap:14px;align-items:flex-start;padding:14px 18px;border-radius:var(--r-card);border:1px solid color-mix(in srgb,var(--warn) 45%,var(--line));background:var(--raised)}
-.banner svg{color:var(--warn);margin-top:2px}
+.banner svg{color:var(--warn);margin-top:2px;flex-shrink:0}
+.banner>div{flex:1;min-width:0;overflow-wrap:anywhere}
+.banner .link{display:inline-flex;align-items:center;font-weight:700}
+@media (max-width:640px){
+  .banner{gap:12px;padding:12px 14px}
+  .banner>div>b{display:block}
+  .banner .link{display:flex;width:fit-content;margin-top:2px;padding-inline:2px}
+}
 
 /* body columns */
 .cols{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;align-items:start}
