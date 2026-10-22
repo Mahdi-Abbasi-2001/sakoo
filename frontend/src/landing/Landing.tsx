@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
-import { Mark } from '../components/Icon';
+import { Icon, Mark } from '../components/Icon';
 import { AGENT_IDEAS, keepWish } from '../components/AgentPrompt';
 import { LangToggle, ThemeToggle } from '../components/Shell';
 import { useI18n, usePageTitle } from '../i18n';
@@ -90,8 +90,9 @@ export default function Landing() {
         <span className="lp-sp" />
         {authed
           ? <Link className="acct" to="/dashboard"><span className="at">{t('nav.dashboard')}</span></Link>
-          : <><Link className="acct" to="/login"><span>{t('land.login_short')}</span></Link><Link className="btn reg" to="/register">{t('land.register_short')}</Link></>}
-        <LangToggle /><ThemeToggle />
+          : <><Link className="acct wide-only" to="/login"><span>{t('land.login_short')}</span></Link><Link className="btn reg" to="/register"><span className="wide-only">{t('land.register_short')}</span><span className="narrow-only">{t('land.register_tiny')}</span></Link></>}
+        <span className="wide-only bar-ctl"><LangToggle /><ThemeToggle /></span>
+        <BarMenu authed={authed} />
       </header>
       <main id="top" tabIndex={-1}>
         <div className="hero"><div className="wrap hero-grid">
@@ -142,6 +143,40 @@ export default function Landing() {
         </div></section>
       </main>
       <footer className="ft"><div className="wrap ft-row"><span>{t('app.name')}</span><span className="ft-links"><Link to="/login">{t('land.login_short')}</Link><Link to="/register">{t('land.register_short')}</Link></span><LangToggle /></div></footer>
+    </div>
+  );
+}
+
+// on a phone the header keeps the brand and one call to action; the sections, sign in, language and theme move into this menu
+function BarMenu({ authed }: { authed: boolean }) {
+  const { t } = useI18n();
+  const [open, setOpen] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+  const btn = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const away = (e: PointerEvent) => { if (!box.current?.contains(e.target as Node)) setOpen(false); };
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') { setOpen(false); btn.current?.focus(); } };
+    document.addEventListener('pointerdown', away); document.addEventListener('keydown', esc);
+    return () => { document.removeEventListener('pointerdown', away); document.removeEventListener('keydown', esc); };
+  }, [open]);
+  const close = () => setOpen(false);
+  return (
+    <div className="lp-menu narrow-only" ref={box}>
+      <button type="button" ref={btn} className="icon-btn" aria-expanded={open} aria-controls="lp-menu-panel" aria-label={t('land.menu')} onClick={() => setOpen(o => !o)}>
+        <Icon name={open ? 'x' : 'menu'} />
+      </button>
+      {open && (
+        <div className="lp-menu-panel" id="lp-menu-panel">
+          <nav aria-label={t('land.nav.label')}>
+            <a href="#how" onClick={close}>{t('land.nav.how')}</a>
+            <a href="#creates" onClick={close}>{t('land.nav.creates')}</a>
+            <a href="#why" onClick={close}>{t('land.nav.safety')}</a>
+          </nav>
+          {!authed && <Link className="lp-menu-login" to="/login">{t('land.login_short')}</Link>}
+          <div className="lp-menu-ctl"><LangToggle /><ThemeToggle /></div>
+        </div>
+      )}
     </div>
   );
 }

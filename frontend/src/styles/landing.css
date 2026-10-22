@@ -178,3 +178,28 @@ html[lang="fa"] .crd-note{font-size:13.5px;line-height:23px}
 .lp .ask-ideas{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .lp .ask-ideas .lp-chip{text-align:start}
 .lp .ask .cta:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* phone header: brand, one call to action and a menu; the rest of the bar moves into the menu */
+.lp .bar-ctl{display:flex;align-items:center;gap:8px}
+.lp .narrow-only{display:none}
+.lp .lp-menu{position:static}
+.lp .lp-menu-panel{position:absolute;inset-inline:12px;top:calc(100% + 8px);z-index:5;display:flex;flex-direction:column;gap:6px;padding:10px;
+  background:var(--surface);border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.lp .lp-menu-panel nav{display:flex;flex-direction:column}
+.lp .lp-menu-panel nav a,.lp .lp-menu-login{display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:8px;color:var(--tx);text-decoration:none;font-size:15px}
+.lp .lp-menu-panel nav a:hover,.lp .lp-menu-login:hover{background:var(--raised)}
+.lp .lp-menu-login{border-top:1px solid var(--line);border-radius:0 0 8px 8px;padding-top:6px}
+.lp .lp-menu-ctl{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 4px 2px;border-top:1px solid var(--line)}
+@container lp (max-width:600px){
+  .lp .wide-only{display:none}
+  .lp .narrow-only{display:inline-flex}
+  .lp .bar{gap:8px}
+  .lp .lp-brand{font-size:16px}
+  .lp .btn.reg{padding:0 14px;white-space:nowrap}
+}
+@container lp (max-width:360px){
+  .lp .wrap{padding:0 16px}
+  .lp .bar{gap:6px}
+  .lp .lp-brand{font-size:14px;gap:8px}
+  .lp .btn.reg{padding:0 10px}
+}
