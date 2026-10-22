@@ -20,6 +20,12 @@ const WHY = [
   { k: 'own', icon: <><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></> },
 ];
 
+const MCP = [
+  { icon: <><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></> },
+  { icon: <><path d="m8 8-4 4 4 4M16 8l4 4-4 4M13.5 6l-3 12" /></> },
+  { icon: <><path d="M20 12a8 8 0 1 1-2.6-5.9" /><path d="M20 4v5h-5" /></> },
+];
+
 const Html = ({ html, className }: { html: string; className?: string }) => <span className={className} style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: html }} />;
 
 
@@ -86,7 +92,7 @@ export default function Landing() {
       <a className="skip" href="#top">{t('nav.skip')}</a>
       <header className="wrap bar">
         <a className="lp-brand" href="#top"><Mark /><span>{t('app.name')}</span></a>
-        <nav className="lp-nav" aria-label={t('land.nav.label')}><a href="#how">{t('land.nav.how')}</a><a href="#creates">{t('land.nav.creates')}</a><a href="#why">{t('land.nav.safety')}</a></nav>
+        <nav className="lp-nav" aria-label={t('land.nav.label')}><a href="#how">{t('land.nav.how')}</a><a href="#creates">{t('land.nav.creates')}</a><a href="#why">{t('land.nav.safety')}</a><a href="#agent">{t('land.nav.agent')}</a></nav>
         <span className="lp-sp" />
         {authed
           ? <Link className="acct" to="/dashboard"><span className="at">{t('nav.dashboard')}</span></Link>
@@ -137,6 +143,16 @@ export default function Landing() {
           </ul>
         </div></section>
 
+        <section className="sec why" id="agent"><div className="wrap">
+          <div className="why-head"><span className="tag">{t('land.s4.tag')}</span><h2>{t('land.s4.h')}</h2><p>{t('land.s4.p')}</p></div>
+          <ul className="why-grid why-three">{MCP.map((w, i) => (
+            <li className="why-card" key={i}><span className="why-ic" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">{w.icon}</svg></span>
+              <h3>{t(`land.mcp.${i}.h`)}</h3><p>{t(`land.mcp.${i}.p`)}</p></li>))}
+          </ul>
+          <p className="mcp-note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ac)" strokeWidth="2" strokeLinejoin="round" aria-hidden="true"><path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" /></svg><span>{t('land.mcp.note')}</span></p>
+          <Link className="lp-link" to={authed ? '/settings' : '/register'}>{t('land.mcp.cta')}</Link>
+        </div></section>
+
         <section className="sec go"><div className="wrap go-in">
           <h2>{t('land.go.h')}</h2><p>{t('land.go.p')}</p>
           <Link className="cta go-cta" to={cta.to}><span className="cta-t">{cta.text}</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></Link>
@@ -172,6 +188,7 @@ function BarMenu({ authed }: { authed: boolean }) {
             <a href="#how" onClick={close}>{t('land.nav.how')}</a>
             <a href="#creates" onClick={close}>{t('land.nav.creates')}</a>
             <a href="#why" onClick={close}>{t('land.nav.safety')}</a>
+            <a href="#agent" onClick={close}>{t('land.nav.agent')}</a>
           </nav>
           {!authed && <Link className="lp-menu-login" to="/login">{t('land.login_short')}</Link>}
           <div className="lp-menu-ctl"><LangToggle /><ThemeToggle /></div>

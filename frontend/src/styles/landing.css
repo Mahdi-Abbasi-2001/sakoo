@@ -95,13 +95,18 @@
 .lp[lang=fa] .why-card h3{font-size:19.5px;font-weight:800;line-height:1.7;letter-spacing:0}
 .lp .why-card p{margin-top:10px;color:var(--tx2);font-size:15.5px;line-height:1.7}
 .lp[lang=fa] .why-card p{font-size:16.5px;line-height:2}
+.lp .why-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.lp .mcp-note{display:flex;gap:10px;align-items:flex-start;margin-top:28px;color:var(--tx2);font-size:15.5px;line-height:1.7}
+.lp .mcp-note svg{flex:none;margin-top:4px}
+.lp[lang=fa] .mcp-note{font-size:16.5px;line-height:2}
+.lp #agent .lp-link{display:inline-block;margin-top:14px}
 .lp section.go{border-top:1px solid var(--line)}
 .lp .go-in{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
 .lp .go-in p{color:var(--tx2);font-size:17px;max-width:32em}
 .lp[lang=fa] .go-in h2{font-size:clamp(28px,3vw,38px)}
 .lp[lang=fa] .go-in p{font-size:18px;line-height:2}
 .lp .go-cta{width:auto;min-width:300px;padding:0 28px;margin-top:10px}
-@container lp (max-width:1100px){.lp .why-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@container lp (max-width:1100px){.lp .why-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.lp .why-three{grid-template-columns:minmax(0,1fr)}}
 @container lp (max-width:600px){.lp .why-grid{grid-template-columns:minmax(0,1fr)}.lp .go-cta{width:100%;min-width:0}}
 
 /* ---- hero picture: the launch pad (one 10 s loop; the last frame for reduced motion; paused off screen) ---- */
